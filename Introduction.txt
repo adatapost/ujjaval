@@ -1,0 +1,240 @@
+What is "Java"?
+---------------
+
+  1. Java is itself a platform which has further four sub-platforms:
+      1. Java SE 
+      2. Java EE
+      3. Java ME and
+      4. Java Fx
+  2. Java is a language which supports Object-Oriented Paradigm
+
+     The "Java" language is one of the few JVM based language (Scala,
+     Kotlin, Jython etc).
+
+Each Java platform has :
+   1. APIs and
+   2. Runtime 
+
+The JavaSE is the only platform that comes with "Java" compiler (Language).
+
+  3. Java platforms are specification based. It means each and every comopnent,
+     technology, compiler, runtime environment, JVM and many more are specification
+     based. The JCP (Java Community Process) is the community which recommed the 
+     specifications.
+
+     For instance,  "Java" language is designed as per Java Language Specification.
+                    "JavaSE" libraries are designed using number of specifications e.g.
+			date & time, collection framework, device I/O etc.
+     [Note: Speficiation is a guideline for the creator of software/platforms and
+            the users of the platforms.]
+
+
+Java SE Types System
+=====================
+There are two kind of  "TYPES":
+
+1. Primitives - Which are not designed as OOP guideline and are added into the scope
+   of Java Compiler. These are eight - boolean, char, int, short, double, float, long,
+    byte.
+
+2. Reference Types - These are designed as per OOP guideline. The class java.lang.Object is the root or the ultimate super class of all reference TYPES.
+ 
+Following literals are used to denote the "primitive" value:
+  1.  integer  -  0 to 9, hexadecimal, octal and binary
+      (byte, short, int and long) are integer family TYPES.
+  2. long literal is expressed via L or l suffix. eg. 10L or 2L
+  3. Float literal - F e.g 10.10f is float value
+  4. Double literal - e.g 10.10 
+  5. Character literal - ANSI char - 'r', '&'  '1' etc
+                         UNICODE : '\uxxxx'  \u+four+digit+hex
+  6. false or true - boolean literal
+
+
+The string literal is denoted by double quotes e.g "Java". The "String" is a Reference Type (i.e library type). The "String" is the collection of "unicode" character and when you enclose any value in double quotes, the Java compiler automatically creates an object of "String" class for us. We don't have to use "new" keyword to create an object for "String" class:
+    "Hello" <--- String object
+    String name = "Reena";  <-- String object
+    String lastName = new String("Shah");  <-- Also valid and it is a string object.
+
+The null literal -- This is a compitable with any "Reference Type". We can't use null with primitives. e.g int n = null is invalid
+But,
+   String name = null;
+   java.util.Date dt = null;
+  
+The null indicates the "an absence of an object" or "object is missing" or "object is not exists".
+
+How to design a class?
+-----------------------
+1. first statement must be a package. It must be in lowerletter
+2. Create a public class
+3. Create private fields/datamebers (instance or static)
+4. Add necessary methods, getters, setters, override some of the methods of super class    - Object.   
+   Use "set" or "get" methods to encapsulate the data-members/fields
+   Methods should have "public" access.
+5. Methods and fields must be written in "camelCase". Never add _ underscrore with TypeName, package name, fields or method name. 
+6. Add appropriate constructors - to initialize the fields
+7. Use "PascalCase" pattern to name class, interface, enum or annotation.
+8. USE ALL UPPPER to name the constants (final).
+
+Student.java
+============
+
+package com.adatapost;
+
+public class Student {
+  //fields - instance
+  private int roll;
+  private String name;
+  private int maths, english, science;
+
+  //fields - static
+  private static String school = "ABC School";
+
+  //Consturctors
+  public Student() { 
+    this("",0,0,0,0);
+  }
+  public Student(String name, int roll, int maths, int english, int science) { 
+    this.name = name;
+    this.roll = roll;
+    this.maths = maths;
+    this.english = english;
+    this.science  = science;
+  }
+  public Student( int roll, String name, int maths, int english, int science) { 
+     this(name,roll,maths,english,science);
+  }
+ 
+ 
+  //Setters/Getters
+  public void setRoll(int roll) { this.roll = roll ; }
+  public int getRoll() { return roll; }
+  public void setName(String name) { this.name = name; }
+  public String getName() { return name; }
+  //TODO
+ 
+  public static String getSchool() { return school; }
+  public static void setSchool(String school) {
+    Student.school = school;
+  }
+
+  //Extra methods
+  public int getTotal() { return maths+english+science;  }
+  public double getPer() { return getTotal()/3.0; }
+  public String getGrade() {
+     double p = getPer();
+     if(p>=70) return "A";
+     if(p>=60) return "B";
+     return "C";
+   } 
+
+  // Override - equals, hashCode and toString methods
+  @Override
+  public int hashCode() {
+     return roll + name.hashCode() + maths + english + science;
+  }
+  @Override
+  public boolean equals(Object other) {
+     return hashCode() == other.hashCode();
+  }
+  @Override
+  public String toString() {
+     return String.format("%d  %s  %d  %d  %d  %d  %f  %s",roll,
+       name, maths, english, science, getTotal(), getPer(), getGrade());
+   }
+
+ }//End of class
+
+Compile,
+>javac Student.java -d .
+
+Test.java
+---------
+
+package com.adatapost;
+
+class Test {
+  public static void main(String []args) {
+     Student s = new Student(1,"Meena",55,66,77);
+     Student t = new Student(1,"Meena",55,66,77);
+     System.out.println(s);
+     System.out.println(t);
+     System.out.println(s.hashCode());
+     System.out.println(t.hashCode());
+
+     System.out.println(s.equals(t));
+ 
+     System.out.println( new Student(5,"TTT",55,44,66) );
+  }
+}
+
+Compile,
+
+>javac Test.java -d .
+
+Run,
+
+>java com.adatapost.Test
+
+Example: Why we need to override equals(), hashCode() and toString() methods of the "java.lang.Object" class?
+
+package com.adatapost;
+
+class Product {
+    private int id;
+    private String name;
+    public Product() { }
+    public Product(int id, String name) {  id  = id; this.name = name; }
+
+    @Override  
+    public boolean equals(Object obj) {
+      /* if(obj == null) return false;
+       Product other = (Product) obj;
+       if(other.id != this.id ) return false;
+       if(!other.name.equals(name)) return false;
+       return true; */
+       return hashCode() == obj.hashCode();
+    }
+
+   @Override
+   public int hashCode() {
+      int hash = 5;
+      hash += id;
+      hash += (name==null ? 0 : name.hashCode() );
+      return hash;
+   }
+   @Override
+   public String toString() {
+     return "Kv[Product(" + id + "," + name + ")]";
+   }
+}
+class Test {
+  public static void main(String []args) {
+     String s1 = new String("Hello");
+     String s2 = new String("Hello");
+
+     Product p1 = new Product(10,"Pen");
+     Product p2 = new Product(10,"Pon");
+
+     System.out.println(s1.hashCode() + " " + s2.hashCode());
+     System.out.println(p1.hashCode() + " " + p2.hashCode());
+
+     System.out.println(p1.equals(p2));
+     System.out.println(s1.equals(s2));
+
+     System.out.println(s1 + " "  + s2);
+     System.out.println(p1 + " "  + p2);
+     
+  }
+  public static void main1(String []args) {
+     Student s = new Student(1,"Meena",55,66,77);
+     Student t = new Student(1,"Meena",55,66,77);
+     System.out.println(s);
+     System.out.println(t);
+     System.out.println(s.hashCode());
+     System.out.println(t.hashCode());
+
+     System.out.println(s.equals(t));
+ 
+     System.out.println( new Student(5,"TTT",55,44,66) );
+  }
+}

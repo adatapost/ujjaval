@@ -1,0 +1,27 @@
+Use the classes from one package/folder to other package/folder
+
+1. Create Emp class into c:\abc folder with in.test package
+
+package in.test;
+
+class Emp { 
+  public Emp() {
+     System.out.println("Emp");
+  }
+}
+>javac Emp.java -d .
+
+2. Create TestEmp class into c:\pqr folder with uk.best package
+
+package uk.best;
+
+class TestEmp {
+   public static void main(String []args) {
+      in.test.Emp emp = new in.test.Emp();  //Use fully qulified type name or
+   }                                        //Import the type.
+}
+
+>javac -cp .;c:\abc TestEmp.java -d .
+>java -cp .;c:\abc uk.best.TestEmp
+
+

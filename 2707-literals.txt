@@ -1,0 +1,139 @@
+The Literals (Primitive types)
+===============================
+
+package com.adatapost;
+
+public class Test {
+  public static void main(String []args) {
+     //Literals
+     int a = 0xA;  // Hex
+     int b = 012;  // Oct
+     int c = 10;   // Decimal
+     int d = 0B1010; // Binary
+     System.out.println(a + " " + b + " " + c + " " + d);
+     System.out.println( 0xA );
+     
+  }
+}
+
+The underscore literal _  to add digit separator with int and floating value family types.  e.g  int no = 1_00_000;
+             double amount = 10_34_539.45;
+
+Primitive type (size)
+----------------------
+Name		Size (bytes)
+byte 		1
+short		2
+int		4
+long		8
+
+float		4
+double		8
+
+char		2 (Unicode char)
+
+boolean		1 bit - true and false literal
+
+The "int" literal automatically/implicitly assigned to  byte, short, int or long if the literal value is within the range of target type.
+
+   Example:
+
+             byte n = 10;    // int literal to byte conversion
+             short m = 3000; // int literal to short conversion
+     But,
+             byte n = 128;   // Compiler will throws an error because target type's
+			     //	range is -128 to 127
+
+The "int" object cannot be convert/cast byte, short automatically. We need to use () cast operator.
+   e.g
+     int n = 10;
+     byte m = n;   // Error - incompatible type
+
+   But,  use (byte) cast operator:
+          int n = 10;
+          byte m = (byte) n; // Explicit cast OR Force cast
+ 
+The wrappers - java.lang primitive wrapper classes
+==================================================
+In Java 2, some new classes are introduced in java.lang package and these classes duplicates the funcnalities of "primitive" types and even more functionalities then "primitive".
+
+Primitive		Wrapper class
+byte			java.lang.Byte
+short			java.lang.Short
+int			java.lang.Integer
+long			java.lang.Long
+float			java.lang.Float
+double			java.lang.Double
+char			java.lang.Character
+boolean			java.lang.Boolean
+
+Primitives and its equivalent reference types implicitly cast the value under the following notions:
+
+ 1. Autoboxing  -- primitive to wrapper is known as autoboxing.
+
+	e.g  Integer no = 10;   Or    int n = 10;
+                                      Integer no = n;
+
+ 2. Autounboxing - Wrapper (reference) to primitive 
+
+    e.g    Integer no = 100;
+           no++;
+           int k = no;   // Autounboxing
+
+
+The conversion methods of wrapper objects
+-----------------------------------------
+Wrapper object provide xxxxValue() methods which convert an object data to primitive one.
+e.g
+      Double d = 1000.23;
+      int n = d.intValue();
+      float f = d.floatValue();
+      short s = d.shortValue();
+
+The String.vauleOf( value ) - Convert primitive data to string (or Format the data)
+-----------------------------------
+
+  int no = 10;
+  String value = String.valueOf(no);
+  System.out.println(value);
+
+  value  = String.valueOf( 2.3f );
+  System.out.println(value);
+
+
+The String.format("format",valueParam...) -- Convert primitive data to string or format the data
+-----------------------
+  int no = 10;
+  String value = String.format("%d",no);
+  System.out.println(value);
+
+  int age = 13;
+  String name = "Reena";
+  float per = 93.23f;
+
+  value = String.format("Roll : %d\nName  : %s\nPercent : %f",age,name,per);
+  System.out.println(value);
+
+Convert primitive value to String via Wrappers
+------------------------------------------------
+  int no = 10;
+  Integer wNo = no;  
+  String value = wNo.toString();  
+  System.out.println( value );
+
+The toString() of wrapper object returns string form of the data.
+
+ Ex:   String value = new Integer(20).toString();
+    Or String value = String.valueOf( 20 );        
+ 
+Use parse methods of wrapper classes to parse the string data to appropriate primitives
+-------------------------------------
+e.g
+   String value = "1000"; 
+   int no = Integer.parseInt( value );
+   no++;
+   System.out.println( no );
+
+Similarly, Double.parseDouble, Float.parseFloat and so on.
+
+

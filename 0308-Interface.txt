@@ -1,0 +1,493 @@
+USe of interface Types
+======================
+
+1.  It provide syntax for the methods defined in a class. i.e. It separate the creator     code from the user's code.
+
+    So, we can say "Code separation" is the major function of interface.
+
+    Interface type include the declarations/prototypes of functions whereas 
+    class types provide the implelemtations of these declared functions.
+
+Here is an example: We've two interfaces or two behaviors IOByte and Device and these two behaviors are implemented by one or more classes. That means we can achieve the real world polymorphism ~ One name and multiple forms ~. 
+
+public interface IOByte {
+  byte read();
+  void write(byte b);
+}
+public interface Device {
+  void open();
+  void close();
+}
+
+public class NetworkIO implements IOByte, Device {
+  public byte read() { }
+  public void write(byte b) { }
+  public void open() { }
+  public void close() { }
+}
+public class DiskIO implements IOByte, Device {
+  public byte read() { }
+  public void write(byte b) { }
+  public void open() { }
+  public void close() { }
+}
+
+2. The closure mechanism - To store method reference (In C/C++, function pointer) along
+   with associate object's references.
+
+The interface reference variable create a "Virtual Method Table" and here how it works:
+  IOByte io;
+  |--------------------------|
+  | Name  | Memory Reference |
+  |-------|------------------|
+  | read  |  Not available   |
+  | write |  Not available   |
+  |--------------------------|
+ and
+  Device dv;
+  |--------------------------|
+  | Name  | Memory Reference |
+  |-------|------------------|
+  | open  |  Not available   |
+  | close |  Not available   |
+  |--------------------------|
+
+  Now, creating an objects of implementation of IOByte and Device interface:
+   
+   NetworkIO n1 = new NetWorkIO();
+   DiskIO d1 = new DiskIO();
+
+   Initialize the virtual method table,
+   
+     io = n1;  So read points to n1.read and write points to n1.write methods
+  |--------------------------|
+  | Name  | Memory Reference |
+  |-------|------------------|
+  | read  |  n1.read         |
+  | write |  n1.write        |
+  |--------------------------|
+
+     io.read();
+     io.write();
+
+     io = d1;
+  |--------------------------|
+  | Name  | Memory Reference |
+  |-------|------------------|
+  | read  |  d1.read         |
+  | write |  d1.write        |
+  |--------------------------|
+
+     io.read();
+     io.write();
+
+   dv = n1;
+
+  |--------------------------|
+  | Name  | Memory Reference |
+  |-------|------------------|
+  | open  |  n1.open         |
+  | close |  n1.close        |
+  |--------------------------|
+
+  dv.open();
+  dv.close();
+
+  dv = d1;
+
+  dv.open();
+  dv.close();
+
+code in main:
+
+ IOByte io;
+ Device dv;
+
+ NetworkIO n1 = new NetWorkIO();
+ DiskIO d1 = new DiskIO();
+
+ io = n1;
+ dv = n1;
+
+ dv.open();
+ io.read();
+ io.write();
+ dv.close();
+
+ io = d1;
+ dv = d1;
+
+ dv.open();
+ io.read();
+ io.write();
+ dv.close();
+
+Edit: Create a new interface which extends Device and IOByte interfaces
+public interface DeviceByteIO extends Device, IOByte { }
+
+and your DiskIO and NetworkIO classes implements DeviceByteIO:
+ public class DiskIO implements DeviceByteIO { ... }
+ public class NetworkIO implements DeviceByteIO { ... }
+
+and code in main method:
+public class Main {
+  static void test() {
+     Device d = new DiskIO();  // or new NetworkIO();
+     IOByte i = (IOByte) d;  // Cast the object
+     d.open();
+     i.read();
+     d.close();
+   //OR
+     DeviceByteIO dd = new DiskIO();  // or (DeviceByteIO) d;
+     dd.open();
+     dd.read();
+     dd.write( (byte) 3);
+     dd.close();
+  }
+ public static void main(String []args) {
+     test();
+ }
+}
+
+Another Test:
+-------------
+ 
+ static void deviceAction(Device d) {
+    System.out.println("Opening the device...");
+    d.open();
+ }
+ static void readAction(IOByte b) {
+    System.out.println("Reading a byte...");
+    b.read();
+    ( (Device) (b)).close();
+    System.out.println("Closing ... the device");
+ }
+ static void performIO(DeviceByteIO io) {
+     System.out.println("Received the request...");
+     deviceAction(io);
+     readAction(io);
+     System.out.println("Finished!!!");
+ }
+ public static void main(String []args) {  
+    performIO( new DiskIO() );
+    performIO( new NetworkIO() );
+ }
+
+Another Test:
+
+package com.adc;
+
+
+public class Main {
+
+	public static void main(String[] args) {
+		test1();
+	}
+	static void test2() {
+		Device b = new NetworkIO(); //new DiskIO(); 
+		b.open();
+		b.close();
+		IOByte io = (IOByte) b;
+		io.read();
+		io.write((byte)3);
+		
+		DeviceByteIO dbio = (DeviceByteIO) b;
+		dbio.open();
+		dbio.read();
+		dbio.write((byte)4);
+		dbio.close();
+		
+		
+	}
+	static void test1() {
+		// We've two closures
+		 IOByte io;
+		 Device dv;
+
+		 NetworkIO n1 = new NetworkIO();
+		 DiskIO d1 = new DiskIO();
+
+		 io = n1;
+		 dv = n1;
+
+		 dv.open();
+		 io.read();
+		 io.write((byte)2);
+		 dv.close();
+
+		 io = d1;
+		 dv = d1;
+
+		 dv.open();
+		 io.read();
+		 io.write((byte)1);
+		 dv.close();
+		 
+		 openDevice(d1);
+		 openDevice(n1);
+	}
+	static void openDevice(Device device) {
+		device.open();
+	}
+
+}
+
+
+3. Developers uses "Interfaces" to implement the "STANDARDS or PROTOCOLs". 
+4. With help of closure, number of applications framework define the dependency    injection (DI) and event handling system.
+
+   Java EE, Spring, and many more frameworks uses DI techniques.
+
+
+For instance, the java.lang.AutoCloseable interface is used to ensure that every class (especially Device, Database, Network etc) must have "close()" method and that close() will be called automatically if try-with-resource syntax is used:
+
+  try( AutoCloseableClass obj = new AutoCloseableClass() ) {
+    //statements
+  }....
+
+
+Almost all IO, NEtworking, Audio/Video, Compression, Encyrption and Database classes implements this "AutoCloseable" interface.
+
+Example: How the try-with-resource works?
+class Test implements AutoCloseable {
+	@Override
+	public void close() throws Exception {
+		System.out.println("End");
+	} 
+}
+public class Main {
+	public static void main(String[] args) {
+		try(Test test = new Test()) {
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+}
+ 
+Similarly, in order to clone() your class's object,  you must have to implement the Cloneable interface to just tell the JVM that this class supports the "object cloning". 
+
+Example:
+
+package com.test;
+
+class Test implements AutoCloseable {
+	@Override
+	public void close() throws Exception {
+		System.out.println("End");
+	} 
+}
+class Product implements Cloneable {
+	private int id;
+	private String name;
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public Product(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+	public Product() {
+	}
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+	
+}
+public class Main {
+	public static void main(String[] args) {
+		 Product p1 = new Product(10,"Pencil");
+		 try {
+			 Product p2 = (Product) p1.clone();
+			 p2.setId(30);
+			 System.out.println(p1.getId() + " " + p1.getName());
+			 System.out.println(p2.getId() + " " + p2.getName());
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }
+	}
+}
+
+Syntax to create anonymous (nameless) class and object using the interface
+---------------------------------------------------------
+This syntax help us in many situtations where we don't want to a named "implementation" of the "interface". Instead, we want to create "local" implementation of the interface or say a local closure.
+
+
+Syntax:
+
+ InterfaceName  refName = new InterfaceName() {
+    // Implementation of the interface
+ };  <--- Don't forget to put semi-colon here.
+
+Example:
+
+public interface Shape {
+   void draw();
+   void erase();
+}
+
+public class Main {
+  public static void main(String []args) {
+     // Local inner anonymous class
+     Shape circle = new Shape() {
+         @Override public void draw() { System.out.println("Circle is drawn!"); }
+         @Override public void erase() { System.out.println("Circle erased!"); }
+     };
+     Shape rect = new Shape() {
+         @Override public void draw() { System.out.println("Rect is drawn!"); }
+         @Override public void erase() { System.out.println("Rect erased!"); }
+     };
+    circle.draw();
+    rect.draw();
+    circle.erase();
+    rect.erase();
+
+    drawShape( circle );
+    drawShape( rect );
+    eraseShape( circle );
+    eraseShape( rect );
+ }//End main()
+ static void drawShape( Shape shape ) { shape.draw(); }
+ static void eraseShape( Shape shape ) { shape.erase(); }
+}//End Main class
+
+Edit: Changes in main() method
+
+  drawShape( new Shape() {
+      @Override public void draw() { System.out.println("Drawn!"); }
+      @Override public void erase() { System.out.println("Eased!"); }
+  } );
+
+The default interface
+-----------------------
+An interface having single method yet to be implemented by classes is called "default interface".
+e.g
+  public interface Calc {
+      double action(double no1,double no2);
+  }
+ 
+ public interface Color { 
+      void fill();
+ }
+
+The "single" unimplemented method interface is known as "default" and it is used with "lambda" syntax to create anonymous class and object.
+
+Syntax:
+
+     InterfaceName refName = ([param1,...]) -> single-statement;
+     InterfaceName refName = ([param1,...]) -> { 
+         //method body
+     };
+
+Example: code in main:
+      
+  //Anonymous syntax - 1 
+  Calc add = new Calc() {
+    @Override
+    public double action(double n1,double n2) { return n1 + n2; }
+  };
+ //Anonymous syntax - 2
+ Calc mul = (p,q) -> p*q;
+ Calc div = (p,q) -> p/q;
+ Calc printSeries = (s,e) -> {
+    double r = 0;
+    for(double i=s;i<=e;i++) {
+       r += i;
+      System.out.println(i);
+    }
+    return r;
+ };
+ //Call the methods
+ System.out.println( add.action(3,4) );  
+ System.out.println( mul.action(3,4) );
+ System.out.println( div.action(3,4) );
+ System.out.println( printSeries.action(1,10) );
+
+Example: We've "MyNumber" class that include a integer field named "int no". Write a code which raises or call a method "show" of "Message" interface whenever the changes occurs in "int no" fields.
+
+Tip:
+
+public interface Message {
+   void show(String message);
+}
+
+public class MyNumber {
+   private int no;
+   ....
+   ....
+}
+
+
+MyNumber n = new MyNunber();
+n.setNo(4); <-- will call the "show()"
+n.setNo(5); <-- Again it will call the show()
+
+Example:
+
+public interface Message {
+   void show(String message);
+}
+public class MyNumber {
+   private int no;
+   private Message listener;
+
+   //GET/SET - getNo(), setNo(), getListener() , setListener()
+
+   public void setNo(int no) {
+     this.no = no;
+     if(listener!=null) {
+         listener.show("Number has been changed!!!");
+     }
+   }
+}
+
+// Event handler
+public class MyMessage implements Message {
+  @Override public void show(String message) {
+      System.out.println( message );
+  }
+}
+
+public class Main {
+  public static void main(String []args) {
+     MyNumber n = new MyNumber();
+     n.setNo(30);  // Will change the value but wont fire the event/closure 
+                   // because "listener" is null
+
+     //Now, attach the listener or event handler to the object
+    n.setListener( new MyMessage() );
+    n.setNo(50);   // Will display "Number has been changed!!!"
+    n.setNo(5);    // Again raise the event or call the closure method
+    
+    //Set another listener/closure
+    n.setListener( (msg) -> System.out.println("Changed!!!") );
+    n.setNo(4);  // will call the lambda closure 
+    n.setNo(55);
+    //Remove the closure
+    n.setListener( null );
+    n.setNo(44);  // No closure, no message
+    n.setListener( new Message() {
+       @Override public void show(String m) {
+          System.out.println("Hi!" + m);
+       }
+    });
+    n.setNo(4);  
+  }//main()
+}//Main class
+
+
+    
+  
+
+

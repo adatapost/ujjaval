@@ -1,0 +1,200 @@
+How to use classes/types?
+=========================
+We've two ways:
+ 1. Composition -- where types are used as instances/objects into another types
+ 2. Inheritance -- Where the "forms" of types are reused.
+
+Example: Represent local and postal address (each one contains pin, name of city) of student.
+
+package com.adatapost;
+
+public class Address {
+   private int pin;
+   private String city;
+
+   //Constructors and getters/setters
+   public Address() { this("",0); }
+   public Address(String city, int pin) {
+     this.city = city;
+     this.pin = pin;
+   }
+   public int getPin() { return pin; }
+   public String getCity() { return city; }
+   public void setPin(int pin) { this.pin = pin; }
+   public void setCity(String city) { this.city = city ; }
+}
+
+package com.adatapost;
+
+public class Student {
+   private int roll;
+   private String name;
+   private Address local, postal;
+
+   //Constructors/ Getters/Setters
+   public Student() { }
+   public Student(int roll, String name, Address local, Address postal) {
+     this.roll = roll;
+     this.name = name;
+     this.postal = postal;
+     this.local = local;
+   }
+
+   public int getRoll() { return roll; }
+   public String getName() { return name; }
+   public Address getLocal() { return local; }
+   public Address getPostal() { return postal; }
+   public void setRoll(int roll) { this.roll  = roll; }
+   public void setName(String name) { this.name = name; }
+   public void setLocal(Address local) { this.local = local; }
+   public void setPostal(Address postal) { this.postal = postal; }
+}
+
+package com.adatapost;
+class TestStudent {
+ public static void main(String []args) {
+     test6();
+ }
+ // Test - 6
+ static void test6() { 
+     Student s = new Student();
+     System.out.println(s.getRoll() + " " + s.getName() + " " + s.getLocal()  + " " + s.getPostal());
+     s.getLocal().setCity("Mumbai");
+     s.getLocal().setPin(33232);
+     s.getPostal().setCity("Patan");
+     s.getPostal().setPin(232332);
+     print(s);
+ }
+
+ // Test - 5
+ static void test5() { 
+     Student s = new Student(1,"Seema",new Address(), new Address());
+     s.getLocal().setCity("Mumbai");
+     s.getLocal().setPin(33232);
+     s.getPostal().setCity("Patan");
+     s.getPostal().setPin(232332);
+     print(s);
+ }
+ // Test - 4
+ static void test4() { 
+     Student s = new Student(1,"Seema",new Address("Meh",44), new Address("Pat",33));
+     print(s);
+ }
+
+  // Test - 3
+ static void test3() { 
+     Address a = new Address("Mehsana",239923);
+
+     Student s = new Student();
+     s.setRoll(20);
+     s.setName("Reena");
+     s.setPostal( a );
+     s.setLocal( a );
+     print(s);
+     
+  }
+  // Test - 2
+ static void test2() { 
+     Address a = new Address("Mehsana",239923);
+     Address b = new Address("Patan",43923);
+     Student s = new Student();
+     s.setRoll(20);
+     s.setName("Reena");
+     s.setPostal( a );
+     s.setLocal( b );
+     print(s);
+     
+  }
+
+ // Test - 1
+ static void test1() {
+     Student s = new Student();
+     s.setRoll(20);
+     s.setName("Reena");
+     s.setPostal( new Address("Meh",364332) );
+     s.setLocal( new Address("Pat", 220022) );
+     print(s);
+     
+  }
+ public static void print(Student s) { 
+    System.out.println(s.getRoll() + "  " + s.getName());
+    System.out.println(s.getLocal().getCity() + " " + s.getLocal().getPin());
+    System.out.println(s.getPostal().getCity() + " " + s.getPostal().getPin());
+ }
+}
+
+
+Example:  
+
+public class Point {
+   private int x,y;
+}
+public class Rect {
+   private Point start;
+   private Point end;
+}
+
+public class Circle {
+   private Point center;
+   private double radius;
+}
+
+public class Oval {
+   private Point start;
+   private Point size;
+}
+
+Example:
+
+class Category  { 
+  private String name;
+
+}
+class Product {
+   id, name
+   private Category category;
+}
+
+Example:
+
+class Subject {
+}
+
+class Exam {
+  examDate
+  examType
+}
+
+class SubjectExam {
+   private Exam exam;
+   private Subject subject ;
+   private int total, obtain;
+}
+class Student {
+  roll,name
+}
+class StudentExam {
+   int seatNo;
+   String paperDate;
+   SubjectExam subjectExam;
+   Student student;
+}
+
+Example: Write a class "Person" that represent the name, age, gender and reference of father and mother.
+
+
+Tip:
+
+public class Person {
+   private int age;
+   private String name;
+   private String gender;
+   private Person father;
+   private Person mother;
+   .....
+}
+
+
+   
+
+                 

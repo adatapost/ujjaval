@@ -1,0 +1,210 @@
+Best Practice to perform Device IO
+=====================================
+
+1. Always use try-with-resource to close the resources gracefully
+2. Always use "Buffered" classes -- BufferedInputStream (Binary) or BufferedReader (Text) or BufferedOutputStream or BufferedWriter (Text)
+
+
+package com.adatapost;
+
+import java.io.FileOutputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+
+
+public class Main {
+	public static void main(String []args) {
+		File file = new File("c:\\javaprg\\ujjval\\2.png");
+		try(BufferedInputStream in = 
+				new BufferedInputStream( 
+						new FileInputStream(file))) {
+			byte []buffer = new byte[1024*8];
+			int numRead = 0;
+			try(BufferedOutputStream out = 
+					new BufferedOutputStream(
+							new FileOutputStream("c:/javaprg/ujjval/3.png"))) {					
+			  while( (numRead = in.read(buffer,0,buffer.length)) >0) {
+				//String str = new String(buffer,0,numRead);
+				//System.out.println(numRead + " " + str);
+				  out.write(buffer,0,numRead);
+		  	  }
+			}
+			 
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		 
+	}
+	public static void main1(String []args) {
+		File file = new File("c:\\javaprg\\ujjval\\hello.txt");
+		try(BufferedOutputStream out = 
+				new BufferedOutputStream( 
+						new FileOutputStream(file))) {
+			 out.write(65);
+			 out.write(68);
+			 out.write("Hello World".getBytes());
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+	}
+
+}
+
+Example: Using java.net.URL and java.net.URLConnection class to establish the connection with network resources and copy the resource with the help of IO classes.
+
+package com.adatapost;
+
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.BufferedInputStream;
+import java.io.File;
+
+
+public class Main {
+	public static void main(String []args) {
+		 try {
+			 URL url = new URL("http://adatapost.com/course.php");
+			 URLConnection cn = url.openConnection();
+			
+			 try(BufferedReader in = 
+						new BufferedReader(
+								new InputStreamReader(
+										cn.getInputStream()))) {
+					 try(BufferedWriter out = 
+							new BufferedWriter(
+									new FileWriter("c:/javaprg/ujjval/course.html"))) {
+					  System.out.println("Donwload started....");
+					  String line;
+					  while( (line = in.readLine()) !=null) {
+						  out.write(line);
+						  System.out.println(line);
+				  	  }
+					  System.out.println("Donwload ends successfully");
+					}
+				}
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }		   
+		}
+	public static void main4(String []args) {
+		 try {
+			 URL url = new URL("http://adatapost.com/course.php");
+			 URLConnection cn = url.openConnection();
+			 
+			 try(BufferedInputStream in = 
+						new BufferedInputStream( 
+								cn.getInputStream())) {
+					byte []buffer = new byte[1024*8];
+					int numRead = 0;
+					try(BufferedOutputStream out = 
+							new BufferedOutputStream(
+									new FileOutputStream("c:/javaprg/ujjval/course.html"))) {
+					  System.out.println("Donwload started....");
+					  while( (numRead = in.read(buffer,0,buffer.length)) >0) {
+						  out.write(buffer,0,numRead);
+				  	  }
+					  System.out.println("Donwload ends successfully");
+					}
+				}
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }		   
+		}
+	
+	public static void main3(String []args) {
+	 try {
+		 URL url = new URL("http://adatapost.com/content/images/adc-final.png");
+		 URLConnection cn = url.openConnection();
+		 
+		 try(BufferedInputStream in = 
+					new BufferedInputStream( 
+							cn.getInputStream())) {
+				byte []buffer = new byte[1024*8];
+				int numRead = 0;
+				try(BufferedOutputStream out = 
+						new BufferedOutputStream(
+								new FileOutputStream("c:/javaprg/ujjval/adc.png"))) {
+				  System.out.println("Donwload started....");
+				  while( (numRead = in.read(buffer,0,buffer.length)) >0) {
+					  out.write(buffer,0,numRead);
+			  	  }
+				  System.out.println("Donwload ends successfully");
+				}
+			}
+	 }catch(Exception ex) {
+		 System.out.println(ex);
+	 }		   
+	}
+	
+	public static void main2(String []args) {
+		File file = new File("c:\\javaprg\\ujjval\\2.png");
+		try(BufferedInputStream in = 
+				new BufferedInputStream( 
+						new FileInputStream(file))) {
+			byte []buffer = new byte[1024*8];
+			int numRead = 0;
+			try(BufferedOutputStream out = 
+					new BufferedOutputStream(
+							new FileOutputStream("c:/javaprg/ujjval/3.png"))) {					
+			  while( (numRead = in.read(buffer,0,buffer.length)) >0) {
+				//String str = new String(buffer,0,numRead);
+				//System.out.println(numRead + " " + str);
+				  out.write(buffer,0,numRead);
+		  	  }
+			}
+			 
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	public static void main1(String []args) {
+		File file = new File("c:\\javaprg\\ujjval\\hello.txt");
+		try(BufferedOutputStream out = 
+				new BufferedOutputStream( 
+						new FileOutputStream(file))) {
+			 out.write(65);
+			 out.write(68);
+			 out.write("Hello World".getBytes());
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+	}
+
+}
+
+Example: Write/read primitive values - DataInputStream and DataOutputStream
+
+public static void main(String []args) {
+		File file = new File("c:\\javaprg\\ujjval\\emp.txt");
+		try(DataOutputStream out = new DataOutputStream(
+				new BufferedOutputStream( 
+						new FileOutputStream(file)))) {
+			  out.writeInt(10002);
+			  out.writeUTF("Mr. Raj");
+			  out.writeDouble(99399.23);
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+		
+		try(DataInputStream in = new DataInputStream(
+				new BufferedInputStream( 
+						new FileInputStream(file)))) {
+			  System.out.println(in.readInt());
+			  System.out.println(in.readUTF());
+			  System.out.println(in.readDouble());
+		} catch (Exception ex) {
+			System.out.println(ex);
+		}
+	}
+
+

@@ -1,0 +1,283 @@
+Linked List Example - 1
+
+package com.adc;
+
+public class Student {
+	private int roll;
+	private String name;
+	private Student link;
+	
+	public Student() {
+	}
+	public Student(int roll, String name) {
+		super();
+		this.roll = roll;
+		this.name = name;
+	}
+	public int getRoll() {
+		return roll;
+	}
+	public void setRoll(int roll) {
+		this.roll = roll;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Student getLink() {
+		return link;
+	}
+	public void setLink(Student link) {
+		this.link = link;
+	}
+	@Override
+	public String toString() {
+		return "Student [roll=" + roll + ", name=" + name + "]";
+	}
+}
+
+
+package com.adc;
+
+
+public class Main {
+	public static void main(String[] args) {
+		 //Linked List
+		Student s1 = new Student(1,"Reena");
+		Student s2 = new Student(2,"Meena");
+		Student s3 = new Student(4,"Teena");
+		
+		s1.setLink(s2);
+		s2.setLink(s3);
+		
+		System.out.println(s1.getRoll() + " " + s1.getName());
+		System.out.println(s1.getLink().getRoll() + " " + s1.getLink().getName());
+		System.out.println(s1.getLink().getLink().getRoll() + " " + s1.getLink().getLink().getName());
+		
+		System.out.println("======");
+		Student temp = s1;  //STart Ref
+		
+		while(temp!=null) {
+			System.out.println(temp);
+			temp = temp.getLink();
+		}
+		
+	}
+}
+
+Example: Improve the linkedlist example
+
+package com.adc;
+
+public class Student {
+	private int roll;
+	private String name;
+	
+	private Student link = null;
+	
+	public Student() {
+	}
+	public Student(int roll, String name) {
+		this.roll = roll;
+		this.name = name;
+	}
+	public int getRoll() {
+		return roll;
+	}
+	public void setRoll(int roll) {
+		this.roll = roll;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Student getLink() {
+		return link;
+	}
+	public void setLink(Student link) {
+		this.link = link;
+	}
+	@Override
+	public String toString() {
+		return roll + " " + name ;
+	}
+}
+
+
+package com.adc;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+public class StudentList {
+	 private Student first,last;
+	 
+	 /* Add new node */
+	 public void add(int roll, String name) {
+		 add( new Student(roll,name) );
+	 }
+	 public void add(Student student) {
+		 if( first == null ) {  // If list is empty
+			 first = last = student;
+		 } else {
+			 last.setLink(student);
+			 last = student;
+		 }
+	 }
+	 
+	 /* Traverse the linked list */
+	 public void traverse() {
+		 Student temp = first;
+		 while(temp!=null) {
+			 System.out.println(temp.getRoll() + " " + temp.getName());
+			 temp = temp.getLink();
+		 }
+	 }
+	 
+	 /* Delete the node */
+	 public void delete(int roll) {
+		 if(first == null)   // if list is empty
+			 return;
+		 
+		 Student temp = first;
+		 if(temp.getRoll() == roll) {   // if it is first node
+			first = temp.getLink();
+			if(first == null)
+				last = null;
+			return;
+		 }
+		 while( temp.getLink()!=null 
+				 && temp.getLink().getRoll()!=roll) {
+			 temp = temp.getLink();
+		 }
+		 if(temp.getLink()==null) return;  // if node not exists
+		 
+		 if(temp.getLink().getRoll() == roll) {  // if last node
+			 last = temp;
+		 }
+		 temp.setLink( temp.getLink().getLink() );
+	 }
+	 
+	 /* Save students */
+	 public static void save(StudentList list, String path) {
+		 try(DataOutputStream out = new DataOutputStream(
+				 new BufferedOutputStream(
+						 new FileOutputStream(path)))) {
+			 Student temp = list.first;
+			 while( temp!=null) {
+				 out.writeInt(temp.getRoll());
+				 out.writeUTF(temp.getName());
+				 temp = temp.getLink();
+			 }
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }
+	 }
+	 
+	 /* Read students */
+	 public static StudentList read(String path) {
+		 StudentList list = new StudentList();
+		 try(DataInputStream in = new DataInputStream(
+				 new BufferedInputStream(
+						 new FileInputStream(path)))) {
+			 while( in.available()>0) {
+				 //System.out.println(in.readInt() +  " " + in.readUTF());
+				 Student s = new Student(in.readInt(), in.readUTF());
+				 list.add(s);
+			 }
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }
+	 
+		 return list;
+	 }
+}
+
+
+package com.adc;
+
+
+public class Main {
+	public static void main(String[] args) {
+		 menu();
+	}
+	public static void menu() {
+		StudentList list = new StudentList();
+		String path = "c:/javaprg/s.txt";
+		Student std = null;
+		java.util.Scanner sc = new java.util.Scanner(System.in);
+		
+		while(true) {
+		
+		System.out.println("*** Student Database *** ");
+		System.out.println("1. Add");
+		System.out.println("2. Delete");
+		System.out.println("3. Print");
+		System.out.println("4. Save");
+		System.out.println("5. Load");
+		
+		System.out.println("0. Exit\n\nEnter your choice : ");
+		int choice = sc.nextInt();
+		
+		switch(choice) {
+		case 0: 
+			System.out.println("Good bye!!");
+			return;
+		case 1: 
+			System.out.println("Roll & Name : ");
+			std = new Student();
+			std.setRoll(sc.nextInt());
+			std.setName(sc.next());
+			list.add(std);
+			
+			break;
+		case 2: 
+			System.out.println("Roll to be deleted : ");
+			std = new Student();
+			std.setRoll(sc.nextInt());
+			list.delete(std.getRoll());
+			break;
+		case 3: list.traverse(); break;
+		case 4: StudentList.save(list, path); break;
+		case 5: list = StudentList.read(path); break;
+		}
+		}
+		
+	}
+	public static void main2(String[] args) {
+		String path = "c:/javaprg/s.txt";
+		StudentList list = StudentList.read(path);
+		list.traverse();
+		list.delete(1);
+		StudentList.save(list, path);
+	}
+	public static void main1(String[] args) {
+		 //Create a list
+		StudentList list = new StudentList();
+		list.add(6,"Raju");
+		list.add( new Student(2,"Reena") );
+		list.add( new Student(1,"Seena") );
+		list.add( new Student(13,"Seeta") );
+		list.add( 5, "Teena" );
+		
+		list.traverse();
+		
+		System.out.println("---Delete--");
+		//list.delete(113);
+		 
+		list.traverse();
+		StudentList.save(list,"c:/javaprg/s.txt");
+		
+	}
+}
+

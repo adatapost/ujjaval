@@ -1,0 +1,29 @@
+public class Student {
+   private int no;
+   private String name;
+    
+}
+
+
+public class StudentDb {
+    public boolean add(Student student) { 
+          //code to save student data
+          return false;
+    }
+    public boolean update(Student student) { 
+          //code to update student data
+          return false;
+    }
+    public boolean del(Student student) { 
+          //code to del student data
+          return false;
+    }
+    public Student search(Student student) { 
+          //code to search student data
+          return null;
+    }
+    public void printAll() { 
+          //code to save student data
+         
+    }
+}

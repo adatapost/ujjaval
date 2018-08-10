@@ -1,0 +1,234 @@
+The Date & Time APIs
+=====================
+
+
+Example: Local current date & time in millis
+--------------------------------
+	// Local current date time in millis
+   	   long ms = System.currentTimeMillis();
+	   System.out.println(ms);
+
+Example: The java.util.Date class to create date instance - This class represent Epoch date & time. 1st Jan 1970 is the epoch/start date & time.
+
+
+		Date now = new Date();
+		System.out.println(now);
+		
+		Date dt = new Date(0); // millis
+		System.out.println(dt);
+		
+		
+		dt = new Date(System.currentTimeMillis()); // millis
+		System.out.println(dt);
+
+
+Example: Obtain millis from Date object and also perform some artihmetic on them.
+
+	       Date d1 = new Date(); // Current Date
+		
+		long ms = 36 * 24 * 3600 * 1000L;   // 36 days
+		Date d2 = new Date( d1.getTime() - ms );  // 36 days backdate
+	 
+		long m1 = d1.getTime();  // Date to miilis
+		long m2 = d2.getTime();  // Date to miilis
+		long diff = m2 - m1;
+		
+		System.out.println(m1 + " "  + m2);
+	    System.out.println( diff   + " millis"); 
+	    System.out.println( diff/1000   + " seconds");
+	    System.out.println( diff/(1000*60)   + " minutes");
+	    System.out.println( diff/(1000*3600)   + " hours");
+	    System.out.println( diff/(1000*3600*24)   + " days");
+	  
+Example: Convert or parse ISO date into Date object vai java.sql.Date, which is  sub-class of java.util.Date class.
+
+import java.util.Date;
+
+public class Main {
+	public static void main(String[] args) {
+		 String str = "2002-10-31";   // ISO Date
+		 
+		 Date dt = java.sql.Date.valueOf(str);
+		 System.out.println(dt);
+		 System.out.println(dt.getTime());
+	}
+}
+
+Example: Calendar class has methods called "get" to return the date & time parts and "set" method to update the date  & time part.
+
+Calendar cal = Calendar.getInstance();  // Returns current calendar object
+		
+		System.out.println(cal.get(Calendar.DATE));
+		System.out.println(cal.get(Calendar.MONTH)); // 0 for Jan
+		System.out.println(cal.get(Calendar.YEAR));
+		System.out.println(cal.get(Calendar.HOUR));
+		System.out.println(cal.get(Calendar.MINUTE));
+		System.out.println(cal.get(Calendar.SECOND));
+		
+		System.out.println(cal.get(Calendar.DAY_OF_MONTH));
+		System.out.println(cal.get(Calendar.DAY_OF_WEEK));
+		System.out.println(cal.get(Calendar.DAY_OF_YEAR)); 
+
+
+Example:  Set the date & time parts
+
+Calendar cal = Calendar.getInstance();  // Returns current calendar object
+		
+		System.out.println(cal.getTime());  // Returns Date object
+		
+		cal.set(Calendar.MONTH, 11);
+		cal.set(Calendar.YEAR,2017);
+		Date dt = cal.getTime();
+		System.out.println(dt);
+		
+		cal.set(Calendar.DAY_OF_YEAR,50);
+		dt = cal.getTime();
+		System.out.println(dt);
+
+
+The Calendar.getInstance() returns a date & time object of current (default) Locale and TimeZone.
+
+
+Example: List all zones
+
+for(String tId: TimeZone.getAvailableIDs()) {
+  System.out.println(tId);
+ }
+
+
+Example: Calendar object of specified TimeZone
+
+Calendar cal = Calendar.getInstance(); // Local timezone
+		Calendar aCal = Calendar.getInstance(
+				          TimeZone.getTimeZone("America/Guyana"));
+		
+		System.out.println(cal.get(Calendar.HOUR));
+		System.out.println(aCal.get(Calendar.HOUR));
+		
+		long ms = (5 * 3600L + 30 * 60 ) * 1000;
+		System.out.println(ms + " Millis - Offset IST" );
+		System.out.println(cal.get(Calendar.ZONE_OFFSET));
+		System.out.println(aCal.get(Calendar.ZONE_OFFSET));
+		
+		long hrs = (aCal.get(Calendar.ZONE_OFFSET) / 1000L)/3600;
+		System.out.println(hrs);
+
+
+Example: Retrieve the TimeZone objects of all available timezone
+
+for(String tId: TimeZone.getAvailableIDs()) {
+  System.out.println( TimeZone.getTimeZone(tId));
+}
+ 
+
+The java.text.SimpleDateFormat class
+=======================================
+It is used to format the Date object and also parse string date.
+
+Example: Format the Date object
+
+Date dt = new Date();
+		 System.out.println(dt);
+		 
+		 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		 System.out.println(sdf.format(dt));
+		 
+		 sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
+		 System.out.println(sdf.format(dt));
+		 
+		 sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+		 System.out.println(sdf.format(dt));
+		 
+		 System.out.println( new SimpleDateFormat("E MMM MMMM Y").format(dt));
+		 System.out.println( new SimpleDateFormat("Z z").format(dt));
+		 System.out.println( new SimpleDateFormat("HH:mm:ss Z z").format(dt));
+		 
+Example : Parse the string date
+
+
+                String str = "11-13-2002";
+		 String pattern = "dd-MM-yyyy";
+		 
+		 Date dt = null;
+		 
+		 try {
+			 dt = new SimpleDateFormat(pattern).parse(str);
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }
+		 
+		 System.out.println(dt);
+
+ Example: PArse Date & Time 
+
+
+                 String str = "11-13-2002 4:5:2 PM";
+		 String pattern = "dd-MM-yyyy h:m:s a";
+
+		Date dt = null;
+		 
+		 try {
+			 dt = new SimpleDateFormat(pattern).parse(str);
+		 }catch(Exception ex) {
+			 System.out.println(ex);
+		 }
+		 
+		 System.out.println(dt);
+		
+Example: Define the "Helper" class DateUtil and add all necessary methods
+
+
+package com.test;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class DateUtil {
+	
+	public static Date now() {
+		return new Date();
+	}
+	
+	public static Date newDate(long ms) {
+		return new Date(ms);
+	}
+	public static Date toDate(String str, String pattern) {
+		 Date dt = null;
+		 try {
+			 dt = new SimpleDateFormat(pattern).parse(str);
+		 }catch(Exception ex) {
+		 }
+		 return dt;
+	}
+	public static String dateString(Date dt,String pattern) {
+		return new SimpleDateFormat(pattern).format(dt);
+	}
+	public static long dateDiffInMillis(Date first, Date end) {
+		return end.getTime() - first.getTime();
+	}
+	public static long dateDiffInSeconds(Date first, Date end) {
+		return dateDiffInMillis(first,end)/ 1000L;
+	}
+	public static long dateDiffInMinutes(Date first, Date end) {
+		return (dateDiffInMillis(first,end)/1000L) / 60;
+	}
+}
+ Test the DateUtil methods
+ =============================
+                 Date dt = DateUtil.toDate("Wed, 2015", "E, Y");
+		 System.out.println(dt);
+		 System.out.println(DateUtil.dateString(dt, "d-M-Y"));
+		 
+		 Date s1 = DateUtil.newDate(500000);
+		 Date s2 = DateUtil.newDate(2500000);
+		 System.out.println(DateUtil.dateDiffInMinutes(s1, s2));
+
+Example: List of Date object based upon given "interval"
+Example: Next or previous date based upon given value of date & time parse.
+
+	e.g Add 150 days to current date
+	e.g Add 6 months, 3 days, 6 hours to current date
+
+
+
+

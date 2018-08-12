@@ -1,0 +1,589 @@
+Generics or Parameterized Types
+-------------------------------
+
+"Generic" is a technique or feature of compiler (Java) which allow us to pass one or more datatypes/Types (classes, interfaces, enum) to another datatypes/types. Using this feature we can design a "template" class which can be used with different-different data classes.
+
+For example, If we want to create a StudentLinked list then we've to write a separate class and similarly if we need Employee linked list then we must have re-rewrite the code excetly the same as "StudentLinked List" with few changes.
+
+Generics type syntax:
+
+access-modifier class/interface  TypeName<Param1,Param2,...> 
+             extends TypeName<Param,...> 
+             implements Interface<Param,..> {
+
+}
+
+   There may be one or more "Type Parameters". In Java, the Type Parameter name should
+   be upper alphabet.
+
+  e.g  
+
+public class Data<T> {
+  private T value;
+  public void setValue(T value ) { this.value = value ; }
+  public T getValue() { return value; }
+}
+
+and code in main() method:
+
+    Data<String> a = new Data<>();
+    Data<int> b = new Data<>(); <--- Error - Primitive types can't be used with
+                                     Generic type.
+    Data<Integer> b = new Data<Integer>();  // <> Empty Dimond
+    a.setValue("Hello");
+    b.setValue( 20 );
+
+    Data<int[]> c = new Data<>();
+    c.setValue(new int[] { 33,44,22,44} );
+    for(int n: c.getValue())  
+       System.out.println(n);
+
+
+NOTE: The Type parameter must be a sub-class of java.lang.Object. We can't use primitives as type parameters.
+
+So, Generics means "to reuse the source-code" for one or more datatypes. The data-structure algorithms uses "generics" design patten in java.util package where they can be found as :
+    1. java.util.List<T> interface - List/linked list representation of objects. 
+	Implementation of List<T> are Vector, ArrayList, Stack, Queue, LinkedList
+	classes.
+
+	Vector<T> and ArrayList<T> classes serve the common purpose. The Vector<T> is
+        lagecy (old class since Java 1.0) and has some deprecated methods whereas
+        ArrayList<T> is latest and is used in current development.
+
+   2. java.util.Set<T> interface - Set means unique collections of objects. HashSet<T>
+        TreeSet<T> are example of Set classes.
+   3. java.util.Map<K,V> interface - Map means Key-Value pair collection. It is also
+         known as a "Dictionary" collection. HashTable, HashMap are example of Map.
+       Hashtable<K,V> is also lagecy and HashMap<K,v> is more recent so always use
+       ArrayList<T> and HashMap<K,V>.
+
+NOTE: All classes under Set, List and Map are called "Collection Framework" classes.
+
+Example:
+package firstapp;
+
+public class Data<T> {
+	  private T value;
+	  public void setValue(T value ) { this.value = value ; }
+	  public T getValue() { return value; }
+	}
+package firstapp;
+
+public class Main {
+	public static void main(String []args) {
+		Data<Integer> a = new Data<>();
+		Data<String> b = new Data<String>();
+		
+		a.setValue(29);
+		b.setValue("AA");
+		
+		Data<int[]> c = new Data<>();
+		c.setValue(new int[] {44,33,55,22});
+		for(int n: c.getValue())
+			System.out.println(n);
+	}
+}
+
+Example - Pair class
+
+package firstapp;
+
+public class Pair<K,V> {
+  private K key;
+  private V value;
+  
+  public Pair(K key, V value) {
+	  this.key = key;
+	  this.value = value;
+  }
+public K getKey() {
+	return key;
+}
+public void setKey(K key) {
+	this.key = key;
+}
+public V getValue() {
+	return value;
+}
+public void setValue(V value) {
+	this.value = value;
+}
+
+}
+
+package firstapp;
+
+public class Main {
+	public static void main(String []args) {
+		Pair<String,Integer> city = new Pair<>("Meh",384001);
+		System.out.println(city.getKey()  + " " + city.getValue());
+		
+		Pair<String, String[]> country = new Pair<>("India", new String[] {"Guj","Mah","Raj" });
+		System.out.println(country.getKey());
+		for(String state: country.getValue())
+			System.out.println(state);
+	}
+	
+	
+	public static void main1(String []args) {
+		Data<Integer> a = new Data<>();
+		Data<String> b = new Data<String>();
+		
+		a.setValue(29);
+		b.setValue("AA");
+		
+		Data<int[]> c = new Data<>();
+		c.setValue(new int[] {44,33,55,22});
+		for(int n: c.getValue())
+			System.out.println(n);
+	}
+}
+
+Example: Vector or ArrayList 
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.Vector;
+
+public class Main {
+	public static void main(String []args) {
+	    Vector<String> cities = new Vector<>();
+		// ArrayList<String> cities = new ArrayList<>();
+
+	    // append
+		cities.add("Meh");
+		cities.add("Sur");
+		
+		//search
+		System.out.println(cities.contains("Jam"));
+		System.out.println(cities.contains("Meh"));
+		
+		System.out.println(cities.indexOf("Pat")); // -1 Not found
+		System.out.println(cities.indexOf("Sur")); // 1 found
+		
+		//get
+		System.out.println(cities.get(0) + " " + cities.get(1));
+		
+		//insert
+		cities.add(0,"Pat");
+		System.out.println(cities.get(0) + " " + cities.get(1));
+		
+		//traverse - for in loop
+		for(String city : cities) {
+			System.out.println(city);
+		}
+		
+		// remove
+		System.out.println(cities.remove("pat"));
+		System.out.println(cities.remove("Pat"));
+		System.out.println(cities.remove(0));  // By index
+		
+		//change
+		cities.set(0, "Surat");
+		System.out.println("After deletion....");
+		//traverse - for in loop
+				for(String city : cities) {
+					System.out.println(city);
+				}
+	}
+	 
+}
+
+Example: Product Dataset class - A collection ArrayList<Product>
+
+package firstapp;
+
+public class Product {
+	private int id;
+	private String name;
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Product(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return  id + ", name=" + name + "";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+	
+}
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Main {
+	public static void main(String []args) {
+	      List<Product> products = new ArrayList<>();
+	      products.add( new Product(5,"A"));
+	      products.add( new Product(1,"T"));
+	      products.add( new Product(3,"Pencil"));
+	      products.add( new Product(13,"Pen"));
+	      
+	      products.remove(new Product(1,"T"));
+	      System.out.println(products.contains(new Product(1,"T")));
+	      System.out.println(products.indexOf(new Product(1,"T")));
+	      	      
+	      for(Product product: products)
+	    	  System.out.println(product.getId() + " " + product.getName());
+	}
+}
+
+Example: Create a sub class of ArrayList<T>
+
+1. Product.java
+---------------
+package firstapp;
+
+public class Product {
+	private int id;
+	private String name;
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Product(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return  id + ", name=" + name + "";
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+	
+}
+
+2. Products.java
+--------------------
+package firstapp;
+
+import java.util.ArrayList;
+
+public class Products extends ArrayList<Product> {
+
+}
+
+3. Main.java
+--------------
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Main {
+	public static void main(String []args) {
+	      Products products = new Products();
+	      products.add( new Product(5,"A"));
+	      products.add( new Product(1,"T"));
+	      products.add( new Product(3,"Pencil"));
+	      products.add( new Product(13,"Pen"));
+	      
+	      products.remove(new Product(1,"T"));
+	      System.out.println(products.contains(new Product(1,"T")));
+	      System.out.println(products.indexOf(new Product(1,"T")));
+	      	      
+	      for(Product product: products)
+	    	  System.out.println(product.getId() + " " + product.getName());
+	}
+}
+
+Example: Customize the ArrayList<T> sub class
+
+1. Product.java  (Update hashCode and equals methods)
+
+package firstapp;
+
+public class Product {
+	private int id;
+	private String name;
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Product(int id) {
+		this.id = id;
+	}
+	public Product(int id, String name) {
+		super();
+		this.id = id;
+		this.name = name;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public String toString() {
+		return  id + ", name=" + name + "";
+	}
+	@Override
+	public int hashCode() {
+		return id;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		return hashCode() == obj.hashCode();
+	}
+	
+}
+
+2. Products.java
+package firstapp;
+
+import java.util.ArrayList;
+
+public class Products extends ArrayList<Product> {
+   public void add(int id, String name) {
+	   add(new Product(id,name) );
+   }
+   public void removeById(int id) {
+	   int index = indexOf( new Product(id));
+	   if(index!=-1)
+	      //remove( this.get(index ) );
+		   remove( index );
+   }
+   public void updateName(int id, String name) {
+	   int index = indexOf( new Product(id));
+	   if(index!=-1)
+		   get(index).setName(name);
+		    
+   }
+}
+
+3. Main.java
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class Main {
+	public static void main(String []args) {
+	      Products products = new Products();
+	      products.add( 5, "Z");
+	      products.add( 1,"T" );
+	      products.add( 3,"Pencil" );
+	      products.add( 13,"Pen" );
+	      
+	      products.removeById(3);
+	      products.updateName(1, "Fullscape Notebook");
+	       	      
+	      for(Product product: products)
+	    	  System.out.println(product.getId() + " " + product.getName());
+	}
+}
+
+
+Example: Sort the list. We must have to pass an object of java.util.Comparator<T>
+
+class MyCompare implements Comparator<Product> {
+	@Override
+	public int compare(Product a1, Product a2) {
+		return a1.getId() - a2.getId();
+	}
+}
+
+to the ArrayList<T> object's sort() method.
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+class MyCompare implements Comparator<Product> {
+	@Override
+	public int compare(Product a1, Product a2) {
+		return a1.getId() - a2.getId();
+	}
+}
+
+public class Main {
+	public static void main(String []args) {
+	      Products products = new Products();
+	      products.add( 5, "Z");
+	      products.add( 1,"T" );
+	      products.add( 3,"Book" );
+	      products.add( 13,"Pen" );
+	      
+	      //products.removeById(3);
+	      //products.updateName(1, "Fullscape Notebook");
+	      
+	      // products.sort(new MyCompare());
+	      // products.sort( (p,q)->p.getId()-q.getId() );
+	      products.sort( (p,q)->p.getName().compareTo(q.getName()));
+	      
+	      	       	      
+	      for(Product product: products)
+	    	  System.out.println(product.getId() + " " + product.getName());
+	}
+}
+
+
+Example: Add sort() methods into Products class
+
+package firstapp;
+
+import java.util.ArrayList;
+
+public class Products extends ArrayList<Product> {
+   public void add(int id, String name) {
+	   add(new Product(id,name) );
+   }
+   public void removeById(int id) {
+	   int index = indexOf( new Product(id));
+	   if(index!=-1)
+	      //remove( this.get(index ) );
+		   remove( index );
+   }
+   public void sort(ProductField field) {
+	   if(field == ProductField.Id) {
+		   sort( (p,q) ->p.getId() - q.getId() );
+	   } else if(field == ProductField.Name) {
+		   sort((p,q) ->p.getName().compareTo(q.getName()));
+	   }
+   }
+   public void updateName(int id, String name) {
+	   int index = indexOf( new Product(id));
+	   if(index!=-1)
+		   get(index).setName(name);
+		    
+   }
+}
+
+
+package firstapp;
+
+public enum ProductField {
+	Id,
+	Name
+}
+
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
+class MyCompare implements Comparator<Product> {
+	@Override
+	public int compare(Product a1, Product a2) {
+		return a1.getId() - a2.getId();
+	}
+}
+
+public class Main {
+	public static void main(String []args) {
+	      Products products = new Products();
+	      products.add( 5, "Z");
+	      products.add( 1,"T" );
+	      products.add( 3,"Book" );
+	      products.add( 13,"Pen" );
+	      
+	      //products.removeById(3);
+	      //products.updateName(1, "Fullscape Notebook");
+	      
+	      // products.sort(new MyCompare());
+	      // products.sort( (p,q)->p.getId()-q.getId() );
+	      // products.sort( (p,q)->p.getName().compareTo(q.getName()));
+	      
+	      products.sort(ProductField.Name);
+	      	      	       	      
+	      for(Product product: products)
+	    	  System.out.println(product.getId() + " " + product.getName());
+	}
+}

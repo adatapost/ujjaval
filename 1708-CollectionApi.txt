@@ -1,0 +1,156 @@
+Example: Add/subtract "parts" to date object
+
+		Calendar cal = Calendar.getInstance();
+		System.out.println(cal.getTime());
+		cal.set(Calendar.DATE, cal.get(Calendar.DATE) + 50  );
+		System.out.println(cal.getTime());
+		
+		Date dt = new Date();
+		long ms = 50L * 24 * 3600 * 1000;
+		System.out.println(dt);
+		dt = new Date( dt.getTime() + ms );
+		System.out.println(dt);
+
+The Set<T> implementation - HashSet<T> class
+===============================================
+It is a collection of unique object. The type T in the Set must override "hashCode" and "equals" method otherwise it will allows duplicate objects and cannot remove or search.
+
+ Set<String> cities = new HashSet<>();
+ cities.add("Meh");
+ cities.add("Pat");
+ cities.add("Meh"); // won't be added
+
+
+Example:
+
+package firstapp;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+public class Main {
+	public static void main(String []args) {
+		HashSet<String> cities = new HashSet<>();
+		cities.add("Mehsana");
+		cities.add("Patan");
+		cities.add("Mehsana");
+		
+		// Convert List<T> to Set<T>
+		List<String> list = new ArrayList<>();
+		list.add("Surat");
+		list.add("Jam");
+		list.add("Patan");
+		list.add("Surat");
+		list.add("Visnagar");
+		
+		cities.addAll(list);
+		
+		for(String city : cities) {
+			System.out.println(city);
+		}
+		
+		cities.remove("mehsana");
+		cities.remove("Patan");
+		System.out.println(cities.contains("Mehsana"));
+	}
+}
+
+The Map<K,V> implementation - Hashtable<K,V> or HashMap<K,V>
+------------------------------------------------------------
+It is a collection of Map.Entry<K,V> - unique key-value. The Key of the Entry must he unique and must override "hashCode" and "equals" whereas a Value can be any collection.
+
+Example: To represent the "name-roll" key-value pair data.
+
+  HashMap<Integer,String> std = new HashMap<>();
+  //add an entry
+  std.put(101, "Reena");
+  std.put(102, "Mina");
+  //replace a value
+  std.put(102, "Meena");
+
+  //read a value using a key
+  System.out.println( std.get(101) );  // Reena
+  //Remove an entry
+  std.remove(101);
+  
+  std.put(4,"Seema");
+  std.put(1,"Chetan");
+  
+  //traverse the map via keySet()
+  for(Integer roll : std.keySet()) {
+    System.out.println(roll + "   " + std.get( roll )  );
+  }
+
+  //traverse the map via entrySet()
+  for(Map.Entry<Integer,String> entry : std.entrySet()) {
+    System.out.println(entry.getKey() + "  : " + entry.getValue());
+  }
+  
+  //search by key
+  System.out.println( std.containsKey( 102 ));
+  //search by value
+  System.out.println( std.containsValue( "Reena" ));
+  
+Example: Represent the countries and related states
+
+		// countries-states
+		HashMap<String, HashSet<String>> cnt = new HashMap<>();
+		cnt.put("India", new HashSet<>());
+		cnt.put("UK", new HashSet<>());
+		
+		cnt.get("India").add("Gujarat");
+		cnt.get("UK").add("England");
+		cnt.get("India").add("Maha");
+		cnt.get("India").add("Raj");
+		cnt.get("UK").add("London");
+		
+		for(String c : cnt.keySet()) {
+			System.out.println(c);
+			for(String s : cnt.get(c)) {
+				System.out.println("\t\t" + s);
+			}
+		}
+  
+Example: To represent the country-states-cities
+
+package firstapp;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Map;
+
+public class Main {
+	public static void main(String []args) {
+		// countries-states
+		HashMap<String, HashMap<String, HashSet<String>>> cnt = new HashMap<>();
+		cnt.put("India", new HashMap<>());
+		cnt.put("UK", new HashMap<>());
+		
+		cnt.get("India").put("Guj", new HashSet<>());
+		cnt.get("India").put("Raj", new HashSet<>());
+		cnt.get("UK").put("Eng", new HashSet<>());
+		cnt.get("India").put("Mah", new HashSet<>());
+		cnt.get("UK").put("Lon", new HashSet<>());
+		
+		cnt.get("India").get("Guj").add("Meh");
+		cnt.get("India").get("Guj").add("Pat");
+		cnt.get("India").get("Raj").add("Bik");
+		cnt.get("UK").get("Lon").add("A1");
+		cnt.get("UK").get("Lon").add("A2");
+		cnt.get("UK").get("Eng").add("B1");
+		
+		for(Map.Entry<String, HashMap<String,HashSet<String>>> entry : cnt.entrySet()) {
+			System.out.println(entry.getKey());
+			for(Map.Entry<String, HashSet<String>> entry1 : entry.getValue().entrySet()) {
+				System.out.println("\t" + entry1.getKey());
+				for(String city : entry1.getValue()) {
+					System.out.println("\t\t" + city);
+				}
+			}
+		}
+	}
+}
+
+

@@ -1,0 +1,138 @@
+Java JDBC API
+=============
+
+JDBC is a "protocol" and it is exists in Java Core API in the form of "Interfaces". You may find concern iterfaces under the java.sql and javax.sql package. But..the implementation of JDBC will be vary from one database product to antoher. For instance, the MySql's JDBC implementation is available at mysql.org and Oracle's JDBC implementation is available with product's installation.
+
+In order to use the databases we must copy the concern implementation of JDBC API (.jar files) into our project or app folder. (And also set the CLASSPATH -cp )
+
+In Eclipse, use "Build Path" + Add External Jar from the File menu.
+
+After adding the JDBC jar files you need to write code to establish the connection and perform actions:
+
+code to connect Oracle: (code in main() )
+
+try(Connection cn = DriverManager
+           .getConnection("jdbc:oracle:thin:@localhost", "username", "pass")) {
+  System.out.println("DONE!");
+}catch(Exception ex) {
+  System.out.println(ex);
+}
+
+code to connect MySql:
+try(Connection cn = DriverManager
+           .getConnection("jdbc:mysql://localhost/sample_db", "root", "")) {
+  System.out.println("DONE!");
+}catch(Exception ex) {
+  System.out.println(ex);
+}
+NOTE: In Oracle, username is itself a database schema (or database) 
+      In MySql, database name (sample_db in url) is mentioned in URL.
+
+Example: Create tables (MySql or Oracle):
+
+create table category
+(
+  category_id int primary key auto_increment,
+  category_name varchar(50) unique not null
+);
+
+create table product
+(
+   product_id int primary key auto_increment,
+   product_name varchar(100) not null unique,
+   product_rate decimal(18,2) not null,
+   product_avail bit default 1,
+   category_id int not null,
+   foreign key(category_id) references category(category_id)
+);
+
+Example: Insert a record into category
+
+try(Connection cn = DriverManager
+  .getConnection("jdbc:mysql://localhost/sample_db", "root", "")) {
+
+ // Define and compile the query
+ String sql = "insert into category (category_name) values (?)";
+ PreparedStatement ps = cn.prepareStatement(sql);
+ //Set parameters 
+ ps.setString(1, "Pencil");
+ //Execute the query
+ ps.executeUpdate();
+ System.out.println("Done!");
+ 
+}catch(Exception ex) {
+  System.out.println(ex);
+}
+
+Example: Update category
+
+....
+ String sql = "update category set category_name = ? where category_id = ?";
+ PreparedStatement ps = cn.prepareStatement(sql);
+ //Set parameters
+ ps.setString(1, "Fullscape Notebook");
+ ps.setInt(2, 4);  // 4 is category_id
+...
+
+Example: Delete category
+
+....
+ String sql = "delete from category where category_id = ?";
+ PreparedStatement ps = cn.prepareStatement(sql);
+ //Set parameters
+ ps.setInt(1, 4);  // 4 is category_id
+...
+
+
+  
+For non-queries (DELTE, UPDATE and INSERT statements), we must have to call the "executeUpdate()" method after setting the parameters.
+
+
+The query (SELECT) statement must reqquire a call on "executeQuery()" which returns a "cursor" called "ResultSet object.
+
+Example: Search by category_id
+
+....
+
+// Define and compile the query
+String sql = "select * from category where category_id = ? ";
+PreparedStatement ps = cn.prepareStatement(sql);
+//Set parameters
+ ps.setInt(1, 1);  // 1 is category_id
+ 
+ //Execute the query
+ ResultSet rs = ps.executeQuery();
+ if( rs.next() ) {
+   System.out.println(rs.getInt(1) + " " +  rs.getString(2)); 
+ } else {
+   System.out.println("Not found!");
+ }
+
+...
+
+Example: Read multiple records
+
+....
+
+// Define and compile the query
+String sql = "select * from category";
+PreparedStatement ps = cn.prepareStatement(sql);
+ 
+ //Execute the query
+ ResultSet rs = ps.executeQuery();
+ while( rs.next() ) {
+   System.out.println(rs.getInt(1) + " " +  rs.getString(2)); 
+ } 
+...
+
+Example: Insert a product record
+
+String sql = "insert into product (product_name, product_rate,product_avail, category_id ) values (?,?,?,?)";
+PreparedStatement ps = cn.prepareStatement(sql);
+ps.setString(1, "Natraj Test .45");
+ps.setDouble(2, 10.5);
+ps.setInt(3, 1);
+ps.setInt(4, 32);
+ps.executeUpdate();
+
+

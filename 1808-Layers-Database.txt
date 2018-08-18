@@ -1,0 +1,495 @@
+The Layer components for the "Data"
+===================================
+In order to define an abstraction, we need to write code in layers.
+
+We will uses general-purpose "Database" model class which allow us to perform the execution of any kind of query and also dispose the JDBC resources gracefully.
+
+Steps
+=====
+
+Step-1  Create a "Db.java" under com.adc.model package (Or use your own package name).
+
+A "Db" class must be "AutoCloseable" and encapsulate all the necessary methods to perform common database operations.
+
+
+package com.adc.model;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Db implements AutoCloseable {
+	
+	// Database specific constants
+	private static final String URL = "jdbc:mysql://localhost/sample_db";
+	private static final String USER = "root";
+	private static final String PASS = "";
+	
+	//JDBC Resource instances
+	private Connection cn = null;
+	private PreparedStatement ps = null;
+		
+	//Constructor
+	public Db(String sql) throws Exception {
+		cn = DriverManager.getConnection(URL, USER, PASS);	
+		ps = cn.prepareStatement(sql);
+	}
+	//Returns the statement object
+	public PreparedStatement getPs() {
+		return ps;
+	}
+	//Execute the non-Queries (Other that SELECT query)
+	public boolean execute() throws Exception {
+		return ps.executeUpdate()>0;
+	}
+	//Execute the SELECT (Query) which returns single row.
+	public Object [] row() throws Exception {
+		Object []ar = null;
+		try(ResultSet rs = ps.executeQuery()) {
+			int count =  rs.getMetaData().getColumnCount();
+			if(rs.next()) {
+				ar = new Object[count];
+				for(int i=0;i<count;i++) {
+					ar[i] = rs.getObject(i+1);
+				}
+			}
+			
+		}catch(Exception ex) {
+			throw new Exception("Error while executing 'row' method",ex);
+		}
+		return ar;
+	}
+	//Execute the SELECT (Query) which returns multiple rows.
+	public List<Object []> rows() throws Exception {
+		List<Object[]> list = new ArrayList<>();
+		Object []ar = null;
+		try(ResultSet rs = ps.executeQuery()) {
+			int count =  rs.getMetaData().getColumnCount();
+			while(rs.next()) {
+				ar = new Object[count];
+				for(int i=0;i<count;i++) {
+					ar[i] = rs.getObject(i+1);
+				}
+				list.add(ar);
+			}
+			
+		}catch(Exception ex) {
+			throw new Exception("Error while executing 'rows' method",ex);
+		}
+		return list;
+	}
+
+	// Dispose the JDBC Resources
+	@Override
+	public void close() throws Exception {
+		if(ps!=null)
+			ps.close();
+		if(cn!=null)
+			cn.close();
+	}
+}
+
+
+Step-2 Test methods of Db.class 
+
+package firstapp;
+
+import com.adc.model.*;
+
+public class Main {
+	public static void main(String []args) {
+		try(Db x = new Db("select * from category")) {
+			for(Object []ar: x.rows()) {
+				System.out.println(ar[0] + " " + ar[1]);
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	public static void main2(String []args) {
+		try(Db x = new Db("select * from category where category_id=?")) {
+			x.getPs().setInt(1,3);	
+			Object []ar = x.row();
+			for(Object p: ar) {
+				System.out.println(p);
+			}
+			
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+	public static void main1(String []args) {
+		try(Db x = new Db("insert into category (category_name) values (?)")) {
+			x.getPs().setString(1, "Mouse");	
+			if(x.execute()) {   // Can execte any query other than SELECT 
+				System.out.println("Done!");
+			}
+		}catch(Exception ex) {
+			System.out.println(ex);
+		}
+	}
+}
+
+Step-3 Now, we have some database tables (category and product) so design the "POJO - Plain Object Java Object OR Entity or Beans" -- Constructors, Getters, Setters, hashCode, equals and toString methods under the same "com.adc.model" package.
+
+
+package com.adc.model;
+
+public class Category {
+	private int categoryId;
+	private String categoryName;
+	public Category() {
+		super();
+	}
+	public Category(int categoryId, String categoryName) {
+		super();
+		this.categoryId = categoryId;
+		this.categoryName = categoryName;
+	}
+	public Category(int categoryId) {
+		super();
+		this.categoryId = categoryId;
+	}
+	public int getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(int categoryId) {
+		this.categoryId = categoryId;
+	}
+	public String getCategoryName() {
+		return categoryName;
+	}
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + categoryId;
+		result = prime * result + ((categoryName == null) ? 0 : categoryName.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Category other = (Category) obj;
+		if (categoryId != other.categoryId)
+			return false;
+		if (categoryName == null) {
+			if (other.categoryName != null)
+				return false;
+		} else if (!categoryName.equals(other.categoryName))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "Category [categoryId=" + categoryId + ", categoryName=" + categoryName + "]";
+	}
+}
+
+package com.adc.model;
+
+public class Product {
+	private Integer productId;
+	private String productName;
+	private Double productRate;
+	private Boolean productAvail;
+	private Integer categoryId;
+	public Product() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Product(Integer productId, String productName, Double productRate, Boolean productAvail,
+			Integer categoryId) {
+		super();
+		this.productId = productId;
+		this.productName = productName;
+		this.productRate = productRate;
+		this.productAvail = productAvail;
+		this.categoryId = categoryId;
+	}
+	public Product(Integer productId) {
+		super();
+		this.productId = productId;
+	}
+	public Integer getProductId() {
+		return productId;
+	}
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	public Double getProductRate() {
+		return productRate;
+	}
+	public void setProductRate(Double productRate) {
+		this.productRate = productRate;
+	}
+	public Boolean getProductAvail() {
+		return productAvail;
+	}
+	public void setProductAvail(Boolean productAvail) {
+		this.productAvail = productAvail;
+	}
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((productId == null) ? 0 : productId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Product other = (Product) obj;
+		if (productId == null) {
+			if (other.productId != null)
+				return false;
+		} else if (!productId.equals(other.productId))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "Product [productId=" + productId + ", productName=" + productName + ", productRate=" + productRate
+				+ ", productAvail=" + productAvail + ", categoryId=" + categoryId + "]";
+	}
+}
+
+
+Step-4 Now, we will have to define another "Layer" class called "Data Access Layer or Data Access Object" to define entity specific database actions.
+
+package com.adc.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CategoryDao {
+	public static boolean add(Category category) {
+		try(Db x = new Db("insert into category (category_name) values (?)")) {
+			x.getPs().setString(1, category.getCategoryName());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("CategoryDao::add :" + ex);
+		}
+		return false;
+	}
+	public static boolean update(Category category) {
+		try(Db x = new Db("update category set category_name=? where category_id=?")) {
+			x.getPs().setString(1, category.getCategoryName());
+			x.getPs().setInt(2, category.getCategoryId());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("CategoryDao::update :" + ex);
+		}
+		return false;
+	}
+	public static boolean delete(Category category) {
+		try(Db x = new Db("delete from category where category_id=?")) {
+			x.getPs().setInt(1, category.getCategoryId());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("CategoryDao::delete :" + ex);
+		}
+		return false;
+	}
+	public static Category get(Category category) {
+		Category temp = null;
+		try(Db x = new Db("select * from category where category_id=?")) {
+			x.getPs().setInt(1, category.getCategoryId());
+			Object []ar = x.row();
+			if(ar!=null) {
+				temp = new Category();
+				temp.setCategoryId( Integer.parseInt(ar[0].toString()));
+				temp.setCategoryName(ar[1].toString());
+			}
+		}catch(Exception ex) {
+			System.out.println("CategoryDao::get :" + ex);
+		}
+		return temp;
+	}
+
+	public static List<Category> gets() {
+		List<Category> list = new ArrayList<>();
+		
+		try(Db x = new Db("select * from category")) {
+			for(Object []ar : x.rows()) {
+				Category temp = new Category();
+				temp.setCategoryId( Integer.parseInt(ar[0].toString()));
+				temp.setCategoryName(ar[1].toString());
+				list.add(temp);
+			}
+		}catch(Exception ex) {
+			System.out.println("CategoryDao::gets :" + ex);
+		}
+		return list;
+	}
+}
+
+
+package com.adc.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ProductDao {
+	public static boolean add(Product product) {
+		try(Db x = new Db("insert into product"
+				+ " (product_name,product_rate, product_avail, category_id)"
+				+ " values (?,?,?,?)")) {
+			x.getPs().setString(1, product.getProductName());
+			x.getPs().setDouble(2,product.getProductRate());
+			x.getPs().setBoolean(3, product.getProductAvail());
+			x.getPs().setInt(4, product.getCategoryId());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("ProductDao::add :" + ex);
+		}
+		return false;
+	}
+	public static boolean update(Product product) {
+		try(Db x = new Db("update product set"
+				+ " product_name = ?,product_rate = ?, product_avail = ?, category_id = ?"
+				+ " where product_id = ?")) {
+			x.getPs().setString(1, product.getProductName());
+			x.getPs().setDouble(2,product.getProductRate());
+			x.getPs().setBoolean(3, product.getProductAvail());
+			x.getPs().setInt(4, product.getCategoryId());
+			x.getPs().setInt(5, product.getProductId());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("ProductDao::update :" + ex);
+		}
+		return false;
+	}
+	public static boolean delete(Product product) {
+		try(Db x = new Db("delete from  product "
+				+ " where product_id = ?")) {
+			x.getPs().setInt(1, product.getProductId());
+			return x.execute();
+		}catch(Exception ex) {
+			System.out.println("ProductDao::delete :" + ex);
+		}
+		return false;
+	}
+	public static Product get(Product product) {
+		Product temp = null;
+		try(Db x = new Db("select * from product where product_id=?")) {
+			x.getPs().setInt(1, product.getProductId());
+			Object []ar = x.row();
+			if(ar!=null) {
+				temp = new Product();
+				temp.setProductId( Integer.parseInt(ar[0].toString()));
+				temp.setProductName(ar[1].toString());
+				temp.setProductRate( Double.parseDouble(ar[2].toString()));
+				temp.setProductAvail( Boolean.parseBoolean( ar[3].toString()));
+				temp.setCategoryId( Integer.parseInt( ar[4].toString()));
+			}
+		}catch(Exception ex) {
+			System.out.println("ProductDao::get :" + ex);
+		}
+		return temp;
+	}
+
+	public static List<Product> gets() {
+		List<Product> list = new ArrayList<>();
+		
+		try(Db x = new Db("select * from product order by product_name")) {
+			for(Object []ar : x.rows()) {
+				Product temp = new Product();
+				temp.setProductId( Integer.parseInt(ar[0].toString()));
+				temp.setProductName(ar[1].toString());
+				temp.setProductRate( Double.parseDouble(ar[2].toString()));
+				temp.setProductAvail( Boolean.parseBoolean( ar[3].toString()));
+				temp.setCategoryId( Integer.parseInt( ar[4].toString()));
+				list.add(temp);
+			}
+		}catch(Exception ex) {
+			System.out.println("ProductDao::gets :" + ex);
+		}
+		return list;
+	}
+	public static List<Product> gets(int categoryId) {
+		List<Product> list = new ArrayList<>();
+		
+		try(Db x = new Db("select * from product where category_id=?")) {
+			x.getPs().setInt(1, categoryId);
+			for(Object []ar : x.rows()) {
+				Product temp = new Product();
+				temp.setProductId( Integer.parseInt(ar[0].toString()));
+				temp.setProductName(ar[1].toString());
+				temp.setProductRate( Double.parseDouble(ar[2].toString()));
+				temp.setProductAvail( Boolean.parseBoolean( ar[3].toString()));
+				temp.setCategoryId( Integer.parseInt( ar[4].toString()));
+				list.add(temp);
+			}
+		}catch(Exception ex) {
+			System.out.println("ProductDao::gets(categoryId) :" + ex);
+		}
+		return list;
+	}
+}
+
+
+
+Test methods
+=================
+ 
+                //Add
+                Category p = new Category(0,"Laptop");
+		System.out.println(CategoryDao.add(p));
+		
+                //Update
+		p.setCategoryId(3);
+		p.setCategoryName("Soap");
+		System.out.println(CategoryDao.update(p));
+		
+                //List categories
+		for(Category c : CategoryDao.gets()) {
+			System.out.println(c.getCategoryName());
+		}
+
+
+// List all products
+for(Product p : Products.gets()) 
+  System.out.println( p );
+
+// List all products of id = 1 - Pen category
+for(Product p : Products.gets(1)) 
+  System.out.println( p );
+
+// Add product
+Product p = new Product(0,"Mouse Logitech",230, true, 4);
+if( ProductDao.add(p)) 
+   System.out.println("Added!!!");
+else
+   System.out.println("Can't add");
+
+

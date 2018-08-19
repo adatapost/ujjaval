@@ -1,0 +1,58 @@
+Java EE
+=======
+
+Java EE is a specification at first glance and then this specification is implemented by numbers of vendors across the globe and these are - Oracle, IBM, Apache, Google and many more.
+
+Java EE is itself,
+  1. APIs and
+  2. Runtime
+
+which will be installed upon the Java SE.
+
+
+Java EE Application Server
+--------------------------
+All the Java EE implementation comes with a software bundle called "Application Server".  For instance, "Glassfish application server from Oracle",
+                        "Apache-Tomcat app server from Apache Foundation",
+                        "WebSpehere from IBM and so on".
+
+
+ The Application Server
+ ----------------------
+ It is the complete environment that is used to provide all kind of services to the
+ installed applications. Normally, an "Application Server" deploy (install) :
+    1. Client applications  
+    2. Web Applications
+    3. Enterprise Application (EJB)
+
+ The "Application Server" is a sandbox in which our applications are installed,  executed/run and served by the application server's services. These services ranging
+ from code compilation to provide database, email, HTTP server and many more.
+
+ Application Server is also known as "Container" because it can contains 
+ various categories of applications. However, there are different-different containers - Web Container, EJB Container and Client Container". In short, any application server (of any company) must have three types of containers.
+
+ The Application Server and Spring tools - IDE
+ ---------------------------------------------
+ Spring tools IDE implicitly install the Apache-Tomcat app server however we are free
+ to use other application servers. 
+
+ The Apache-Tomcat application server's HTTP server start at 8080 port (We can re- configure the application server).  
+
+ The context  Or Java EE Web App name
+ ------------------------------------
+ The Application Server create a "friendly" name under which we can copy or deploy
+ our application and this "friendly" name is known as "Context" or we can also say 
+ "project name".
+
+ The "Context" is a point of execution of your application.
+
+ When the application server is up, the context can be up at any time when a user very first time request the "resource (page/program/file)" and then it remains "up" or "alive" till the Application is running or "fatal errors" are not encounted within the
+ application.
+
+ For instance,
+   Create a "Dynamic Web Application/site" via Project + Web options in file + new    menu. 
+   Name your project and click on "Finish" (Or use Next to configure a different    application server).
+
+   
+ 
+

@@ -1,0 +1,22 @@
+Inner class - static modifier will create another top-level like class that is just placed inside another class but it is not a member of that class.
+
+
+class School {
+    private String name, address;
+
+    // static classes - are not members of enclosing class. It is the class that
+    // is created inside it.
+
+    public static class Student { }
+    public static class Staff { }
+}
+
+
+// Test methods
+
+ School.Student s1 = new School.Student(1,"A");
+ School.Staff s2 = new School.Staff(2,"AA");
+
+ School sc = new School();
+ sc.setName("ABC School");
+    

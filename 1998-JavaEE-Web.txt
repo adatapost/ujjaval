@@ -53,6 +53,224 @@ All the Java EE implementation comes with a software bundle called "Application 
    Create a "Dynamic Web Application/site" via Project + Web options in file + new    menu. 
    Name your project and click on "Finish" (Or use Next to configure a different    application server).
 
+Web Application Structure
+==========================
+
+A "webapp" must follow the Java EE Web Directory Structure rules/guidelines:
+
+1. Application directory structure:
+
+    /webapp   <--- This is the 'context' or 'app-context'
+          |
+          |---------/META-INF    
+          |
+          |---------/WEB-INF/ web.xml
+                             |
+                             |-----/classes
+                             |            e.g.  in/abc/Emp.class
+                             |-----/lib
+                             |             e.g jstl.jar, mysql-driver.jar etc
+                             /
+          |
+          | public pages/files/resources/folders
+          | must be placed outside the META-INF and WEB-INF
+
+2. Name of file, folder, resource is case-sensitive so always use "lower-case" letters
+   to name the JSP, HTML,CSS, JS, Images, Video, Audio files and directories name.
+   
+   META-INF and WEB-INF must have "UPPER-LETTERS" but "classes" and "lib" folders must
+   have lowercase.
+3. Never use long filenames and also do not add whitespaces into names.
+4. Use "index.html" or "index.htm" or "index.jsp" welcome page file name per directory    to hide the directory listing or to prevent 404 resource not found error.
+
+5. The META-INF folder is used by app-server implicitly so we don't have to deal    directly with this folder.
+
+6. The WEB-INF and META-INF are two folders protected by the application-server and
+   content of these two folders never exposed/visible to clients.
+
+   Under WEB-INF, we have two folders and a web.xml deployment descriptor file.
+   
+   Any class/interface/enum you want to create & use in your webapp, it "must" be 
+   placed inside the "WEB-INF/classes" folder. If not then that particular class
+   will not be used anymore.
+
+   In this folder, we will create "Servlets", "Model or Data Access Layers", and
+   POJOs and other misc classes.
+
+   The "WEB-INF/lib" folder contains the libraries archive - .jar files. Any library
+   you want to use in webapp, it must be placed/copied into WEB-INF/lib folder.
+
+   The WEB-INF/web.xml is a deployment descriptor or application configuration file
+   which inherits all "settings" from the root (main) web.xml of Application-Server.
+   Inside the "/WEB-INF.web.xml", we can overrides some of the settings as well as 
+   registers the servlets & filters.
+  
+   NOTE: If you want to add restrictions on some of the programs/resources then you can
+         save/add them into WEB-INF folder. Content or resources of WEB-INF cannot be
+         requested by the "clients" but they are requested via "servlets".
+                             
+7. The Application context or "webapp" name should be in lowercase and use - (hyphen)
+   insted of " _ underscore" to name any "static" or "non-static" resources.
+	e.g 
+       app content name ->    first-app
+                              /first-app/index.jsp
+                              /first-app/customer-data.jsp
+                              /first-app/app-logo-100x-by-100x.png
+
+    Create separate "css" or "js" or "images" or "photo" folders to represent 
+    static resources.
+
+Web Resources
+=============
+
+A "Resource" is a name or a URI (Universal Resource Identifier) for the file or program.
+
+There might be two types of resources:
+  1. Dynamic (program) resources -- They are Java classes - servlets & filters and
+     when request produce the "dynamic content of HTML/CSS/JavaScript".  
+     Example: JSPs, Servlets and Filters classes
+
+  2. Static resources -- These files represent the fixed content and the content
+     cannot be changed programatically. 
+     Example: .html, .htm, .js, .css, images files, video/audio files etc.
+
+The Servlets
+=============
+In Java EE Web, everything is "SERVLET". In fact, an application-server is itself a "root or main or primary" servlet. Our application "context" is also a "secondary"
+servlet and we can create an many as "servlets" by creating .jsp pages and servlet sub-classes.
+
+What is "Servlet"?
+
+    A "servlet" is a Java class that receive the resource request from the clients    (web-browsers or mobiles or desktop apps), process the received requests, generate
+   response (output) and send it back to the clients.
+
+    In other words, a "servlet" is an extension of HTTP/WEB server.
+
+What is Web/HTTP server?
+
+ The main job of web-server is to receive the request of resource but it is not 
+ capable to process it so it forward the received request to the 'Application Server - Java EE, .NET,, PHP etc'. 
+
+  The 'App-Server' then process the request accordingly, produce the result in the
+  form of HTML/CSS/JavaScript or JSON or XML or Binary (download) and return the
+  result (response) to the Web-server and then web-server will return back to 
+  appropriate client.
+
+Client
+(Web Browsers) -----> Request ------> Http/WebServer
+               <---- Response ------     |   ^
+                                         |   |
+                                         V   |
+                                       Application Server
+                                       [app1] [app2] [ap..]
+                                         ^
+                                         |
+                                         V Mail, RDBMS etc
+
+The JSP - Java Server Pages
+============================
+JSP is a specialied servlet used to write HTML/CSS/JavaScript code along with Java code to display the content/data onto the web-browsers.
+
+In other words, JSP is a "Template Engine" or "View Engine", produces the dynamic content of HTML/CSS/JavaScript when they are requested.
+
+When you create a file having .jsp extension, the app server's JSP Template Engine convert .jsp page into .java source code file (or Java Class) and further this Java source code is compiled into bytescode. The bytescode or Java servlet classes then loaded, started, being serviced and then disposed automatically by the application server.
+
+ index.jsp
+   |
+   V
+ convert to index_jsp.java source code
+   |
+   V
+ compiled code index_jsp.class 
+   |
+   V
+  If servlet index_jsp is loaded
+   |
+   |-->No--> Load the servlet -> Store into "servlet pool - array of serlets" 
+   Yes                                                    start servlet
+   |                                                         |
+   V <--------------------------------------------------------
+   Requst the "service" of started servlet
+   |
+   V
+   End the "service" and release the "servlet" so next request re-use the servlet
+   instance
+   |
+   V
+   Output goes to client via HTTP server
+
+[NOTE: Servlet will be removed/unloaded from servlet pool whenever changes occurs in source .jsp file or in case of errors. In this case, servlet's java and bytescode will
+produced.]
+
+Inside the each JSP servlet class we will have following object properties to access the objects:
+
+ 1. out - To write text / HTML into the response buffer.
+ 2. request - It is an instance of HttpServletRequest to read the resource.
+ 3. response - It is an instance of HttpServletResponse to write data/text/binary.
+ 4. session - It is an instance of HttpSession.
+ 5. application - It is an instance of "app's context" object.
+ 6. exception - It is an instance of "Exception" represent an exception object.
+ 7. page and
+ 8. pageContext - Instances of page and pageContext/ServletContext
+
+All above mentioned objects are available in every servlet/JSPservlet.
+ 
+Java code and JSP 
+==================
+There are two approaches to write Java code in JSPs.
+
+ 1. Using JSP Tags syntax --- These syntax are not popular because of the 
+    improper use of the JSP tags. People uses JSP tags to write tons of code
+    in a jsp page. 
+
+    The main objective of .jsp is to display "data" not to process the data. 
+    One must have to create "Servlet sub-classes" to "process" the data. 
+    Similiarly, "Servlet sub-classes" are mainly used to define the server
+    side services and not to produce the dynamic content of HTML/CSS/JavaScript.
+
+    So, use jsp to display the data and use Servlets to process/receive the data.
+
+ 2. Expression Language (EL) and Java Standard Tag Library (JSTL)
+
+    This is an improvement API over the JSP tags. You can have all kind of basic
+    facility to display data via EL syntax and using the JSTL library.
+
+    EL Synax allow us to write expressions to write data into the response buffer.
+    Syntax:
+        ${ expr }
+
+Example:
+
+<!doctype html>
+
+<!-- EL Syntax -->
+<br/>${10} <input type="number" value="${10}" />
+
+<!-- JSP TAGs -->
+<%
+out.print("<br/>");
+int no = 10;
+out.print(no);
+out.print("<input type=\"number\" value=\"10\" />");
+%>
+
+EL keeps content tidy and clean. In EL, we can only "read" the value/expression. There is no syntax to create, update or remove the object's content.
+
+The EL automatically read the "data" from following objects in following order:
+  1. pageContext
+  2. requestScope
+  3. sessionScope and
+  4. applicationScope
+
+if "data" are available in "pageContext" then read from pageContent and stops the 
+reading further.
+It goest to "requestScope" if data is not avaialble in "requestScope" and read if they exists but goes to sessionScope and if sessionScope has no data then it goes to applicationScope and if applicationScope has no data it returns null and the null will be coerce into "" empty string.
+
+
+
+
+
+   
    
  
 

@@ -1,0 +1,237 @@
+EL Operators
+------------
+EL uses all Java style operators along with there are named operators:
+
+  eq stands for ==
+  ne stands for !=
+  gt stands for >
+  lt stands for <
+  le less and equal <=
+  ge greater and equal >=
+
+  not stands for !
+  and stands for &&
+  or  stands for ||
+
+  empty to check the null e.g ${ empty(no) } ${ not empty(no) }
+
+Example: sample.jsp
+
+<br/>Arithmetic - ${10+20}  ${3 + 3 * 5}
+<br/>${15 mod 2 }  ${15 % 2}
+<br/>${15 div 2 }  ${15 / 2}
+<br/>Boolean expression
+<br/>${10 > 4}  ${10 gt 4}
+<br/>${10 >= 10}  ${10 ge 10}
+<br/>${10 lt 4}  ${10 lt 4}
+<br/>${10 == 4}  ${10 eq 4}
+<br/>${ 10>2 and 20<30 }
+<br/>${ empty(no) or empty(name) }
+<br/>${10>3 ? 10 : 3}
+<br/>Null coerce ${address}  <--- address is not exist and hence returns null and EL 				  engine will replace null with "" empty string.
+
+JSP Directives
+--------------
+A JSP Engine uses "Directive" statement to instruct or inform the JSP Engine about to take actions at the time of "page-compilation or servlet generation". JSP Engine will generate servlet based upon the given "Directives".
+
+There are three directives:
+  1. <%@ page .. %> -- Page directive instructs the Engine about page language,
+     page imports, error page, buffer size and many more.
+  2. <%@ include .. %> -- To include the content of specified "url" into a current
+     JSP before the current JSP is compiled.
+  3. <%@taglib .. %> - To use the TAG Libraries (e.g JSTL).
+
+Example-1
+---------
+<%@ page language="java" import="java.util.Date, java.io.*" %>
+<%= new java.text.SimpleDateFormat("dd-MM-yyyy").format(new Date()) %>
+
+Example-2 Define an errorPage
+
+Step-1 Define an error page e.g error.jsp
+
+<%@ page isErrorPage="true" %>
+<h3>Error !!!</h3>
+<%=exception%>
+
+Step-2 Add following code in any .jsp other than "error.jsp"
+
+<%@ page errorPage = "error.jsp" %>
+
+${ "A" + 20 }
+<%
+ String name = null;
+ out.println( name.length() );
+%>
+
+
+The <%@ include file="filename" %> directive
+----------------------------------------------
+It insert the content of "given" file into current JSP page. A "given" file can be JSP or any other static resource.
+
+
+Step-1 create test.jsp
+This is Test page
+Step-2 create sample.jsp
+<select>
+  <option>India</option>
+  <option>UK</option>
+  <option>USA</option>
+</select>
+Step-3 create course.txt
+Courses:
+  1. C Language
+  2. C++
+  
+<%
+ String name = "Rajesh";
+ %>  
+Step-4 index.jsp (Multi-file/page content)
+<!doctype html>
+
+<h1>Welcome</h1>
+<%@ include file="test.jsp" %>
+<%@ include file="sample.jsp" %>
+<pre><%@ include file="course.txt" %></pre>
+<p>Prepared by <%=name %></p>
+
+JSP Actions
+===========
+
+JSP Actions are buil-in TAGS library in Java EE JSP Engine and they are used for various purposes.
+
+ JSP Actions tags uses XML syntax it means tag must be strictly nested,attribute value must be surrrounded by single or double quotes.
+
+ JSP action tags uses <jsp:tagName>  "jsp" prefix.
+
+ 1. <jsp:useBean id="name" .... /> - To create an object of class and push it into
+     pageContext (by default), request, session or application scope.
+
+Syntax:
+
+ <jsp:useBean id="refName"
+              scope="page|request|session|application"
+              class="package.subpack.ClassName"></jsp:useBean>
+
+Example:
+
+<jsp:useBean id="now" class="java.util.Date"></jsp:useBean>
+<jsp:useBean id="std" class="com.adatapost.model.Student"></jsp:useBean>
+<br/>${ now }
+<br/>${ now.date } 
+<br/>${ std }
+<br/>${ std.roll } ${std.name}
+
+[Note: Student class has two fields namely: roll and name]
+ 
+2. <jsp:setProperty /> - To set field value of an object
+3. <jsp:getProperty /> - To read field value of an object
+
+<jsp:useBean id="std" class="com.adatapost.model.Student"></jsp:useBean>
+<jsp:setProperty name="std" property="roll" value="22"></jsp:setProperty>
+<jsp:setProperty name="std" property="name" value="Mohan"></jsp:setProperty>
+<br/> ${std.roll } ${std.name}
+<br/> Read the properties
+Roll : <jsp:getProperty name="std" property="roll" />
+Name : <jsp:getProperty name="std" property="name" />
+
+
+IMPORTANT - Restart the "container"  or "context" whenever new class or servlet class is added or changes occurs in any .java source code file. 
+
+The JSTL - Java Server Pages Standard Tag Library
+=================================================
+As we know that the EL supports reading of object content. The JSTL is a part of Java EE JSP specification and it is a suite of "tag" libraries -- three important tag libraries:
+   1. Core tag library 
+   2. Format tag library and
+   3. SQL tag library
+
+The core, format and sql -- three libs form a "JSTL".
+
+Now, each library has set of actions/tags and they are added into page via 
+<%@ taglib %> directive.
+
+   Normally, people uses "c" prefix for "core", "fmt" for "foramt" and "sql" for SQL
+   tag library.
+
+** IMPORTANT - In order to use the JSTL in webapp, we must have to add reference of this library explicitly or just copy them into "WEB-INF/lib" folder. [Stop the container, clean the project, and restart the project build].
+   There will be two .jars 1. JSTL.x.x.jar and standard.x.x.jar that represent JSTL.
+
+How to register the tag lib in .jsp?
+-----------------------------------
+
+ prefix		URI
+  c             http://java.sun.com/jstl/core
+  fmt		.../fmt
+  sql  		.../sql
+Example: To add support of all three JSTL lib.
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="sql" uri="http://java.sun.com/jstl/sql" %>
+
+<!-- Create page scope object and set value 10 -->
+<c:set var="no" 
+   value="10"
+   scope="page"></c:set>
+<br/>${no}
+
+
+NOTE: Update the JSTL URI - http://java.sun.com/jsp/jstl/core which supports both static and runtime expressions (variables).
+
+1. Create, read and remove the object 
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="name" value="Rajesh" />
+Name : ${name}
+<br/>Name : <c:out value="${name}" />
+<c:remove var="name" />
+<br/>Name : <c:out value="${name}" default="No value!!!" />
+
+2. <c:out> automatically encode the special or confusing chars including tags and
+   script code.
+
+<c:set var="name" value="<h1>Rajesh</h1><script>alert('Hello!')</script>" />
+<br/> ${name}
+<br/> <c:out value="${name }" />
+
+ So, it is good practice to use <c:get> instead of EL expression directly.
+
+
+3. Simple loops
+
+<c:forEach begin="1" end="10" var="no">
+  <p>${no}</p>
+</c:forEach>
+
+<select>
+<c:forEach begin="1" end="10" var="no" step="2">
+  <option>${no}</option>
+</c:forEach>
+</select>
+
+4. Collection iterator loops
+
+  <c:forEach var="varName" items="array-list-set-map-object"></c:forEach>
+
+Example:
+<c:forEach var="city" items="Meh,Pat,Raj">
+  <br/>${city }
+</c:forEach>
+
+5. simple if 
+
+<c:set var="name" value="Rajesh"/>
+
+<c:if test="${ not empty(name) }" >
+ Welcome ${name }
+</c:if>
+
+<c:if test="${ empty(name) }" >
+ Welcome Guest
+</c:if>
+
+ 
+
+
+
+

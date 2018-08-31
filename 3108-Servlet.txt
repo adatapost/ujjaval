@@ -1,0 +1,72 @@
+Servlet sub-classes and their role in Web App 
+=============================================
+
+Basically "Servlet" are introduce to receive the client requests, process the client requests, and produce the response of varities of forms/types. The varatities of "forms" means - a servlet's response can be - text data, html data, binary (download data - zip, doc, audio, video, images), JSON and "XML".
+
+That means the "Servlet" best fits in so called "MVC Design pattern" as a "Controller".
+
+Model-View-Controller is a design pattern to keep "Model means data", "View means output--html/css/JavaScript etc" and "Controller means service components/classes" code in three separate programs/files. So, MVC is a case of code separation.
+
+
+Example:
+
+     client (GET /emp) ---> request /emp -----> EmpServlet
+                                                |       |
+                                               get      post  (service methods)
+                                                
+                                                service method returns "my-emp.jsp"
+                                                when 'get' request received.
+            ^                                    |
+            |----- response /my-emp.jsp ---------- 
+                                                        ^   The 'post' service method
+    client (POST /emp) ---> request /emp with data------|   will be requested and
+                                                            based upon received data
+						 this doPost method dispatch 
+						 'my-success.jsp' or 'my-failure.jsp'
+						 view/output.
+            ^                                                        |
+            |----- response /my-failure.jsp  or my-success.jsp--------
+
+Step-1 Create  "/my-emp.jsp" at root
+<!DOCTYPE html>
+
+<h3>Employee</h3>
+<form method="post" action="emp">
+ <p><input placeholder="Id" type="number" name="no"/></p>
+ <p><button>Submit</button></p>
+</form>
+
+Step-2 Create "/my-failure.jsp" at root
+<h3>Invalid Data</h3>
+
+Step-3 Create "/my-success.jsp" at root
+<h3>Success!!!</h3>
+
+Step-4 Create EmpServlet under com.adc.servlets package and use "/emp" url.
+
+@WebServlet("/emp")
+public class EmpServlet extends HttpServlet {
+  protected void doGet(HttpServletRequest request, 
+       HttpServletResponse response) throws ServletException, IOException {
+	  request.getRequestDispatcher("/my-emp.jsp")
+	         .forward(request, response);
+  }
+  protected void doPost(HttpServletRequest request, 
+       HttpServletResponse response) throws ServletException, IOException {
+  	// Receive the request data
+	String noStr  = request.getParameter("no");
+	int no = Integer.parseInt(noStr);
+		
+	String redirectPage = "/my-failure.jsp";
+	if(no>0 && no<=100) {
+		redirectPage = "/my-success.jsp";
+	}
+	request.getRequestDispatcher(redirectPage)
+               .forward(request, response);
+   }//End doPost
+}//EndClass
+
+
+
+
+

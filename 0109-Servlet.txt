@@ -1,0 +1,135 @@
+Passing "data" to "view - jsp" from servlet
+-------------------------------------------
+
+As we know, servlet's url invoke the appropriate servlet and returns the result. If we want to add some data to the "result" so the JSP page can display the "data".
+
+
+In servlet, we have three "scope" objects through which we can pass "data" of "any" datatype and these are:
+
+    1. Request object (HttpServletRequest)
+    2. Session object (HttpSession)
+    3. Application object (HttpServletContext)
+
+ All three objects have following methods:
+   1. setAttribute("key", value) - To set/store the data
+   2. getAttribute("key") - It returns the value of type java.lang.Object of given
+                            key if it is exists returns null otherwise.
+   3. removeAttribute("key") - It removes the "data".
+
+Example: We've FirstServlet (/first) and here is the doGet code:
+
+@WebServlet("/first")
+public class FirstServlet extends HttpServlet {
+  public void doGet(HttpServletRequest request,
+                    HttpServletResponse response) 
+                         throws ServletException, IOExcetption {
+
+       //pass message and current date via request
+       request.setAttribute("message","Welcome to JavaEE!");
+       request.setAttribute("now", new java.util.Date());
+      
+       //Dispatch the view which carries the request data
+       request.getRequestDispatcher("/my-first.jsp")
+              .forward( request, response );
+  }//end doGet
+}//end class
+
+/my-first.jsp
+---------------
+<!doctype html>
+<h4>${message}</h4>
+<h6>${now}</h6>
+   
+Example: Passing a List<string>  (code in doGet/doPost)
+
+           ...
+           List<String> cities = new ArrayList<>();
+	   cities.add("Patan");
+	   cities.add("Rajkot");
+	   cities.add("Mehsana");
+	   
+	   request.setAttribute("cities", cities);
+           ....
+
+and code in .jsp
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!doctype html>
+<select>
+ <c:forEach var="c" items="${cities}">
+    <option value="${c}">${c }</option>
+ </c:forEach>
+</select>
+
+Example: Display "Student" data. Assume that we've Student(roll,name,gender) class.
+
+code in doGet:
+   ... 
+   Student std = new Student(10,"Reena","Female"); 
+   request.setAttribute("student", std);
+   ....
+code in JSP:
+ <br/>Roll : ${student.roll}
+ <br/>Name : ${student.name}
+ <br/>Gender : ${student.gender}
+<h4>Edit Student</h4>
+<input type="number" value="${student.roll}" />
+<input type="text" value="${student.name}" />
+<input type="text" value="${student.gender}" />
+
+Example: Servlet returns list of students and searched student object.
+
+code in doGet:
+      //Receive the request data
+      String rollStr = request.getParameter("roll");
+      Integer mRoll = 0;
+      try {
+	   mRoll = Integer.parseInt(rollStr);
+       }catch(Exception ex) { }
+	   
+       Map<Integer, Student> map = new HashMap<>();
+       map.put(101, new Student(101,"Rajesh"));
+       map.put(131, new Student(131,"Monish"));
+       map.put(211, new Student(211,"Reena"));
+       request.setAttribute("students", map);
+
+       //Search the student
+       Student student = new Student();
+       if(map.containsKey(mRoll)) {
+    	   student = map.get(mRoll);
+       }
+       request.setAttribute("student", student);
+
+code in JSP:
+...
+<input type="number" value="${ student.roll }" />
+<input type="text" value="${ student.name }" />
+<hr/>
+<table border="1">
+  <c:forEach var="c" items="${ students }">
+    <tr>
+      <td>${ c.value.roll }</td>
+     <td>${ c.value.name }</td>
+     <td><a href="first?roll=${ c.value.roll}">Details</a></td>
+    </tr>
+  </c:forEach>
+</table>
+Example: Countries, States and Cities are represented in a "HashMap". Write code to display dropdownlist of "Country", "State" and "city". Note: State will be filled based upon country selection and similarly the "city" dropdown.
+
+Example: Define a common service method that can use doGet as well as doPost request.
+
+code in your servlet:
+
+  public void myCommonMethod(HttpServletRequest request, 
+              HttpServletResponse response ) throws ServletException, IOException {
+     //code
+  }
+
+  public void doGet(.....) .... {
+       myCommonMethod(request,response);
+  }
+  public void doPost(.....) .... {
+       myCommonMethod(request,response);
+  }
+
+
+   

@@ -1,0 +1,335 @@
+Step-1 Tables
+==================
+create table user_account
+(
+   user_id  int primary key auto_increment,
+   user_email varchar(255) not null unique,
+   user_pass varchar(255) not null,
+   user_role varchar(10) not null,
+   date_created date,
+   deleted bit default 1
+);
+
+Step-2 POJO and DAO
+=====================
+package com.adatapost.model;
+
+import java.util.Date;
+
+public class UserAccount {
+	private Integer userId;
+	private String userEmail,
+	               userPass,
+	               userRole;
+	private boolean deleted;
+	private java.util.Date dateCreated;
+	public UserAccount() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public UserAccount(Integer userId, String userEmail, String userPass, String userRole, boolean deleted,
+			Date dateCreated) {
+		super();
+		this.userId = userId;
+		this.userEmail = userEmail;
+		this.userPass = userPass;
+		this.userRole = userRole;
+		this.deleted = deleted;
+		this.dateCreated = dateCreated;
+	}
+	public UserAccount(Integer userId) {
+		super();
+		this.userId = userId;
+	}
+	public UserAccount(String userEmail) {
+		super();
+		this.userEmail = userEmail;
+	}
+	public UserAccount(String userEmail, String userPass) {
+		super();
+		this.userEmail = userEmail;
+		this.userPass = userPass;
+	}
+	public Integer getUserId() {
+		return userId;
+	}
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	public String getUserEmail() {
+		return userEmail;
+	}
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+	public String getUserPass() {
+		return userPass;
+	}
+	public void setUserPass(String userPass) {
+		this.userPass = userPass;
+	}
+	public String getUserRole() {
+		return userRole;
+	}
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+	public java.util.Date getDateCreated() {
+		return dateCreated;
+	}
+	public void setDateCreated(java.util.Date dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserAccount other = (UserAccount) obj;
+		if (userId == null) {
+			if (other.userId != null)
+				return false;
+		} else if (!userId.equals(other.userId))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "UserAccount [userId=" + userId + ", userEmail=" + userEmail + ", userRole=" + userRole + ", deleted="
+				+ deleted + ", dateCreated=" + dateCreated + "]";
+	}
+}
+
+package com.adatapost.model;
+
+import com.adatapost.Db;
+
+public class UserAccountDao {
+	public static boolean add(UserAccount model) {
+		String sql = "insert into user_account (user_email, user_pass,user_role, date_created, deleted) values(?,?,?,?,?)";
+		try (Db x = new Db(sql)) {
+		    x.getPs().setString(1, model.getUserEmail());
+		    x.getPs().setString(2,model.getUserPass());
+		    x.getPs().setString(3, model.getUserRole());
+		    x.getPs().setDate(4, new java.sql.Date ( System.currentTimeMillis()));
+		    x.getPs().setInt(5, 0);
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in add : " + ex);
+		}
+		return false;
+	}
+	
+	public static boolean changePassword(UserAccount model, String newPass) {
+		String sql = "update  user_account set user_pass= ? where user_email=? and user_pass = ?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1,newPass);
+		    x.getPs().setString(2, model.getUserEmail());
+		    x.getPs().setString(3,model.getUserPass());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in changePassword : " + ex);
+		}
+		return false;
+	}
+	public static UserAccount login( UserAccount model ) {
+		String sql = "select * from user_account where user_email=? and user_pass=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, model.getUserEmail());
+			x.getPs().setString(2, model.getUserPass());
+			
+			Object[] ar = x.row();
+			if (ar != null) {
+				UserAccount temp = new UserAccount();
+				temp.setUserId((Integer) ar[0]);
+				temp.setUserEmail((String) ar[1]);
+				temp.setUserPass((String) ar[2]);
+				temp.setUserRole((String) ar[3]);
+				temp.setDateCreated((java.sql.Date) ar[4]);
+				temp.setDeleted(Boolean.parseBoolean(ar[5].toString()));
+				return temp;
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in get : " + ex);
+		}
+		return null;
+	}
+	
+	public static UserAccount get( UserAccount model ) {
+		String sql = "select * from user_account where user_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, model.getUserId());
+			Object[] ar = x.row();
+			if (ar != null) {
+				UserAccount temp = new UserAccount();
+				temp.setUserId((Integer) ar[0]);
+				temp.setUserEmail((String) ar[1]);
+				temp.setUserPass((String) ar[2]);
+				temp.setUserRole((String) ar[3]);
+				temp.setDateCreated((java.sql.Date) ar[4]);
+				temp.setDeleted(Boolean.parseBoolean(ar[5].toString()));
+				return temp;
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in get : " + ex);
+		}
+		return null;
+	}
+	
+}
+
+Step-3 Servlets 
+
+package com.adatapost.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.adatapost.U;
+import com.adatapost.model.UserAccount;
+import com.adatapost.model.UserAccountDao;
+
+@WebServlet("/register")
+public class RegistrationServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/admin/my-register.jsp").forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		UserAccount model = new UserAccount();
+		String userPass1 = U.getString(request, "userPass1");
+		model.setUserEmail(U.getString(request, "userEmail"));
+		model.setUserPass(U.getString(request, "userPass"));
+		model.setUserRole("Guest");
+		model.setDeleted(false);
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+
+		if ("Add".equals(cmd) && userPass1.equals(model.getUserPass())) {
+			message = UserAccountDao.add(model) ? "User account created successfully"
+					: "Please verify your email. It is taken by someone else";
+		} else {
+			message = "User password and confirm are not match!!!";
+		}
+
+		request.setAttribute("message", message);
+		request.setAttribute("model", model);
+		request.getRequestDispatcher("/admin/my-register.jsp").forward(request, response);
+	}
+}
+
+
+package com.adatapost.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.adatapost.U;
+import com.adatapost.model.UserAccount;
+import com.adatapost.model.UserAccountDao;
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/admin/my-login.jsp").forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		UserAccount model = new UserAccount();
+		
+		model.setUserEmail(U.getString(request, "userEmail"));
+		model.setUserPass(U.getString(request, "userPass"));
+
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+
+		if ("Login".equals(cmd)) {
+			model = UserAccountDao.login(model);
+			message = model == null ? "Invalid username or password" : "You're authenticated successfully!!!";
+		}
+
+		request.setAttribute("message", message);
+		request.getRequestDispatcher("/admin/my-login.jsp").forward(request, response);
+	}
+}
+
+Step-4 JSPs at /admin
+
+
+/admin/my-register.jsp
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="New User" />
+<%@include file="my-header.jsp"%>
+
+<h3>New User</h3>
+<form method="post" action="register">
+<p>Email</p>
+<p><input type="email" name="userEmail" /></p>
+
+<p>Password</p>
+<p><input type="password" name="userPass" /></p>
+
+<p>Confirm Password</p>
+<p><input type="password" name="userPass1" /></p>
+
+	<button name="cmd" value="Add">Submit</button>
+</form>
+<p>${ message }</p>
+ 
+
+<%@include file="my-footer.jsp"%>
+
+
+/admin/my-login.jsp
+--------------------
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="Login" />
+<%@include file="my-header.jsp"%>
+
+<h3>Login</h3>
+<h4><a href="register">New user?</a></h4>
+
+<form method="post" action="login">
+<p>Email</p>
+<p><input type="email" name="userEmail" /></p>
+
+<p>Password</p>
+<p><input type="password" name="userPass" /></p>
+	<button name="cmd" value="Login">Login</button>
+</form>
+<p>${ message }</p>
+ 
+
+<%@include file="my-footer.jsp"%>

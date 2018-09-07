@@ -1,0 +1,928 @@
+Step - 1 TABLES
+-----------------
+create table country
+(
+  country_id int primary key  auto_increment,
+  country_name varchar(50) not null unique
+);
+
+create table state
+(
+  state_id int primary key  auto_increment,
+  state_name varchar(50) not null unique,
+  country_id int not null,
+  foreign key(country_id) references country(country_id)
+);
+
+create table city
+(
+  city_id int primary key  auto_increment,
+  city_name varchar(50) not null unique,
+  state_id int not null,
+  foreign key(state_id) references state(state_id)
+);
+
+Add some view objects
+
+1.
+
+create view view_state as 
+select state.*,
+       country.country_name
+       from state 
+       join country on country.country_id = state.country_id 
+
+2.
+
+create view view_city as 
+select city.*,
+state.state_name,
+country.* 
+from city
+join state on state.state_id = city.state_id 
+join country on country.country_id = state.country_id
+
+Step - 2   POJO
+==========
+
+package com.adatapost.model;
+
+public class Country {
+	private Integer countryId;
+	private String countryName;
+
+	public Country() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Country(Integer countryId, String countryName) {
+		super();
+		this.countryId = countryId;
+		this.countryName = countryName;
+	}
+
+	public Country(Integer countryId) {
+		super();
+		this.countryId = countryId;
+	}
+
+	public Integer getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(Integer countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((countryId == null) ? 0 : countryId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Country other = (Country) obj;
+		if (countryId == null) {
+			if (other.countryId != null)
+				return false;
+		} else if (!countryId.equals(other.countryId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Country [countryId=" + countryId + ", countryName=" + countryName + "]";
+	}
+}
+
+
+package com.adatapost.model;
+
+public class State {
+	private Integer stateId, countryId;
+	private String stateName, countryName;
+
+	public State() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public State(Integer stateId, Integer countryId, String stateName, String countryName) {
+		super();
+		this.stateId = stateId;
+		this.countryId = countryId;
+		this.stateName = stateName;
+		this.countryName = countryName;
+	}
+
+	public State(Integer stateId, Integer countryId, String stateName) {
+		super();
+		this.stateId = stateId;
+		this.countryId = countryId;
+		this.stateName = stateName;
+	}
+
+	public State(Integer stateId) {
+		super();
+		this.stateId = stateId;
+	}
+
+	public Integer getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(Integer stateId) {
+		this.stateId = stateId;
+	}
+
+	public Integer getCountryId() {
+		return countryId;
+	}
+
+	public void setCountryId(Integer countryId) {
+		this.countryId = countryId;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getCountryName() {
+		return countryName;
+	}
+
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((stateId == null) ? 0 : stateId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		State other = (State) obj;
+		if (stateId == null) {
+			if (other.stateId != null)
+				return false;
+		} else if (!stateId.equals(other.stateId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "State [stateId=" + stateId + ", countryId=" + countryId + ", stateName=" + stateName + ", countryName="
+				+ countryName + "]";
+	}
+}
+
+package com.adatapost.model;
+
+public class City {
+	private Integer cityId,
+	                stateId,
+	                countryId;
+	private String cityName, 
+	               stateName,
+	               countryName;
+	public City() {
+	}
+	public City(Integer cityId, Integer stateId, String cityName) {
+		super();
+		this.cityId = cityId;
+		this.stateId = stateId;
+		this.cityName = cityName;
+	}
+	public City(Integer cityId, Integer stateId, Integer countryId, String cityName, String stateName,
+			String countryName) {
+		super();
+		this.cityId = cityId;
+		this.stateId = stateId;
+		this.countryId = countryId;
+		this.cityName = cityName;
+		this.stateName = stateName;
+		this.countryName = countryName;
+	}
+	public City(Integer cityId) {
+		super();
+		this.cityId = cityId;
+	}
+	public Integer getCityId() {
+		return cityId;
+	}
+	public void setCityId(Integer cityId) {
+		this.cityId = cityId;
+	}
+	public Integer getStateId() {
+		return stateId;
+	}
+	public void setStateId(Integer stateId) {
+		this.stateId = stateId;
+	}
+	public Integer getCountryId() {
+		return countryId;
+	}
+	public void setCountryId(Integer countryId) {
+		this.countryId = countryId;
+	}
+	public String getCityName() {
+		return cityName;
+	}
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+	public String getStateName() {
+		return stateName;
+	}
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+	public String getCountryName() {
+		return countryName;
+	}
+	public void setCountryName(String countryName) {
+		this.countryName = countryName;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((cityId == null) ? 0 : cityId.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		City other = (City) obj;
+		if (cityId == null) {
+			if (other.cityId != null)
+				return false;
+		} else if (!cityId.equals(other.cityId))
+			return false;
+		return true;
+	}
+	@Override
+	public String toString() {
+		return "City [cityId=" + cityId + ", stateId=" + stateId + ", countryId=" + countryId + ", cityName=" + cityName
+				+ ", stateName=" + stateName + ", countryName=" + countryName + "]";
+	}
+}
+
+
+Step-3 DAO
+==========
+package com.adatapost.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.adatapost.Db;
+import com.adatapost.U;
+
+public class CountryDao {
+	public static boolean add(Country country) {
+		String sql = "insert into country (country_name) values(?)";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, country.getCountryName());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in add : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean delete(Country country) {
+		String sql = "delete from country where country_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, country.getCountryId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in delete : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean update(Country country) {
+		String sql = "update country set country_name=? where country_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, country.getCountryName());
+			x.getPs().setInt(2, country.getCountryId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in update : " + ex);
+		}
+		return false;
+	}
+
+	public static Country get(Country country) {
+		String sql = "select * from country where country_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, country.getCountryId());
+			Object[] ar = x.row();
+			if (ar != null) {
+				Country temp = new Country();
+				temp.setCountryId((Integer) ar[0]);
+				temp.setCountryName((String) ar[1]);
+				return temp;
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in get : " + ex);
+		}
+		return null;
+	}
+
+	public static List<Country> gets() {
+		List<Country> list = new ArrayList<>();
+		String sql = "select * from country order by country_name";
+		try (Db x = new Db(sql)) {
+			for (Object[] ar : x.rows()) {
+				Country temp = new Country();
+				temp.setCountryId((Integer) ar[0]);
+				temp.setCountryName((String) ar[1]);
+				list.add(temp);
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in gets : " + ex);
+		}
+		return list;
+	}
+}
+
+
+package com.adatapost.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.adatapost.Db;
+
+public class StateDao {
+	public static boolean add(State state) {
+		String sql = "insert into state (state_name, country_id) values(?,?)";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, state.getStateName());
+			x.getPs().setInt(2, state.getCountryId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in add : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean delete(State state) {
+		String sql = "delete from state where state_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, state.getStateId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in delete : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean update(State state) {
+		String sql = "update state set state_name=?, country_id=? where state_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, state.getStateName());
+			x.getPs().setInt(2, state.getCountryId());
+			x.getPs().setInt(3, state.getStateId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in update : " + ex);
+		}
+		return false;
+	}
+
+	public static State get(State state) {
+		String sql = "select * from view_state where state_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, state.getStateId());
+			Object[] ar = x.row();
+			if (ar != null) {
+				State temp = new State();
+				temp.setStateId((Integer) ar[0]);
+				temp.setStateName((String) ar[1]);
+				temp.setCountryId((Integer) ar[2]);
+				temp.setCountryName((String) ar[3]);
+				return temp;
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in get : " + ex);
+		}
+		return null;
+	}
+
+	public static List<State> gets(int countryId) {
+		List<State> list = new ArrayList<>();
+		String sql = "select * from view_state where country_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, countryId);
+			for (Object[] ar : x.rows()) {
+				State temp = new State();
+				temp.setStateId((Integer) ar[0]);
+				temp.setStateName((String) ar[1]);
+				temp.setCountryId((Integer) ar[2]);
+				temp.setCountryName((String) ar[3]);
+				list.add(temp);
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in gets : " + ex);
+		}
+		return list;
+	}
+}
+
+
+package com.adatapost.model;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.adatapost.Db;
+
+public class CityDao {
+	public static boolean add(City city) {
+		String sql = "insert into city (city_name, state_id) values(?,?)";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, city.getCityName());
+			x.getPs().setInt(2, city.getStateId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in add : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean delete(City city) {
+		String sql = "delete from city where city_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, city.getCityId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in delete : " + ex);
+		}
+		return false;
+	}
+
+	public static boolean update(City city) {
+		String sql = "update city set city_name=?, state_id=? where city_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setString(1, city.getCityName());
+			x.getPs().setInt(2, city.getStateId());
+			x.getPs().setInt(3, city.getCityId());
+			return x.execute();
+		} catch (Exception ex) {
+			System.out.println("Error in update : " + ex);
+		}
+		return false;
+	}
+
+	public static City get(City city) {
+		String sql = "select * from view_city where city_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, city.getCityId());
+			Object[] ar = x.row();
+			if (ar != null) {
+				City temp = new City();
+				temp.setCityId((Integer) ar[0]);
+				temp.setCityName((String) ar[1]);
+				temp.setStateId((Integer) ar[2]);
+				temp.setStateName((String) ar[3]);
+				temp.setCountryId((Integer) ar[4]);
+				temp.setCountryName((String) ar[5]);
+				return temp;
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in get : " + ex);
+		}
+		return null;
+	}
+
+	public static List<City> gets(int stateId) {
+		List<City> list = new ArrayList<>();
+		String sql = "select * from view_city where state_id=?";
+		try (Db x = new Db(sql)) {
+			x.getPs().setInt(1, stateId);
+			for (Object[] ar : x.rows()) {
+				City temp = new City();
+				temp.setCityId((Integer) ar[0]);
+				temp.setCityName((String) ar[1]);
+				temp.setStateId((Integer) ar[2]);
+				temp.setStateName((String) ar[3]);
+				temp.setCountryId((Integer) ar[4]);
+				temp.setCountryName((String) ar[5]);
+				list.add(temp);
+			}
+		} catch (Exception ex) {
+			System.out.println("Error in gets : " + ex);
+		}
+		return list;
+	}
+}
+
+Step-4 Servlets
+================
+
+package com.adatapost.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.adatapost.U;
+import com.adatapost.model.Country;
+import com.adatapost.model.CountryDao;
+
+@WebServlet("/country")
+public class CountryServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setAttribute("countries", CountryDao.gets());
+		request.getRequestDispatcher("/admin/my-country.jsp").forward(request, response);
+
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		Country country = new Country();
+		country.setCountryId(U.getInt(request, "countryId"));
+		country.setCountryName(U.getString(request, "countryName"));
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+
+		if ("Add".equals(cmd)) {
+			message = CountryDao.add(country) ? "Added" : "Failed";
+		}
+
+		request.setAttribute("message", message);
+		request.setAttribute("model", country);
+		request.setAttribute("countries", CountryDao.gets());
+		request.getRequestDispatcher("/admin/my-country.jsp").forward(request, response);
+	}
+}
+
+
+package com.adatapost.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.adatapost.U;
+import com.adatapost.model.Country;
+import com.adatapost.model.CountryDao;
+import com.adatapost.model.State;
+import com.adatapost.model.StateDao;
+
+/**
+ * Servlet implementation class StateServlet
+ */
+@WebServlet("/state")
+public class StateServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setAttribute("countries", CountryDao.gets());
+		request.setAttribute("states", StateDao.gets(0));
+		request.getRequestDispatcher("/admin/my-state.jsp").forward(request, response);
+
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		State state = new State();
+		state.setCountryId(U.getInt(request, "countryId"));
+		state.setStateId(U.getInt(request, "stateId"));
+		state.setStateName(U.getString(request, "stateName"));
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+		System.out.println(state);
+
+		if ("Add".equals(cmd)) {
+			message = StateDao.add(state) ? "Added" : "Failed";
+		}
+
+		request.setAttribute("message", message);
+		request.setAttribute("model", state);
+
+		request.setAttribute("countries", CountryDao.gets());
+		request.setAttribute("states", StateDao.gets(state.getCountryId()));
+		request.getRequestDispatcher("/admin/my-state.jsp").forward(request, response);
+	}
+}
+
+
+package com.adatapost.servlets;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.adatapost.U;
+import com.adatapost.model.City;
+import com.adatapost.model.CityDao;
+import com.adatapost.model.CountryDao;
+import com.adatapost.model.State;
+import com.adatapost.model.StateDao;
+
+/**
+ * Servlet implementation class CityServlet
+ */
+@WebServlet("/city")
+public class CityServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setAttribute("countries", CountryDao.gets());
+		request.setAttribute("states", StateDao.gets(0));
+		request.setAttribute("cities", CityDao.gets(0));
+		request.getRequestDispatcher("/admin/my-city.jsp").forward(request, response);
+
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		City city = new City();
+
+		city.setCountryId(U.getInt(request, "countryId"));
+		city.setStateId(U.getInt(request, "stateId"));
+		city.setCityId(U.getInt(request, "cityId"));
+		city.setCityName(U.getString(request, "cityName"));
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+
+		if ("Add".equals(cmd)) {
+			message = CityDao.add(city) ? "Added" : "Failed";
+		}
+
+		request.setAttribute("message", message);
+		request.setAttribute("model", city);
+
+		request.setAttribute("countries", CountryDao.gets());
+		request.setAttribute("states", StateDao.gets(city.getCountryId()));
+		request.setAttribute("cities", CityDao.gets(city.getStateId()));
+		request.getRequestDispatcher("/admin/my-city.jsp").forward(request, response);
+	}
+}
+
+Step-5 Pages at /admin/ folder
+
+/admin/my-country.jsp
+-----------------------
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="Manage - Country" />
+<%@include file="my-header.jsp"%>
+
+<h3>Country</h3>
+<form method="post" action="country">
+	<input type="hidden" name="countryId" value="${model.countryId}" /> <input
+		type="text" name="countryName" value="${model.countryName }" />
+	<button name="cmd" value="Add">Add</button>
+</form>
+
+<table>
+	<c:forEach var="c" items="${ countries }">
+		<tr>
+			<td>${c.countryName }</td>
+			<td>
+				<form method="post" action="country">
+					<input type="hidden" name="countryId" value="${c.countryId}" />
+					<button name="cmd" value="Edit">Edit</button>
+				</form>
+			</td>
+		</tr>
+	</c:forEach>
+</table>
+
+<%@include file="my-footer.jsp"%>
+
+
+/admin/my-state.jsp
+----------------------
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="Manage - Country" />
+<%@include file="my-header.jsp"%>
+
+<h3>State</h3>
+<form method="post" action="state" id="form1">
+	<select name="countryId" onchange="form1.submit()">
+		<option value="">Choose</option>
+		<c:forEach var="c" items="${ countries }">
+			<c:set var="sel"
+				value='${ c.countryId eq model.countryId ? "selected" : "" }' />
+			<option ${sel} value="${ c.countryId }">${ c.countryName }</option>
+		</c:forEach>
+	</select> <input type="hidden" name="stateId" value="${model.stateId}" /> <input
+		type="text" name="stateName" value="${model.stateName }" />
+	<button name="cmd" value="Add">Add</button>
+</form>
+
+<table>
+	<c:forEach var="c" items="${ states }">
+		<tr>
+			<td>${c.stateName }</td>
+			<td>
+				<form method="post" action="state">
+					<input type="hidden" name="stateId" value="${c.stateId}" /> <input
+						type="hidden" name="countryId" value="${c.countryId}" />
+					<button name="cmd" value="Edit">Edit</button>
+				</form>
+			</td>
+		</tr>
+	</c:forEach>
+</table>
+
+<%@include file="my-footer.jsp"%>
+
+/admin/my-city.jsp
+-------------------
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="Manage - City" />
+<%@include file="my-header.jsp"%>
+
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-header">Manage State</div>
+			<div class="card-body">
+				<form method="post" action="city" id="form1">
+					<select name="countryId" onchange="form1.submit()">
+						<option value="">Choose</option>
+						<c:forEach var="c" items="${ countries }">
+							<c:set var="sel"
+								value='${ c.countryId eq model.countryId ? "selected" : "" }' />
+							<option ${sel} value="${ c.countryId }">${ c.countryName }</option>
+						</c:forEach>
+					</select> <select name="stateId" onchange="form1.submit()">
+						<option value="">Choose</option>
+						<c:forEach var="c" items="${ states }">
+							<c:set var="sel"
+								value='${ c.stateId eq model.stateId ? "selected" : "" }' />
+							<option ${sel} value="${ c.stateId }">${ c.stateName }</option>
+						</c:forEach>
+					</select> <input type="hidden" name="cityId" value="${model.cityId}" /> <input
+						type="text" name="cityName" value="${model.cityName }" />
+					<button name="cmd" value="Add">Add</button>
+				</form>
+
+			</div>
+		</div>
+
+	</div>
+	<div class="col">
+		<div class="card">
+			<div class="card-header">Cities</div>
+			<div class="card-body">
+				<table class="table">
+					<c:forEach var="c" items="${ cities }">
+						<tr>
+							<td>${c.cityName }/${ c.stateName }/${ c.countryName }</td>
+							<td>
+								<form method="post" action="city">
+									<input type="hidden" name="cityId" value="${c.cityId}" /> <input
+										type="hidden" name="stateId" value="${c.stateId}" /> <input
+										type="hidden" name="countryId" value="${c.countryId}" />
+									<button name="cmd" value="Edit">Edit</button>
+								</form>
+							</td>
+						</tr>
+					</c:forEach>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<%@include file="my-footer.jsp"%>
+
+/admin/my-header.jsp
+----------------------
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<c:set var="title" value="Manage - City" />
+<%@include file="my-header.jsp"%>
+
+<div class="row">
+	<div class="col">
+		<div class="card">
+			<div class="card-header">Manage State</div>
+			<div class="card-body">
+				<form method="post" action="city" id="form1">
+					<select name="countryId" onchange="form1.submit()">
+						<option value="">Choose</option>
+						<c:forEach var="c" items="${ countries }">
+							<c:set var="sel"
+								value='${ c.countryId eq model.countryId ? "selected" : "" }' />
+							<option ${sel} value="${ c.countryId }">${ c.countryName }</option>
+						</c:forEach>
+					</select> <select name="stateId" onchange="form1.submit()">
+						<option value="">Choose</option>
+						<c:forEach var="c" items="${ states }">
+							<c:set var="sel"
+								value='${ c.stateId eq model.stateId ? "selected" : "" }' />
+							<option ${sel} value="${ c.stateId }">${ c.stateName }</option>
+						</c:forEach>
+					</select> <input type="hidden" name="cityId" value="${model.cityId}" /> <input
+						type="text" name="cityName" value="${model.cityName }" />
+					<button name="cmd" value="Add">Add</button>
+				</form>
+
+			</div>
+		</div>
+
+	</div>
+	<div class="col">
+		<div class="card">
+			<div class="card-header">Cities</div>
+			<div class="card-body">
+				<table class="table">
+					<c:forEach var="c" items="${ cities }">
+						<tr>
+							<td>${c.cityName }/${ c.stateName }/${ c.countryName }</td>
+							<td>
+								<form method="post" action="city">
+									<input type="hidden" name="cityId" value="${c.cityId}" /> <input
+										type="hidden" name="stateId" value="${c.stateId}" /> <input
+										type="hidden" name="countryId" value="${c.countryId}" />
+									<button name="cmd" value="Edit">Edit</button>
+								</form>
+							</td>
+						</tr>
+					</c:forEach>
+				</table>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<%@include file="my-footer.jsp"%>
+
+
+/admin/my-footer.jsp
+-----------------------
+    </section>
+    <footer>
+       <p>
+       &copy; ABC Ltd - 2018
+       </p>
+    </footer>
+ </div>
+</body>
+</html>
+
+

@@ -1,5 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+<c:if test="${empty isAdmin }">
+  <c:redirect url="/login"></c:redirect>
+</c:if>
 <c:set var="title" value="Manage - Country" />
 <%@include file="my-header.jsp"%>
 

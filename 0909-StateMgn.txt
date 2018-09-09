@@ -1,0 +1,106 @@
+The HttpSession and State Management
+=====================================
+
+As we know that HTTP is a stateless protocol and in stateless protocol no request or response record is either saved at client or server machine/programs. That means each request made to server will be consider as "fresh" or "new" request. For some apps, it is mandatory to remember the client or to identify the client as well as save client specific data.
+
+In Web App, we've some mechanisms to save the "Identity" of client and also save the "user/client" specific data and this can be achieved by the:
+
+  1. Session Tracking System - An object of HttpSession that will be created 				automatically when a first request from the user
+				is received by the application server and this object
+				remains alive till that user stop the communication
+				by closing the browser/connection or force termination
+				of session by server program in case of errors or
+				system administrator's action.
+
+     This is server side user's identity system which automatically uses "cookies" to
+     persists client's identity at client as well as server side.
+
+  2. The Cookie System -- This mechanism is provided by the WEB-Browser and it also
+     				represents the identity & data of user but at 				"client's" environmemt (a machine where a browser
+				is installed).
+
+ Client1 -------->first request ----------> Web+App Server ---> Create a session
+								object with unique
+								key called 
+								sessionId and
+								this sessionId sent
+								back to browser in
+								the form of "Cookie"
+   ^
+   |----------<--Response along with sessionId <---------------------- |
+
+    ----------->second request with sessionId --------------------------> 
+    ----------->third request with sessionId ---------------------------->
+    .......
+
+NOTE: Cookies are always travels to server with each request.
+
+Home made state management via re-write HTML attributes and form's parameters
+-----------------------------------------------------------------------------
+Generally we uses "querystring --- page.jsp?id=10&name=ABC" or <input> or <input type="hidden"> to persists the data within the page.
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!doctype html>
+
+<c:set var="no" value="${param.no +  1}" />
+<br/>Value ${ no }
+
+<a href="index.jsp?no=${no}">Refresh</a>
+
+<form method="get">
+  <input type="hidden" name="no" value="${no }">
+  <button>Refresh</button>
+</form>
+
+Example: We've some image files into an array or List<String>. Write code which navigate one by one image when user press First, PRev, Next, Last button/link.
+
+
+Example: Naviagate list of cities
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<!doctype html>
+
+<c:set var="cities" value="Mehsana,Rajkot,Patan" />
+<c:set var="index" value="${ param.index + 0}" />
+${ cities.split(',')[index] }
+
+<br/>
+<a href="index.jsp?index=${index-1}&cmd=Prev">Prev</a>
+<a href="index.jsp?index=${index+1}&cmd=Next">Next</a>
+
+Example: Create or add objects into "session Scope".
+
+<c:set var="no" value="2" scope="session" />
+<a href="next.jsp">Next Page</a>
+
+And code in next.jsp
+  ${no}
+
+
+Example: 
+
+ <c:set var="no" value="${no+1}" scope="session" />
+ ${no}
+ <a href="index.jsp">Referesh</a>
+
+Obtain session object reference in Servlets
+--------------------------------------------
+
+                HttpSession session = request.getSession();
+		session.setAttribute("no", "100");
+		System.out.println(session.getId());
+		System.out.println(session.getCreationTime());
+		System.out.println(session.getMaxInactiveInterval());
+		request.getRequestDispatcher("/about.jsp").forward(request, response);
+		
+Basic methods of Session object:
+1. getId() - Returns unique identified which is an identity of request-response.
+2. getCreationTime() - Returns time in millis
+3. getMaxInactiveInterval() - Returns inactive interval which was set by the app 
+				server in seconds. 1800 seconds = 30 minuts.
+4. setMaxInactiveInterval(seconds) - Set inactive interval in seconds.
+5. removeAttribute("key") - Remove the data.
+6. getAttribute("key") - Return data of given key in java.lang.Object form.
+
+
+

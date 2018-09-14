@@ -102,5 +102,204 @@ Basic methods of Session object:
 5. removeAttribute("key") - Remove the data.
 6. getAttribute("key") - Return data of given key in java.lang.Object form.
 
+The Filter class -- Implementation of javax.servlet.Filter interface
+================
 
+The "Filter" is a servlet like component but it is not a servlet and it is used to "Filter" the requests and responses. It sits between user's request and servlets.
+
+ User1-->Request--> FirstFilter --> SecondFilter -> .... ---> Servlet
+      <-- Response<---          <--              <--      <--- Response
+
+ There can be one or more filters. 
+ 
+ Each filter intercept the request and response and it deside whether to stop
+ the request, to forward the request or to redirect the request to other resources.
+ The last component in filter-chain is the "Servlet".
+
+ ** Important Note **                
+ Frameworks like JSF, Spring, and many more uses Filters & Servlets implicitly. We  don't have to create these components explicitly.
+
+Steps to define & config the Filter class
+-----------------------------------------
+package com.adatapost.filters;
+
+@WebFilter("/*")
+public class FirstFilter implements Filter {
+ public FirstFilter() { }
+ public void destroy() { }
+
+ public void doFilter(ServletRequest request, 
+	ServletResponse response, FilterChain chain) 
+                  throws IOException, ServletException {
+		
+    //Create wrapper objects
+    HttpServletRequest req = (HttpServletRequest) request;
+    HttpServletResponse res = (HttpServletResponse) response;
+		   
+   res.getWriter().print("Hello World!");
+
+   //Pass request & response to next component in chain		   
+   chain.doFilter(req, res);
+ }
+ public void init(FilterConfig fConfig) throws ServletException { }
+}//End class
+
+In this example, we want to write "Hello World" before any kind of output produced by the servelts, resources, files.
+
+Filter components are used to:
+  1. Filter the "content"
+  2. Compress the request or response data
+  3. Encrypt or decrypt the request and response
+  4. Define login - authorization system
+  5. Design the High Level Web Framework
+   and there are many different-different usage including downloading of files,
+   video and audio streaming.
+
+The Virtual or Relative Path of resource and find the absolute path
+====================================================================
+Each file or resource in our web app is refer via "relativePath" or "virtualPath" in servlets or with hyperlinks or embed elements like img, video, script, audio and so on.
+e.g
+ <img src='images/sample.jpg' >
+ <script src='js/jquery.js'></script>
+
+Now, in order to use the resource in our program especially by pointing that resource by absolute path (full path) for Input Output operations or deletion or copying or renaming the resources we must have to find out the "Actual or Real path".
+
+We've a method in HttpServletRequest called getServletContext() and it returns an application context object whose method named getRealPath("/") returns physical or absolute or real path of your webapp's root.
+
+ //Convert virtual or relative path to absolute path
+  String relativePath = "/files/sample.pdf";
+  String absPath = req.getServletContext().getRealPath(relativePath);
+  System.out.println( absPath );
+  System.out.println( req.getServletContext().getRealPath("/") );
+
+Example: Download a video/text/pdf or any file
+
+@WebFilter("/download/googoosh")
+public class FirstFilter implements Filter {
+	public void doFilter(ServletRequest request, 
+			ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		  //Create wrapper objects
+		   HttpServletRequest req = (HttpServletRequest) request;
+		   HttpServletResponse res = (HttpServletResponse) response;
+		   
+		   HashMap<String, String> map = new HashMap<>();
+		   map.put("googoosh", "one.mp4");
+		   map.put("reena", "two.png");
+		   map.put("seminar", "three.pdf");
+		   
+		   //Convert virtual or relative path to absolute path
+		   String relativePath = "/files/one.mp4";
+		   String absPath = req.getServletContext().getRealPath(relativePath);
+		   File file= new File(absPath);
+		   
+		   //Set Response Headers/Instructions
+		   res.addHeader("content-type", "application/octate-stream");
+		   res.addHeader("content-length", String.valueOf(file.length()));
+		   res.addHeader("content-disposition", "attachment; filename=googoosh.mp4");
+		   
+		   
+		   try(BufferedInputStream in = 
+				   new BufferedInputStream(
+						   new FileInputStream(absPath))) {
+			   byte []bytes = new byte[8012];
+			   int numRead = 0;
+			   while( (numRead = in.read(bytes,0,bytes.length))>0 ) {
+				   res.getOutputStream().write(bytes, 0, numRead );
+			   }
+			   res.getOutputStream().flush();
+		   }catch(Exception ex) {
+			  System.out.println(ex);   
+		   }
+		  
+	}
+	public void init(FilterConfig fConfig) throws ServletException {
+	}
+	public FirstFilter() {
+	}
+	public void destroy() {
+	}
+}
+
+
+Example: Improved version of previous Filter - It takes any valid resource name and download/streams it if exists.
+
+@WebFilter("/download/*")
+public class FirstFilter implements Filter {
+	public void doFilter(ServletRequest request, 
+			ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		  //Create wrapper objects
+		   HttpServletRequest req = (HttpServletRequest) request;
+		   HttpServletResponse res = (HttpServletResponse) response;
+		   
+		   String requestUri = req.getRequestURI();
+		   String []parts = requestUri.split("/");
+		   for(String p: parts) {
+			   System.out.println(p);
+		   }
+		   if( parts.length != 4) {
+			   res.getWriter().print("Invalid resource!!!");
+			   return;
+		   }  
+		   String resource = parts[3];
+		   
+		   HashMap<String, String> map = new HashMap<>();
+		   map.put("googoosh", "one.mp4");
+		   map.put("reena", "two.png");
+		   map.put("seminar", "three.pdf");
+		   
+		   if(!map.containsKey(resource)) {
+			   res.getWriter().print("Given resource is not found!");
+			   return;
+		   }
+		   
+		  //Convert virtual or relative path to absolute path
+		   String relativePath = "/files/" + map.get(resource);
+		   String absPath = req.getServletContext().getRealPath(relativePath);
+		   File file= new File(absPath);
+		   
+		   //Set Response Headers/Instructions
+		   res.addHeader("content-type", "application/octate-stream");
+		   res.addHeader("content-length", String.valueOf(file.length()));
+		   res.addHeader("content-disposition", "attachment; filename=" + map.get(resource));
+
+		   try(BufferedInputStream in = 
+				   new BufferedInputStream(
+						   new FileInputStream(absPath))) {
+			   byte []bytes = new byte[8012];
+			   int numRead = 0;
+			   while( (numRead = in.read(bytes,0,bytes.length))>0 ) {
+				   res.getOutputStream().write(bytes, 0, numRead );
+			   }
+			   res.getOutputStream().flush();
+		   }catch(Exception ex) {
+			  System.out.println(ex);   
+		   }
+	}
+	public void init(FilterConfig fConfig) throws ServletException {
+	}
+	public FirstFilter() {
+	}
+	public void destroy() {
+	}
+}
+
+
+You can use following URIs to test the download:
+
+ /app/download/reena
+ /app/download/seminar
+ /app/download/googoosh
+
+Or you can link or embed them in document.
+
+<a href="download/seminar">Download Seminar</a>
+<video src="download/googoosh" autoplay controls></video>
+<audio src="download/googoosh" autoplay controls></audio>
+<a href="download/googoosh">Download Googoosh Video</a>
+
+<img src="download/reena">
+<a href="download/reena">Download Image</a>
+
+
+ 
 

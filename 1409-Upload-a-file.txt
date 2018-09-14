@@ -1,0 +1,101 @@
+File Upload
+===========
+To copy a file or (files) from client and save it (them) at server folder/database is known as "file" upload.
+
+1. In order to design a client (HTML), a form request must be "POST" and "enctype" (Encoding type) must be "multipart/form-data".
+
+upload.jsp
+-------------
+
+<form method="post"
+      action="upload"
+      enctype="multipart/form-data">
+
+ <p>Name : <input type="text" name="name"> </p>
+ <p>Select a file <input type="file" name="file"> </p>
+ <p><button>Submit</button>
+</form>
+<p>{$message}</p>
+
+Now, the UploadServlet(/upload) must configure as "Multipart" and has following code:
+
+
+@WebServlet("/upload")
+@MultipartConfig()   <------- This is mandatory attribute
+public class UploadServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/upload.jsp")
+		.forward(request, response);
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String name = request.getParameter("name");
+		Part file = request.getPart("file");
+		String message = "Cannot upload file";
+		
+		if(file!=null  && file.getSize() !=0 ) {
+                  // To read the uploaded file name
+		  System.out.println(file.getHeader("content-disposition"));
+		  String []array = file.getHeader("content-disposition")
+				  .split("filename=");
+		  String fileName = array[1].replaceAll("\"", "");
+		  System.out.println(fileName);
+
+
+		   String absPath = request.getServletContext()
+			   	.getRealPath("/data/" + fileName);
+
+                  //Save the file
+		   file.write(absPath);
+		   message = "File uploaded successfully!";
+		}
+		
+		request.setAttribute("message", message);
+		request.getRequestDispatcher("/upload.jsp")
+		.forward(request, response);
+	}
+}
+
+
+Example: Save Image/file content into table (Database)
+
+create table student
+(
+  name varchar(40) primary key,
+  photo longblob 
+)
+BLOB - stands for Binary Large Object
+
+@WebServlet("/upload-db")
+@MultipartConfig()
+public class UploadDbServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("/upload.jsp")
+		.forward(request, response);
+	}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String name = request.getParameter("name");
+		Part file = request.getPart("file");
+		String message = "Cannot upload file";
+		
+		if(file!=null  && file.getSize() !=0 ) {
+			InputStream in = file.getInputStream();
+			try(Db x = new Db("insert into student values (?,?)")) {
+				x.getPs().setString(1, name);
+				 // x.getPs().setBinaryStream(2, U.getByteStream(in));
+				x.getPs().setBlob(2,in);
+				//x.getPs().setBinaryStream(2,in);
+				
+				x.execute();
+				message = "File uploaded successfully!";
+			} catch(Exception ex) {
+				System.out.println(ex);
+			}
+		}
+		
+		request.setAttribute("message", message);
+		request.getRequestDispatcher("/upload.jsp")
+		.forward(request, response);
+	}
+}
+
+

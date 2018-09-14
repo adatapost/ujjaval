@@ -1,0 +1,151 @@
+Design Authorization for two category of users - Admin and Customer (Roles)
+============================================================================
+
+/app/
+   |
+   |----/admin/
+           Restricted Resources (only for Admin) 
+   |----/customer/
+           Restricted Resources (only for Customer) 
+   |
+   | other public resources
+
+
+1. We've two filters namely AdminFilter ("/admin/*) and CustomerFilter("/customer/*") filters the requests of resources that matches given URI pattern.
+
+@WebFilter("/admin/*")
+public class AdminFilter implements Filter {
+    public AdminFilter() {
+    }
+	public void destroy() {
+	}
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		  //Create wrapper objects
+		   HttpServletRequest req = (HttpServletRequest) request;
+		   HttpServletResponse res = (HttpServletResponse) response;
+		   
+		   //Obtain the Session object
+		   HttpSession session = req.getSession();
+		   if(session.getAttribute("isAdmin") == null) {
+			   req.getRequestDispatcher("/login").forward(req, res);
+			   return;
+		   }
+		   chain.doFilter(req, res);
+		
+	}
+	public void init(FilterConfig fConfig) throws ServletException {
+	}
+}
+
+
+@WebFilter("/customer/*")
+public class CustomerFilter implements Filter {
+    public CustomerFilter() {
+    }
+	public void destroy() {
+	}
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+		  //Create wrapper objects
+		   HttpServletRequest req = (HttpServletRequest) request;
+		   HttpServletResponse res = (HttpServletResponse) response;
+		   
+		   //Obtain the Session object
+		   HttpSession session = req.getSession();
+		   if(session.getAttribute("isCustomer") == null) {
+			   req.getRequestDispatcher("/login").forward(req, res);
+			   return;
+		   }
+		   chain.doFilter(req, res);
+		
+	}
+	public void init(FilterConfig fConfig) throws ServletException {
+	}
+}
+
+We've LoginServlet(/login) and RegisterServlet(/register) for public users
+
+@WebServlet("/login")
+public class LoginServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		session.invalidate(); // Re-create the current session
+		request.getRequestDispatcher("/login.jsp").forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		UserAccount model = new UserAccount();
+		HttpSession session = request.getSession();
+		session.setMaxInactiveInterval(50000);
+		 
+		String url = "/login.jsp";
+		
+		model.setUserEmail(U.getString(request, "userEmail"));
+		model.setUserPass(U.getString(request, "userPass"));
+
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+		session.removeAttribute("isLogged");
+		session.removeAttribute("isAdmin");
+		session.removeAttribute("isCustomer");
+		if ("Login".equals(cmd)) {
+			model = UserAccountDao.login(model);
+			message = model == null ? "Invalid username or password" : "You're authenticated successfully!!!";
+			if(model!=null) {
+				session.setAttribute("isLogged", "Yes");
+				if("Admin".equals(model.getUserRole())) {
+					session.setAttribute("isAdmin", 1);
+					url = "/admin/my-country.jsp";
+				}
+				if("Guest".equals(model.getUserRole())) {
+					session.setAttribute("isCustomer", 1);
+					url = "/customer/index.jsp";
+				}
+			}
+		}
+
+		request.setAttribute("message", message);
+		request.getRequestDispatcher(url).forward(request, response);
+	}
+}
+
+@WebServlet("/register")
+public class RegistrationServlet extends HttpServlet {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.getRequestDispatcher("/register.jsp").forward(request, response);
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		UserAccount model = new UserAccount();
+		String userPass1 = U.getString(request, "userPass1");
+		model.setUserEmail(U.getString(request, "userEmail"));
+		model.setUserPass(U.getString(request, "userPass"));
+		model.setUserRole("Guest");
+		model.setDeleted(false);
+		String cmd = U.getString(request, "cmd");
+		String message = "";
+
+		if ("Add".equals(cmd) && userPass1.equals(model.getUserPass())) {
+			message = UserAccountDao.add(model) ? "User account created successfully"
+					: "Please verify your email. It is taken by someone else";
+		} else {
+			message = "User password and confirm are not match!!!";
+		}
+
+		request.setAttribute("message", message);
+		request.setAttribute("model", model);
+		request.getRequestDispatcher("/register.jsp").forward(request, response);
+	}
+}
+
+
+Define Admin purpose servlets - CityServlet (/admin/city), StateServlet(/admin/state), CountryServlet(/admin/country) and  many more but these servlet url pattern must begins with '/admin/*'
+
+Similarly design servlet for customers abd ensure that their url must begins with 'customer/*'
+
+
+

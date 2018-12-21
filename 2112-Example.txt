@@ -1,0 +1,37 @@
+Design the "invoice" schema as per:
+
+create table product  ( ) -- To represent the product name, qty, rate, unit, discount 
+
+create table invoice () - To represent invoice no, date, customer name, city
+
+create table invoice_detail() - To represent invoice no (reference of invoice), product (ref of product), sal qty, sal rate, discount of one or more products.
+
+Write appropriate POJOS and DAOs and design the user interface to add/modify/delete/view the bill or invoice data.
+
+Layout should look a like:
+
+Bill No: ____________________                          Date : _______________________
+Customer: _____________________
+          ____________________-
+
+
+Product                    Qty          Rate       Discount    Amount
+[ dropdown-select product] [_________]  [_______] [________]   calculated-amount [Add Button]
+
+ -----------------------------------------------------------------------------------
+ Product 		Qty		Rate		Disount		Amount	
+ -----------------------------------------------------------------------------------
+ xxxxx			10		2		0		20	[delete Button]
+ xxxxx			10		3		0		30	[delete Button]
+ ....
+ ....
+ 
+-----------------------------------------------------------------------------------
+							Total Amount     xxx
+[Amount in words - Rs. so and so. .....]
+
+-----------------------------------------------------------------------------------
+
+                   [Save/Update the Invoice button]  [Delete the invoice button]
+
+

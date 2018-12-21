@@ -1,0 +1,43 @@
+Design - 1  Write code to add/delete/update/list student data (use your own database structure)
+==========
+
+ Screen-1
+ 
+ STUDENT LIST
+
+
+ <add new student - hyperlink>
+ ------------------------------------------------------------------
+ Roll	Name		City	and other data.
+ -------------------------------------------------------------------
+ x	xxxxxxxx	xx	xxxxx				[edit link]
+ x	xxxxxxxx	xx	xxxxx				[edit link]
+ x	xxxxxxxx	xx	xxxxx				[edit link]
+ x	xxxxxxxx	xx	xxxxx				[edit link]
+
+
+ Screen-2
+ Add new student
+ 
+ Roll: ____________
+ Name: ____________
+ City:___________
+ and other data
+
+ [btnAdd][btnBackToList]
+
+ Screen-3
+ Update the student
+ 
+ Roll: 12____________
+ Name: ABC____________
+ City: BBB___________
+ and other data
+
+ [btnUpdate][btnDelete][btnBackToList]
+
+
+Design-2 Add "paging" to student list in Screen-1 --- Display 5 records per page and add [Next][Previous][First][Last]Buttons to navigate the students.
+
+
+

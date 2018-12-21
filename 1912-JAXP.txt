@@ -1,0 +1,346 @@
+Java API for XML - JAXP
+========================
+
+This API mainly used to "parse" the XML data/document using standard libraries namely - DOM (Document Object Model) and SAX (Simple API for XML). Using this APIs, we can form/create XML format data document and read XML format data programatically.
+
+Packages org.w3c.dom and org.xml.sax contains "standard interface" components and their implementations can be found at javax.xml package.
+
+1. DOM Parser -- It reads or parse all the XML elements (tags) at once into memory. Create an
+		 object (called Element or Node object) of each tag and adust the node into
+		 document-tree or doctree.
+		 
+		 DOM parser is not suited with "large" XML data/document because it uses huge
+		 amount of memory no matter whether you don't with to all data.
+2. SAX Parser -- It uses stream (In or Out) or sequential approch to read/write the XML Data. 
+		 SAX uses EventHandler which will raises or invoke appropriate method when 
+		 XML data are parsed.
+		 
+		 SAX is well suited to read large document also backup/write the data 		sequentially. 
+
+		 If you want to search one or more nodes/objects or update/delete/insert nodes 		 then we must have to use "DOM".
+
+[NOTE: There are some non-standard parser out there in JavaSE but they are not popular].
+
+IMPORTANT - DOM API is also used by the web-browsers to parse HTML, XML, SVG data using the JavaScript language.
+
+
+What is an XML ?
+
+  An XML (Extensible Markup Language) is not a markup language but it is a "standard" to create a new markup language to describe the data Or to format data. So any "makup language" created using XML standard known as "XML language or XXXXX XML language".
+
+For instance, to represent my programming "skill", I've following data described via XML vocabaliries:
+
+<skills>
+   <languages>
+       <language>Java</language>
+       <language>C++</language>
+   </languages>
+   <mobile>
+       <platform>Adroid</platform>
+       <platform>IOS</platform>
+   </mobile>
+</skills>
+
+ So, above data is XML language data or XML format data or "Skill Markup Language" -- this is my private language but this document can be parsed via any DOM APIs written on different OS with different languages/platforms.
+
+What makes a markup document as "XML document"?
+
+  Ans - XML Standards make any ordinary markup document to XML document.
+
+One must have to follows the rules strictly:
+
+  1. Element name are case-sensitive
+  2. Each data document must have one and only one root element.
+<A>
+   <p>10</p>
+</A>       
+ [Valid]
+
+<A>
+   <p>10</p>
+</a>       
+ [Invalid]
+
+<A>
+  <p>10</p>
+</A>
+<A>
+  <p>20</p>
+</A>  
+ [Invalid]
+ 3. Elements must be strictly nested. 
+      <k>
+         <m>A</k>
+      </m> 
+      [Invalid]
+4. Whitespaces are consider as special elements -- whitespace will be preserved and parser will create objects of text data. (In HTML whitespaces are replaced by single whitespace).
+5. Attribute value must be enclosed with single or double quotes.
+ <students>
+   <student className='1st'>
+      <roll>10</roll>
+      <name>Raj</name>
+   </student>
+   <student className="2nd">
+      <roll>20</roll>
+      <name>Man</name>
+   </student>
+ </students>
+6. Each open tag must have associate close tag. Empty tag is represened by  <tag/> or <tag></tag>
+7. First line of XML data document should have an instruction for the parsers called "Pre-processors" which allows user to select appropriate standard of XML and text encoding scheme.
+
+
+The DOM APIs
+============
+The package org.w3c.dom has number of interfaces but the most basic/essential interface is "Node - org.w3c.dom.Node". This interface is then extends by other interfaces in current package and these are:  
+1. Document -- It represent the document element (root element) and methods to parse, create , 		read the objects.
+2. Element  -- It represents the each Node which contains either childen nodes or plain text data.
+3. Attribute -- It reprensets the attribute value of an object
+4. Node      -- It represents methods to obtain parent or child nodes, search on nodes, examine 		the type or category of node, remove the node etc.
+5. NodeList  -- It is a collection of "Node" objects.
+
+7. TextNode -- It represents 'plain-text' data e.g 10, "Raj", whitespaces etc.
+
+Now, all above and more than mentioned above interfaces are implemented via javax.xml.parsers package classes, so we must have to start or initialize the DOM Parsers using following classes:
+
+1. javax.xml.parsers.DocumentBuilderFactory 
+2. javax.xml.parsers.DocumentBuilder 
+
+These two classes initialize or start the DOM engine or DOM parsers: 
+
+ DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+ DocumentBuilder docBuilder = documentBuilderFactory.newDocumentBuilder();
+
+ Now, with the help of DocumentBuilder instance, we can parse the existing XML data or create new  XML data.
+
+Example: Create XML Data document programatically using DOM API.
+
+There are three important phases:
+ 1. Start/Initialize the DOM APIs
+ 2. Create or Obtain the org.w3c.dom.Document object and create/remove children
+ 3. Transform the DOM into SAX, Stream (file) or another DOM -- Save DOM to other forms.
+
+     javax.xml.transform package contains Transformer APIs where we need two implementations of
+     "Source" and "Result" interfaces of very same package. 
+
+          e.g  DOMSource, SAXSource, StreamSource and
+               DOMResult, SAXResult, and StreamResult are the classes which implements "Source"
+		and "Result" interfaces respectively.
+
+public class App {
+	public static void main(String[] args) throws Exception {
+		//1. Start the DOM Engine
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		
+		//2. Create/parse the XML data
+		Document document = builder.newDocument();
+		//Root element
+		Element students = document.createElement("students");
+		
+		//Children
+		Element student = document.createElement("student");
+		Element roll = document.createElement("roll");
+		Element name = document.createElement("name");
+		
+		student.setAttribute("className", "1st");
+		Node rollValue = document.createTextNode("10");
+		roll.appendChild(rollValue);
+		name.appendChild( document.createTextNode("Raj"));
+		student.appendChild(roll);
+		student.appendChild(name);
+		students.appendChild(student);
+		students.appendChild( create("20","Man","2nd",document));
+				
+		//3. Write/Save XML Data -- Transform the DOM or SAX or Stream
+		TransformerFactory tFact = TransformerFactory.newDefaultInstance();
+		Transformer trans = tFact.newTransformer();
+		
+		DOMSource source  = new DOMSource(students);
+		StreamResult result = new StreamResult("c:/javaprg/ujjval/sample.xml");
+		trans.setOutputProperty(OutputKeys.INDENT, "yes"); //To indent XML data
+		trans.transform(source, result);
+	}
+	public static Element create(String mRoll, String mName, String mClassName, Document document) {
+		Element student = document.createElement("student");
+		Element roll = document.createElement("roll");
+		Element name = document.createElement("name");
+		
+		student.setAttribute("className",mClassName);
+		roll.appendChild(document.createTextNode(mRoll));
+		name.appendChild( document.createTextNode(mName));
+		student.appendChild(roll);
+		student.appendChild(name);
+		return student;
+	}
+}
+
+ 
+
+Example: Parse the "sample.xml" and store data into List<Student>
+
+1. Create Student POJO 
+2. Code in main method:
+
+                List<Student> list = new ArrayList<>();
+		//1. Start the DOM Engine
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newDefaultInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		
+		//2. Create/parse the XML data
+		Document document = builder.parse("c:/javaprg/ujjval/sample.xml");
+		
+		//Obtain the root element
+		Element students = document.getDocumentElement(); 
+		int numChild = students.getChildNodes().getLength();
+		NodeList studentList = students.getChildNodes();
+		for(int i=0;i<numChild;i++) {
+			Node node = studentList.item(i);
+			if(node.getNodeType() == Node.ELEMENT_NODE) {
+				Element student = (Element) node;
+				System.out.println(student.getAttribute("className"));
+				Student s = new Student();
+				s.setClassName(student.getAttribute("className"));
+				
+				for(int j=0;j<student.getChildNodes().getLength();j++) {
+					if( student.getChildNodes().item(j).getNodeType() == Node.ELEMENT_NODE) {
+						Element e = (Element)student.getChildNodes().item(j);
+						System.out.println(e.getTextContent());
+						if(e.getNodeName().equals("roll"))
+							s.setRoll(e.getTextContent());
+						if(e.getNodeName().equals("name"))
+							s.setName(e.getTextContent());
+					}
+				}
+				list.add(s);
+			}
+		}
+		for(Student s : list) {
+			System.out.println(s);
+		}
+	}
+
+
+Example: Obtain a NodeList of given "tag/element" name.
+
+...
+NodeList rolls = document.getElementsByTagName("roll");
+for(int i=0;i<rolls.getLength();i++) { 
+  //TODO
+}
+
+Example: Delete "student" whose roll is "50"
+
+...
+...
+NodeList rolls  = document.getElementsByTagName("roll");
+for(int i=0;i<rolls.getLength();i++) {
+	Node node = rolls.item(i);
+	if(node.getNodeType() == Node.ELEMENT_NODE) {
+		Element e = (Element)node;
+		System.out.println(e.getTextContent());
+		System.out.println(e.getNextSibling().getTextContent());
+		if(e.getTextContent().equals("50")) {
+			students.removeChild( e.getParentNode());
+		}
+	}
+}
+		
+//3. Write/Save XML Data -- Transform the DOM or SAX or Stream
+TransformerFactory tFact = TransformerFactory.newDefaultInstance();
+Transformer trans = tFact.newTransformer();
+				
+DOMSource source  = new DOMSource(students);
+StreamResult result = new StreamResult("c:/javaprg/ujjval/sample.xml");
+//trans.setOutputProperty(OutputKeys.INDENT, "yes");
+trans.transform(source, result);
+
+XML standard and its application 
+--------------------------------
+XML is a evergreen standard and is widely used by almost all kind of apps -- system, utility, applications, development, operating system, network apps, GUI etc.
+
+For instance, IDE uses "xml" to describe settings and build actions
+              JavaFX uses xml to describe the UI
+ 	      Android uses XML to describe the UI
+	      WPF - C#/.NET uses XML to describe the UI
+	      SVG uses XML to describe the UI
+	      Web Service OR Remoting or Remote Method Invocation or EJB uses XML to describe
+			the comopnents, methods, parameters, and result.
+In short, there is no such place in computer where XML is not used.
+
+SAX - Simple API for XML parser
+--------------------------------
+This API uses "Event Handler" system which will raise different events namely -- startDocument, endDocument, startElement, endElement and so on whenever parser encounter one of the described events while parsing the XML data.
+
+Step-1 Create a "Model" Student POJO
+Step-2 Create a sub-class of DefaultHandler class (org.xml.sax.helpers package) and override necessary methods. We will override four important methods.
+
+public class MyHandler extends org.xml.sax.helpers.DefaultHandler {
+	private List<Student> list;
+	private Student s;
+	private String data;
+	@Override 
+	public void startDocument() {
+		list = new ArrayList<>();
+	}
+	@Override
+	public void characters(char[] ch, int start, int length) throws SAXException {
+		data = new String(ch,start,length);
+	}
+	@Override
+	public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+		if("student".equals(qName)) {
+			s = new Student();
+			s.setClassName(attrs.getValue("className"));
+		}
+	}
+	@Override
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+		if("student".equals(qName)) {
+			if(s.getClassName().equals("1st"))
+			  list.add(s);
+		}
+		if("roll".equals(qName)) {
+			s.setRoll(data);
+		}
+		if("name".equals(qName)) {
+			s.setName(data);
+		}
+	}
+
+Step-3 Start the SAX parser and pass XML Data and "DocumentHandler" event callback to the parse method. (code in main):
+
+SAXParserFactory factory = SAXParserFactory.newInstance();
+SAXParser sax = factory.newSAXParser();
+		
+MyHandler myHandler = new MyHandler();
+sax.parse("c:/javaprg/ujjval/sample.xml", myHandler);
+		
+for(Student s: myHandler.getList()) 
+	System.out.println(s);
+
+
+Example: Create a UserXMLDao class which saves/updates/deletes and lists (serach) user-account data.
+
+Data
+----
+<users>
+   <user role='admin'>
+      <email>a@a.com</email>
+      <pass>29292</pass>
+      <created>2018-10-20 10:20:22</created>
+   </user>
+   .....
+   .....
+</users>
+
+Design the user-interface to insert, update, delete and list the users.
+
+[Note: You've to use the DOM APIs]	
+
+Also design user-interface for "login" (to examine the user's credentials),
+                           for "changepass" (to examine user's credentails and update password), and for "recover" the password.
+
+The "xml" data document must be saved under /WEB-INF/mydata so no one can directly access the file. You can also create your own protected folder by creating a "filter" component.
+
+
+

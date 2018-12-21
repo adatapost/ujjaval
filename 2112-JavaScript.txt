@@ -1,0 +1,80 @@
+JavaScript Language  OR ECMAScript OR ES
+========================================
+
+Current ES or JavaScript standard is 2018 (or you can say ES6 or higher). JavaScript is a specification based scripting language that is mostly used by the web-clients(browsers) and server-environment (NodeJS). The JavaScript is the only language in web-browser to code/program.
+
+JavaScript code can be embed into web document using <script> element:
+
+ <script> 
+    //JavaScript code 
+ </script>
+
+Or embed the external doc or uri
+ <script src="uri"></script>
+
+1. JavaScript is dynamic language.
+2. It is case-sensitive language.
+3. It support modular, oop, funtional, imperative programming methodologies
+4. To debug the JavaScript code use the "Developer Tools" in web-browsers (Press F12 or Ctrl+Shift+I to open the Developer Tool). The "console" section of Developer tool displays the exception and other log.
+
+5. It does :
+     -> Selection -- if ,switch etc
+     -> Looping - for, while, do whle, for enhance
+     -> Typing - class, interface, methods, closures, lambda expressions, inheritance etc
+     -> Provide built-in TYPES and Objects
+     -> Parse the XML, HTML, and other documents
+     -> interface to generate "graphics" (provides APIs)
+     
+Declaring variables .i.e. creating objects
+==========================================
+JavaScript is untype or dynamic language. It has no explicit name for some built-in types but they are determined automatically as per the "literal" types.
+
+1. number - JavaScript has 64 bit number object can represent any int or float value.
+2. string - You can express string using single or double quotes
+3. boolean - true or false 
+		JavaScript uses following values as "false" (falsy values):
+			1. "" or '' empty string
+			2. 0 or 0.0
+			3. null
+			4. NaN - Not a number error
+			5. undefined 
+			6. false
+		Any value other than "falsy values" are "truthy value".
+4. Date object
+5. RegExp - Regular expression object
+6. Math object
+7. Function object - to define function, class, closure etc
+8. document object - It reprenset the "parsers - XML/HTML".
+9. window object - It represents the "windowing" actions of the web-browser.
+10. Object - - Represents an object of "Any type in JavsCript" --i.e Super class 
+
+Namespace and entity name
+--------------------------
+Any entity (variable, function, class etc) created using JavaScript will be placed automaically into "window" package or namespace.
+However we can create our own namespaces to separate the entities.
+
+Example: code in your web doc
+
+<script>
+  var firstName = 'Shah'; 
+  window.lastName  = "Amar";
+  city = "Mehsana";
+  // all three entities are added into window namespace
+  // Open Developer tool + Console to see/view the log
+
+  console.log( firstName, lastName, city );
+  console.log( window.firstName, window.lastName, window.city );
+</script>
+
+The "window" is global namespace and it remains avaialble till the web-browser is open. So entities in this namespace will be accidently erased when another app on same web-browser or another library uses very same named entity. 
+
+Secondly, we must not use the "global" namespace to store short lived data -- these data must be erased as soon as function or a piece of code is terminated but in JavaScript this might be not work if you have use "window" namespace.
+
+
+
+
+
+
+				
+
+ 

@@ -1,0 +1,201 @@
+The "console" and Developer Tool
+---------------------------------
+In order to debug the JavaScript code, there is a "console" object (for Developer Environment) to  display or dump the debugging "log" and this log will be printed into Developer Tool.
+
+   You may use console.log()
+               console.dir() 
+               console.info() and many more method for dump the debug log.
+
+The "let" keyword  -- create variable or entity into "local" namespace instead of "window".
+------------------    
+It is good practice to use "let" keyword and that way we can prevent a global namespace being poluted.
+
+So any entity without "let" will be added into "window" namespace except the "var" keyword is used into a "function" -- if "var" keyword is used to declare entity inside the function, the entity has "local" scope.
+
+Example:
+ <script>
+     let no = 110;
+     var firstName = "Raj";
+     let lastName = "Shah";
+
+     console.log(no, firstName, lastName);
+     console.log(window.no, window.firstName, window.lastName);
+     console.dir( new Date() );
+     console.log( [10,20,40]);
+
+     console.assert(no==10,"OK");
+     
+     console.dir( [10,20,40]);
+     console.error("This is illgal");
+     console.info("This is info text");
+  </script>
+
+console.dir() - dump the object content at console.
+console.assert(boolean, text) -- Break point. It displays error "text" when result of boolean 				 expression is evaluted to false.
+
+let vs var 
+----------
+1. let keyword declare a variable once in a given "scope". The "scope" can be a script block, function, class, statement-level etc.
+2. var keyword declare a variable more than once into "window" namespace.
+3. Variables created using "let" will be discarded as soon as the "scope" is reached out of context.
+4. The entities in window namespace has "global" scope and remains till web-browser is running.
+
+How to determine the type of data programatically?
+------------
+Use typeof construct.
+
+let n = 10;
+console.log( typeof(n) );
+n = 20.20;
+console.log( typeof(n) );
+n = 'This is string';
+console.log( typeof(n) );
+console.log( typeof([10,20,30]) );
+
+Example: check the numeric and string functions/methods.
+e.g at console prompt,
+>let no = 100000.3434343
+>no.toFixed(2)
+Or write code in script file
+let no = 1000000.2323232;
+console.log( no.toString() );
+console.log( no.toFixed(1) );
+
+Example: "if", "switch", "while", "for", "do while" has same syntax as "Java" language
+
+//test the boolean expression (Falsy/Truthy) value
+let no = 0;
+if(no) {
+  console.log(no);
+} else {
+  console.log('Falsy value!');
+}
+
+for(let n=1;n<=10;n++) {
+  console.log(n);
+}
+
+Example: Array - Two syntax to create an array:
+1. [] and
+2. Array construct
+
+let nos = [10,20,30];
+let values = new Array(20,30,40);
+
+console.log( nos );
+console.log( values );
+
+console.log( nos.length );
+console.log( nos[0], nos[1], nos[2] );
+
+Example: Arbitory indexed arrays
+let nos=[];  // empty array
+nos.push(10);  // insert at the end
+nos.push(20);  
+nos[10] = 30;   // at 10th index
+nos[100] = 60;  
+
+console.log( nos.length ) // 101 
+for(let i=0;i<nos.length;i++) {
+  console.log( i, nos[i]);
+}
+//indexed for each loop 
+  for(let index in nos) {
+	  console.log( index, nos[index] );
+  }
+
+The indexed or property for each loop returns "index" of an array and "property" from the object.
+
+Example: Use/Test the array object functions. Use console prompt which will shows the syntax.
+
+e.g 
+>let nos = [];
+>nos.push(22);
+>nos.pop()
+
+//to insert an element at given index
+//splice( atIndex, removeIndex, newElements.....)
+>nos.splice(0,0,50,60,70); // insert at 0 index
+>nos
+>nos.splice(2,1);  // remove 2nd element
+>nos.splice(2,2);  // remove 2 elements from 2nd index onward
+
+JSON - JavaScript Object Notation -- a way to create a custom object
+------------------------------------------------------------
+Syntax:
+
+  {
+    "propertyName": value,
+    ....
+   };
+
+let emp = {
+   "id": 10,
+   "name": "Rajesh",
+   "phone": {
+        "home": 499232,
+        "office": 343434
+    }
+};
+
+console.log( emp.id, emp.name, emp.phone.home, emp.phone.office );
+console.log( emp["id"], emp['name'], emp["phone"]["home"], emp["phone"]["office"] );
+
+Object properties can be read via . dot as well as subscript operator.
+
+To add new property,
+
+   emp.address = "ABC Society";
+   
+To remove a property,
+
+   delete emp.name;
+
+Example: List of students
+let students = [{"roll": 10, "name": "Man"}, {"roll": 43, "name": "Ram"} ];
+students.push( {"roll": 4,"name": "Tan" } );
+for(let index in students) {
+  console.log( students[index] );
+  let s = students[index];
+  console.log(s.roll, s.name);
+}
+
+The function keyword and function definitions
+==============================================
+There are two ways to declare functions:
+1. Declaraive method 
+2. Variable function -- anonymous function
+
+Syntax: declarative function
+
+  function functionName(argument.....) {
+     //body
+  }
+
+
+Syntax: Variable function or Anonymous function
+
+  let varName = function(arg.....) {
+     //body
+  };
+
+  Variable function or anonymous functions are available during program execution whereas   declarative functions exists forever.
+
+<script>
+   function add(no1, no2) {
+     return no1 + no2;
+    }
+   let mul = function(no1,no2) {
+      return no1*no2;
+   };
+
+   // Call the functions
+   console.log( add(2,3) );
+   console.log( mul(2,3) );
+</script>
+ 
+
+
+
+
+

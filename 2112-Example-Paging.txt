@@ -40,4 +40,7 @@ Design - 1  Write code to add/delete/update/list student data (use your own data
 Design-2 Add "paging" to student list in Screen-1 --- Display 5 records per page and add [Next][Previous][First][Last]Buttons to navigate the students.
 
 
+SELECT * FROM TABLE LIMIT 0,5  (first five)
+SELECT * FROM TABLE LIMIT 5,5  (Next five)
+SELECT * FROM TABLE LIMIT 10,5  (Next five)
 

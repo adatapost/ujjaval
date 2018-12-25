@@ -306,6 +306,8 @@ public class MyHandler extends org.xml.sax.helpers.DefaultHandler {
 			s.setName(data);
 		}
 	}
+   public List<Student> getList() { return list; }
+}
 
 Step-3 Start the SAX parser and pass XML Data and "DocumentHandler" event callback to the parse method. (code in main):
 

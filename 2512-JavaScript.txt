@@ -195,7 +195,275 @@ Syntax: Variable function or Anonymous function
 </script>
  
 
+Create/define a class
+----------------------
+The 'function' keyword is also used to define a class:
+
+function TypeName(args...) {
+   //members must be qualified with 'this' keyword
+
+   this.data1 = value1;
+   this.data2 = function() {
+ 
+   };
+}
+
+To instantiate the class, use "new TypeName(param)" syntax.
+
+Example:
+
+function Emp(id, name) {
+  this.id = id;
+  this.name = name;
+
+  this.getEmp = function() {
+     return this.id + "  " + this.name;
+  };
+}
+
+//Create instances
+let p = new Emp();
+let q = new Emp(10,"Reena");
+
+console.log(p.id, p.name);
+console.log(q.id, q.name);
+console.log(q.getEmp());  // call a method
+p.id = 90;
+p.name = "Amar";
+console.log(p.getEmp());
+
+
+Example: parse the number (String to numeric) using "parseInt" and "parseFloat" functions
+
+let str = "1000.23";
+let no = parseFloat(str);
+console.log( typeof(no), no);
+
+Note: Use toString() of numeric object to format the string.
+
+Example: Display message text using 'alert(text)' function
+         Display 'input' dialog using 'prompt(text)' function
+         Display confirm dialog using 'confirm(text)' function
+
+let no = prompt('Enter the number');
+if(!no) {
+  alert('Pl. type number');
+} else {
+  let result = confirm('Got the data! Do you want to continue...?');
+  if(result) {
+      alert('OK then continue...!');
+  } else {
+      alert('OK Bye..');
+  }
+}
+
+Example: Handling the events. Or attach your functions to the HTML object's event.
+
+There are two ways to attach your functions to the events of HTML objects:
+  1. Declarative attachment and
+  2. Programmatically/Dynamically attachment
+
+Here is an example of declarative attachement of 'function' to the HTML object's event:
+
+  <p onclick='doThis()'>Click Here</p>
+  <button onclick='doThis()'>OK</button>
+
+  <script>
+     function doThis() {
+       alert('This is the function called via event of DOM!');
+      }
+  </script>
+
+Example: Passing parameters to the handlers
+  
+  <p onclick='doThis("para")'>Click Here</p>
+  <button onclick='doThis("button")'>OK</button>
+
+  <script>
+     function doThis(data) {
+       alert('This is the function called via event of DOM! and I got action from :' + data);
+      }
+  </script>
+
+Referencing the HTML object via JavaScript code OR The DOM API
+==============================================================
+As we know that each HTML tag is transformed into an object called "HTML" object and if you want to update the properites of HTML object or call a method of an object, we must have to use the DOM interface which provide standard APIs to process or parse the objects.
+
+The "document" object proprty represent the DOM implementation. Here, in browser, we have two readly to use references of "body" and "head" tag  -- document.body and document.head.
+
+But, to retrieve objects inside the head or body, we must have to use DOM's search functions -- getElementsByTagName, getElementById, getElementsByName, querySelector and querySelectorAll etc.
+
+querySelector() - returns single HTML object from the given "CSS selector pattern" whereas querySelectorAll() returns one or more HTML objects based upon query selector pattern.
+
+Example:
+
+<h1>One</h1>
+<p name="test">Two</p>
+<h1>Three</h1>
+<h1 name="test">Four</h1>
+
+<script>
+  let list = document.getElementsByTagName('h1'); // returns NodeList of three objects
+  for(let i=0;i<list.length;i++) {
+     let obj = list.item(i);
+     console.log( obj );
+  }
+</script>
+
+
+Example: Access the CSS properties of body object
+
+<script>
+   document.body.style.color = "red";
+   document.body.style.fontSize = "2em";
+   document["body"]["style"]["backgroundColor"] = "#00f";
+</script>
+
+Example: Handle the "event(s)" dynamically. We will use obj.addEventListener('eventName',methodRef) to attach the event handler. 
+Note: eventName don't include 'on' prefix. 
+
+e.g 
+
+<h1>Hello</h1>
+<script>
+  let h = document.querySelector('h1');
+  h.addEventListener('click',doSomething);
+  function doSomething() {
+    console.log('Something...!');
+  }
+</script>
+
+OR 
+
+h.addEventListener('click', function() {
+   console.log('This is anonymous function');
+});
+
+Example: Attach one or more handlers
+
+<div id="test">Click Here</div>
+
+<script>
+  function action1() { console.log('Action1'); }
+  function action2() { console.log('Action2'); }
+
+  let test = document.querySelector('#test');
+  test.addEventListener('click',action1);
+  test.addEventListener('click',action2);
+  test.addEventListener('mouseenter',function() {
+     console.log('Mouse entered into the region!!!');
+  });
+</script>
+
+
+Example: Reference the current HTML object - an object through which the event is raised.
+
+<h1 onclick='doSomething(this)'>Hello</h1>
+
+<script>
+  function doSomething(obj) {
+    obj.style.color  = "red";
+  }
+</script>
+
+Example: Create new HTML objects and append them into existing tree/dom.
+
+<div id="output"></div>
+
+<script>
+   let a1 = document.createElement('input'); 
+   a1.setAttribute('type','text');
+   let a2 = document.createElement('h3');
+   
+   a1.setAttribute("value","JavaScript");
+   a2.innerHTML = "The JavaScript Language";
+   
+   //Now, append these two objects into "#output" dom
+   let output = document.querySelector('#output');
+   output.appendChild( a1 );
+   output.appendChild( a2 );
+</script>
+
+NOTE: innerHTML property set/get the value inside the open and close tag. e.g 
+<p>This is innerHTML</p>
+
+The input, select elements has "value" property so we can read or set the value using "value" as well as setAttribute and getAttribute methods.
+
+Example: Populate the <select>
+
+<select id="city"></select>
+
+<script>
+  let cities = ["Meh",'Pata','Raj','Sur'];
+  for(let i in cities) {
+     let op = document.createElement('option');
+     op.innerHTML = cities[i];
+     document.querySelector('#city').appendChild( op );
+  }
+</script>
+
+Example: JSON object -- parse and stringfy the data
+
+   let str = '{"no": 10, "name": "Reena"}';
+   let obj = JSON.parse(str);  // String to object
+   obj.address = "Mehsana - 239993";
+   console.log(obj);
+
+   let str1 = JSON.stringify(obj);  // Object to string
+   console.log( str1 );
+
+Example: Request the server resources programatically and handle the response backgroundly. 
+
+This kind of communication is achieve via "XMLHttpRequest" object and this type of programming is known as AJAX - Asynchronious JavaScript And XML.
+
+Assume that we've /test servlet which returns "plain text data -- 'Hello Everybody, It's <currentTime>'";
+
+code in doGet of (/test) servlet:
+
+   response.getWriter().write("Hello Everybody, It's " + new java.util.Date() );
+   response.getWriter().flush();
+
+And code in any .jsp or .html page:
+
+<button onclick="doRequest()">Request the /test servlet</button>
+<script>
+    function doRequest() {
+        //1. Instantiate the XHR
+        let xhr = new XMLHttpRequest();
+        //2. Set URL and data
+        xhr.open("get", "test");
+        //3. Set up the response handler callback
+        xhr.onreadystatechange = function() {
+            if(xhr.DONE == xhr.readyState ) {
+              console.log( xhr.responseText );
+            }
+        };
+        //4. Start/make the request
+        xhr.send();
+     }
+</script>
+
+Example: Send the POST data. Create doPost in /test servlet to receive the data and client code would be:
+  
+    xhr.open("post","test?no=10&name=Reajesh");
+    ....
+
+and doPost:
+   String no = request.getParameter("no");
+   String name = request.getParamer("name");
+   response.getWriter().write("Success " + no + " " + name);
+   response.getWriter().flush();
 
 
 
 
+
+
+
+
+
+
+
+
+
+  

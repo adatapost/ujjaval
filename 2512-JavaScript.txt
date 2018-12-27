@@ -454,10 +454,209 @@ and doPost:
    response.getWriter().write("Success " + no + " " + name);
    response.getWriter().flush();
 
+The FormData object to pass the both plain text as well as binary data (file upload)
+-------------------------------------------------------------
+ The methods "set" and "append" allow us to specify the name-value entry along with "filename" if that entry's value is "blob - binary large object".
+
+  let data = new FormData();
+  data.set("no","10");
+  data.set("photo", photo_object, "my.png");
+ Or
+  data.append("name", "Value...");
+ 
+Then after pass this "FormData" object to the send() method of XHR.
+
+ e.g xhr.send( data );
+
+On other side (server side), you must configure or annotate @MultipartConfig servlet in order to read the "FormData" whose 'enctype" is "multipart/form-data" already set.
+
+The JSON Parser
+===============
+To parse the "Java" objects into JSON string and vice-versa. This is an open source API and you can download the JSON parser source from json.org and github.com.
+
+There are two entry point classes namely JSONObject and JSONArray. JSONObject deals with JSON object (e.g { "key": value } ) and JSONArray deals with list or array. e.g [{},{}]
+
+Step-1 Download the json api source code or .jar file. We will use source code in this example.
+
+Create org.json package and paste the "JSON source programs" in it.
+
+Step-2 : code in any method:
+
+	         Student student = new Student(10,"Reena");
+		 JSONObject obj = new JSONObject(student);
+		 System.out.println(obj.toString());
+		 
+		 String jsonStr = "{\"roll\": 12, \"name\": \"Man\"}";
+		 obj = new JSONObject(jsonStr);
+		 System.out.println(obj.getInt("roll") + " " + obj.getString("name"));
+
+Note: Presume that we've Student(int roll, String name) POJO.
+
+Example: List<T> to JSON string.
+
+ List<Student> students = new ArrayList<>();
+ students.add( new Student(10,"A") );
+ students.add( new Student(30,"B") );
+
+ JSONArray arr = new JSONArray(students);
+ String jsonString = arr.toString();
+ System.out.println( jsonString );
+
+Example: Receive the country's id and name and also return the "country" data in the form of JSON string.
+
+1. Create Country(id,name) POJO
+2. code in doPost of "country" CountryServlet
+
+String id = request.getParameter("id");
+String name = request.getParameter("name");
+	    
+Country c = new Country(Integer.parseInt(id),name);
+     
+response.setContentType("application/json");
+response.getWriter().write( new JSONObject(c).toString() );
+response.getWriter().flush();
+
+3. Client code ( in any .jsp or .html page) country.jsp
+
+<input type="number" id="id" placeholder="Country Id"/>
+<input type="text" id="name" placeholder="Country Name"/>
+<button onclick="doRequest()">Save</button>
+
+<script>
+ let cid = document.querySelector('#id');
+ let cname = document.querySelector('#name');
+  function doRequest() {
+	  let xhr = new XMLHttpRequest();
+	  xhr.open("post","test");
+	  let data = new FormData();
+	  data.set("id", cid.value);
+	  data.set("name", cname.value);
+	  xhr.onreadystatechange = function() {
+          if(xhr.DONE == xhr.readyState ) {
+              console.log( xhr.responseText);
+              let obj = JSON.parse(xhr.responseText);
+              console.log( obj );
+              console.log( obj.id, obj.name );
+           }
+	  };
+	  xhr.send(data);
+   }
+</script>
+
+Example: Wrap up the "AJAX" code and other JavaScript code into resulable "functions".
+
+1. Create /js/my.js (or any ther name you like) with following code:
+
+function ajax(method,url,data, callback ) {
+  let xhr = new XMLHttpRequest();
+  xhr.open(method, url);
+  xhr.onreadystatechange = function() {
+    if( xhr.DONE == xhr.readyState ) {
+        callback( xhr.responseText );
+     }  
+   };
+  xhr.send(data);
+ }
+function post(url,data,callback) { ajax("post",url,data,callback); }
+function get(url,data,callback) { ajax("get",url,data,callback); }
+function val(id, value) {
+ if(value) {
+   return document.querySelector(id).value = value;
+  }
+  return document.querySelector(id).value;
+}
+function html(id, value) {
+  if(value) {
+   return document.querySelector(id).innerHTML = value;
+  }
+  return document.querySelector(id).innerHTML;
+}
+
+And client code to send / read the data
+  <input type="number" id="id" />
+  <input type="number" id="name" />
+
+  <script src="js/my.js"></script>  
+  <script>
+     post("country",null, function(result) {
+        let obj = JSON.parse(result);
+        val('#id', obj.id);
+        val('#name', obj.name);
+      });
+  </script>
+
+Example: Design a /country servlet which receive the data to perform add, delete, update, serach and also returns the list of countries in the form of JSON.
+
+In this sample, we will create a POJO which represent the structure of JSON data.
+
+Step-1 Create a POJO named ResponseData
+
+public class ResponseData {
+   private String message;
+   private boolean status;
+   private Object data;
+   //TODO
+}
+
+Now, design the doPost method to receive data 
+
+            String id = request.getParameter("id");
+	    String name = request.getParameter("name");
+	    String action = request.getParameter("action");
+	    
+	    ResponseData rd = new ResponseData();  
+	    
+	    if("Add".equals(action)) {
+	    	//TODO
+	    	rd.setMessage("Added");
+	    	rd.setStatus(true);
+	    } else  if("Delete".equals(action)) {
+	    	//TODO
+	    	rd.setMessage("Failed");
+	    	rd.setStatus(false);
+	    } else  if("Update".equals(action)) {
+	    	//TODO
+	    	rd.setMessage("Update");
+	    	rd.setStatus(true);
+	    } else  if("Get".equals(action)) {
+	    	//TODO
+	    	rd.setData(new Country(10,"UK"));
+	    	rd.setStatus(true);
+	    } else  if("All".equals(action)) {
+	    	//TODO
+	    	List<Country> list = new ArrayList<>();
+	    	list.add(new Country(2,"Nepal"));
+	    	list.add(new Country(12,"PK"));
+	    	list.add(new Country(32,"India"));
+	    	rd.setStatus(true);
+	    	rd.setData(list);
+	    }
+        response.setContentType("application/json");
+        response.getWriter().write( new JSONObject(rd).toString() );
+ 	    response.getWriter().flush();
+
+     
+Client code:
+  let d = new FormData();
+  d.set("action","Get");
+  d.set("id","10");
+  d.set("name","AA");
+  post("country",d,function(r) { console.log(r); } );
 
 
+Client code:
 
-
+<script>
+    let d = new FormData();
+    d.set("action","All");
+    d.set("id","20");
+    d.set("name","Japan");
+    post("country",d, function(result){
+          let obj = JSON.parse( result );
+          console.log( obj );
+          console.log( obj.data );
+	  });
+ </script> 
 
 
 

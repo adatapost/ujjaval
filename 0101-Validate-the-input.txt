@@ -1,0 +1,52 @@
+Input Validation using JavaScript
+=================================
+
+You can prevent a <form> to be submit using returning false value on click handler of "submit" button.
+
+1. 
+<form method="post" action="emp">
+  .....
+  <button name='cmd' 
+          value='Delete' onclick='return confirm("Are you sure to delete this record?")'>
+      Delete the Employee
+  </button>
+</form>
+
+
+Note: confirm() return false when you click on "Cancel" button in dialog.
+
+2. 
+
+ <form method="post"> 
+   <input type="number" id="no1" />
+   <button name="cmd" value="Add"
+           onclick="return doSubmit()">Add</button>
+  </form>
+
+  <script>
+    let no1 = document.querySelector('#no1');
+    function doSubmit() {
+       if(!no1.value) return false;
+       if(parseInt( no1.value )<1) return false;
+       return true;
+     }
+   </script>
+  
+3. Invoke hanlder using "non submit button" adn calling the method "form#submit()"
+
+<form method="post" id="form1">
+   <input type="number" id="no1" />
+   <button type="button"
+           onclick="doSubmit()">Add</button>
+</form>
+  <script>
+    let no1 = document.querySelector('#no1');
+    let form1 = document.querySelector('#form1');
+    function doSubmit() {
+       if(no1.value &&  parseInt( no1.value )>0)
+          form1.submit();
+     }
+   </script>
+
+
+

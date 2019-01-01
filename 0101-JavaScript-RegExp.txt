@@ -1,0 +1,125 @@
+The RegExp - Regular Expression object
+=======================================
+A text compare/match mechanism using Regualar Expression APIs.
+
+Regular Expression uses "character-class" to define the pattern and you can use the "pattern" to compare the text, split the text or replace the text.
+
+Character classes
+------------------
+Char	Meaning
+----    ----------
+.	It matches any character
+[]	It matches any char from the set
+()	It matches any "group"
+\d	It matches a digit
+\D	It matches a non-digit
+\w	It matches a word char
+\W	It matches a non-word char
+\s	It matches a whitespace
+\S	It matches a non-whitespace
+
+Quantifiers chacters
+?	It represents zero or one character
+*	It represents zero or more characters
++ 	It represents one or more characters
+x{n}	It represents exact "n" chars
+x{n,m}  It represents "n to "m" chars (range)
+
+Example:
+
+<script>
+   //Create a RegExp object
+   // 1. Use pair of forward slash e.g  let re = //;
+   // 2. Use RegExp object. e.g  let re = new RegExp();
+ 
+   let re = /and/;  // Pattern to search 'and' text
+   let str = "The word and is search in this text by regular expression method";
+   if(re.test(str)) {
+      console.log( "Found" );
+   } else {
+      console.log("Not found");
+   }
+</script>
+
+You can search for "exact" pattern by setting boundary char class:
+ ^   Begin of text
+  $  End of text
+
+<script>
+  let re=/and/;
+  let str = 'anand';
+  console.log(re.test(str) ); //true
+  re = /^and$/;
+  console.log(re.test(str) ); //false
+</script>
+
+Example: Create a pattern:
+
+        First char must be any alphabet from p or q or h
+        Second char must be any digit
+	third char must be either a,b,c,or d
+	Last two char must be digits
+
+<script>
+  let re = /^[pqh][0-9][abcd][0-9][0-9]$/
+  let str = 'p0a10';
+  console.log( re.test(str) ); // true
+  console.log( re.test('g0a10) ); // false
+  console.log( re.test('h9d99') ); // true
+  console.log( re.test('h9d990') ); // false
+</script>
+
+Example: Some more patterns
+
+ let re = /^[pqh]\d[abcd]\d\d$/;
+ let pin = /^\d{6}$/;   
+ console.log( pin.test('2323238') );
+ //text tht contains alphabets, and digits - use \w
+ let identifier = /^\w*$/;
+ console.log( identifier.test('Hello') ); // * means zero more - true
+ console.log( identifier.test('') ); // true
+ console.log( identifier.test('10') ); // true
+ console.log( identifier.test('&10') ); // false
+
+ //Person name - Alphabets (upper/lower) and whitespace
+  let personName = /^[a-zA-Z ]+$/;  // + mean one or more
+  console.log( personName.test('Raj') );
+  console.log( personName.test('Raj Kumar') );
+  console.log( personName.test('R.K') ); // false
+
+ //Text without whitespaces
+ let noWhiteSpace = /^\S+$/;
+
+ //group ( ) - color name group
+ let color = /^(red|blue|green)$/;
+ console.log( color.test('black') ); //false
+ console.log( color.test('blue') ); //true
+
+ //Email - simple
+ let email = /^\w+[@]\w+[.]\w+]$/';
+ console.log( email.test('aa@aa.com') ); // true
+ console.log( email.test('aa@aa.co.in') ); // false
+ 
+ //Improved email
+ let email = /^\w+([.]\w+)*[@]\w+([.]\w+)+$/;
+ console.log( email.test('a.a.a@a.a.a.a') ); // true
+
+
+Regular Expression Java API - java.util.regexp package
+--------------------------------------------------------
+Pattern class define the pattern whereas Matcher saves the math result.
+
+Example:
+1. Pattern.matchers(patternStr, dataStr) returns boolean and it also add boundary matcher char.
+
+String str = "123";
+System.out.println(Pattern.matches("\\d\\d\\d", str));
+		
+
+2. Custom pattern and it don't include bounday marker
+		
+Pattern pattern = Pattern.compile("\\d+");
+Matcher matcher = pattern.matcher("Pin 384832 belongs to Patan");
+System.out.println(matcher.find());
+		
+Note: To form a pattern, escape the character class e.g \\d or \\w 

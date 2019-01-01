@@ -1,0 +1,170 @@
+jQuery - a JavaScript DOM library
+---------------------------------
+This is an open source JavaScript library which offer cross-browser compatible and CSS3 standard paradigm.
+
+We can write JavaScript directly into our app but our code might not run in order browsers or other browsers which are not installed in our development enviornment. The only reason is different browser implements different standard of ES or JavaScript. For instance, internet explorer (which is now dead) support ECMA 5 or below. Some where some of the browsers are not updated due to one or more reasons. So, the jQuery gaurantee that the code written using 'jQuery' library must be executed on different impl. of JavaScript.
+
+How to use jQuery in our project?
+
+Goto "jquery.com" and download .js file. There are two types of jQuery.js :
+   1. For production -- which is also known as "minified" or "compressed" or "zipped" so it can be 	easily download at client because of "small" size.
+
+      Always use "production" distribution.
+
+  2. For developers -- wish to learn jQuery lib or to contribute.
+
+You can also use "production ready" CDN - content delivery network from goole, microsoft etc.
+At CDN, we have a bug-free and latest build of jquery for 24 x 7 .
+
+After downloading, copy the .min.js into your project folder. For instance /js/jquery-3.1.1.min.js
+
+To use the jquery.js, embed the .js in your web page:
+
+ <script src="js/jquery-x-x-x.js"></script> 
+
+Note: It is good practice to embed ".js" at the end of document and just before the closing of </body> tag.
+
+
+Example: In all example, we will assume that we've already embed the jquery.min.js 
+
+<script src="js/jquery-3.3.1.min.js"></script>
+ 
+<script>
+  //To refer the jQuery object and its methods, 
+  //use window.$ or window.jQuery variables
+
+  $("*").css("color","red");   
+</script>
+
+
+1. Select the HTML objects using  $(selector) syntax.
+
+   jQuery uses "CSS" style selector to collect/select the HTML object
+
+   $("*") -- It select all HTML objects
+
+   $("h1") -- It select all HTML object (by element name) of h1
+  
+   $(".css-class") --  Any pattern begins with . is a class selector
+
+   $("#id")   -- Any pattern begins with # is id selector
+  
+   $("selector1 selector2") - Children selector
+
+   $("selector1+selector2") -- Sibling selector
+ 
+   $("selector1>selector2") -- Child selector
+
+   
+ All above mentioned syntax returns a "node" or "nodeList" wrapped into jQuery object and you may call jquery methods/functions after selecting the DOMs.
+
+ For instance,
+
+  $("*").css("color","red").css("border","1px solid blue");
+    ^     ^                    ^
+    |     |                    |-- again you can select same or diff method from jquery object ref
+nodeList  jquery method which returns
+		jquery object after
+		setting css property  
+
+
+ In short, the above behavior is known as "chain of method" call.
+
+Note: Not all jquery method supports "chain of method" call. Those method which returns simple text data can't consider as "chain of method" call.
+   
+
+Example - html() method to set or get the innerHTML of one or more object
+
+<h1>Hello World</h1>
+
+<script>
+  console.log( $("h1").html() );  // Hello World
+  //set the html
+  $("h1").html("This is <small>small</small> text with <em>Emphesis</em>.");
+</sript>
+
+Example: css() - to set/get css style property
+
+<div id="output"></div>
+
+<script>
+  $("#output").html("Welcome to jQeury session!")
+              .css("color","#f00")
+              .css("background-color","yellow");
+</script>
+
+Example: attr() - to set/get attribute
+
+<input type="text">
+
+<script>
+  $("input[type=text]").attr("type","radio");
+</script>
+
+Example:  
+ <input type="text" value='10' />
+ <script>
+   console.log( $('input[type=text]').attr('value') );
+ </script>
+
+Example - val() to set/get value to input and select elements.
+
+<input type='number' id='no1'/>
+<input type='number' id='no2'/>
+<div id="out"></div>
+<button onclick="doAdd()">Sum</button>
+
+<script>
+ function doAdd() {
+   let s = parseFloat(  $('#no1').val() ) + parseFloat(  $('#no2').val() );
+   $('#out').html('Result ' + s).css("color","red");
+ }
+</script>
+
+Example:
+<input type='text' id='no'/>
+<input type='text' id='name'/>
+<script>
+  let emp = { "id": 10, "name": "Reena" };
+  $('#no').val( emp.id );
+  $('#name').val( emp.name );
+</script>
+
+Example: hide([interval]) and show([interval]) or toggle([interval]) -- Hide or show or toggle 
+         
+<h1>This is something..</h1>
+<button onclick='doTest()'>Show</button>
+
+<script>
+  $('h1').hide();
+  function doTest() {
+    $('h1').show();
+  }
+</script>
+
+For delay actions, $('h1').show(1000);  set time in milliseconds
+
+For hide/show vice-versa:
+  
+  function doTest() {
+    $('h1').toggle(1000);  // $(..).toggle() -- no delay
+  }
+
+Example: text() -- to set/get the 'text - plain text' inside the innerHTML. In JavaScript, this property is attributed by innerText.
+
+<div id="a1"></div> 
+<div id="a2"></div>
+ 
+<script>
+ $('#a1').html('<h2>This</h2><h3>is</h3> the innerHTML')
+  $('#a2').text('<h2>This</h2><h3>is</h3> the innerHTML')
+  
+  console.log( $('#a1').text() );
+ console.log( $('#a2').text() );
+</script>
+  
+
+ 
+
+ 
+

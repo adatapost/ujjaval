@@ -1,0 +1,19 @@
+Never store plain text passwords into data store.
+-------------------------------------------------
+Always use "HASH" technique to compute "HASH" of the plain text password and then save into data store or compare against another hash.
+
+    
+Example: Produce the hash
+
+	    String plainPassword = "admn,1234";
+	    java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA");
+	    byte []hashBytes = md.digest( plainPassword.getBytes());
+	    
+	    String hashPassword = java.util.Base64.getEncoder().encodeToString(hashBytes);
+	    System.out.println(hashPassword);
+
+Base64 - is a common strategy to produce "printable character" equilvalent to "non printable or control" characters. Basically, some of the non printable or control characters are not accepted by the DBMS as well as http standard. So different tools and in this case we have to convert non-printable to printable chars using Base64 method.
+
+Base64 has Encoder which convert "bytes into" printable strings/bytes and
+           Decoder which converts encoded strings/bytes to "raw bytes"
+

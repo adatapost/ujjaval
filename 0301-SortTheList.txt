@@ -1,0 +1,30 @@
+Sort the List<T>
+=================
+
+To sort the List<T>, we have to use java.util.Comparator<T> interface and have to override the 
+int compare(T o1, T o2) method. This method must returns 0 if two objects are equls, returns >0 if first object is greater than second and returns <0 if o1<o2.
+
+//Assume that we've ArrayList<Product> --- Product(id,name,rate)
+
+list.sort( (p,q) -> p.getId() - q.getId() );  // Sort by ID
+for(Product p : list)
+   System.out.println(p.getId() + " " + p.getName() + " " + p.getRate());
+
+list.sort( (p,q) -> p.getName().compareTo(q.getName()) );  // Sort by name - asc order
+//Print the list - TODO
+
+list.sort( (p,q) -> q.getName().compareTo(p.getName()) );  // Sort by name desc order
+//Print the list - TODO
+
+
+Sort the JavaScript arrays 
+---------------------------
+
+let emps = [{"id": 10, "name": "Zakir" }, ....... ];
+
+emps.sort( (p,q)=> p.id - q.id );  // Sort by id in asc order
+emps.sort( (p,q)=> q.id - p.id );  // Sort by id in asc order
+emps.sort( (p,q)=> p.name.localeCompare(q.name) );  // Sort by name
+
+
+

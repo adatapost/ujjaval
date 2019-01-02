@@ -1,0 +1,108 @@
+Example:  Create an object and append it to an exsting dom
+
+MEthods:
+1. $("<elementName>") -- Creates an object
+2. obj.append( newDom ) -- Append the "newDOM" into "obj" 
+3. newDOM.appendTo ( existingDom ) -- Append the "newDOM" into" the existingDOM
+4. remove() - Remove the object
+
+
+<div id="output"></div>
+
+<script>
+  let a1 = $("<button>");
+  a1.html("OK").css("color","green");
+
+  let h1 = $("<h1>").html("Hello World");
+
+  //append these two objects into #output
+
+  $('#output').append( a1 );
+  $('#output').append( h1 );
+  $('#output').append( $("<h3>").html("Heading3..") );  
+
+  //appdnTo method
+  $("<h4>").html("Heading4").appendTo( '#output' );
+</script>
+
+
+Example: Populate the <select>
+ <select id="city"></select>
+ <script>
+   let cities = ["Meh","Pat","Raj"];
+   for(let index in cities) {
+     $("<option>").html( cities[index] ).appendTo( '#city' );
+   }
+ </script>
+
+Example: We've product (id, name, unit, rate) list. Write code to display these data in "table" objects.
+
+Example: Update previous code and sort the produts when use click on "Id" label of the column,
+or "Name" or "Unit" or "Rate" label
+
+The document.body.onload event 
+------------------------------
+This is useful even and it will be fire when all elements/tags inside the "body" are loaded. In this handler you can attach your JavaScript code from the external source file which are embed at the end of and just before the </body> tag.
+
+
+<script>
+   console.log( $ );  // shows an error $ is undefined
+</script>
+<script src="js/jquery-3.3.1.js"></script>
+
+To solve the issue, move "jquery.js" statement before the <script> block OR use document.body.onload handler:
+
+
+<script>
+   document.body.onload = function() {
+      console.log( $ );  // OK
+   };
+</script>
+<script src="js/jquery-3.3.1.js"></script>
+
+To remove all doms use dom.empty() method. e.g $('#city').empty() -- In this method the children of specified DOM are removed.
+
+
+Example: Add some buttons and remove the clicked button
+
+<div id="city"></div>
+ <script>
+   let cities = ["Meh","Pat","Raj"];
+   for(let index in cities) {
+     $("<button")
+     .html( cities[index] )
+     .click( function() {
+         $(this).remove();
+     })
+     .appendTo( '#city' );
+   }
+ </script>
+
+The events in jQuery uses same name as "JavaScript" except "on" prefix is excluded.
+ $("h1").click( callback );
+ $("#btn").keyup( callback );
+
+To reference the currently active object, use $(this).
+
+The obj.on('eventName', callback) is another method to handle the event.
+
+  $('#btn').on('click', function() {
+     console.log('Something...');
+   });
+
+The addClass(), removeClass and toggleClass -- set/remove the css class selectors
+-------------------------------------
+<style>
+  .red { color: red; }
+  .border { border: 1px solid black; }
+</style>
+<h1>The Wonder of jQuery</h1>
+ <button id='b1'>Set Red Text</button>
+ <button id='b2'>Set Black Border</button>
+ <button id='b3'>Remove the Black Border</button>
+ <script>
+   $('#b1').on('click',()=> $('h1').toggleClass('red'));
+   $('#b2').on('click',()=> $('h1').addClass('border'));
+   $('#b3').on('click',()=> $('h1').removeClass('border'));
+ </script> 
+  

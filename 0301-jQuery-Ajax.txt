@@ -1,0 +1,126 @@
+jQuery Ajax methods
+====================
+There is a core function called "ajax()" which perform almost all actions but syntax of this method is complex. We need to pass "JSON" to specify the url, data, success, error and many more actions.
+
+Example: Assume that we've a /test (servlet and doGet impl.)
+
+$.ajax( {
+  "url": "test",
+  "success": function(result) {
+     console.log( result );
+  },
+  "method": "get"
+);
+
+For post request,
+
+$.ajax( {
+  "url": "test",
+  "success": function(result) {
+     console.log( result );
+  },
+  "method": "post",
+  "data":  { "key": "value1", "key1": "value2" },
+  "error": function(result) {
+     console.log('Error !!!');
+   }
+);
+
+We can also use "helper or shorthand ajax methods" - $.post, $.get and $.getJSON -- all three methods have common syntax:
+
+$.get("test", function(result) { console.log(result); } );
+$.post("test",{ "data": "value",..... },function(result) { console.log(result); } );
+$.getJSON("test",{ "data": "value",..... },function(result) { console.log(result); } );
+
+There is another method called "load()" which insert the response (output) into the innerHTML of the active DOM.
+
+
+For example,
+
+<div id="output"></div>
+<script>
+  $('#output').load('sample.txt');
+</script>
+
+We can use the 'load' to create a single page app.
+
+Example: Assume that we've home.jsp, about.jsp, contact.jsp , servlets which returns the 'HTML content' files.
+
+code in index.jsp/or index.html
+-----------
+
+<a href='#' onclick='loadUrl("home.jsp")'>Home</a>
+<a href='#' onclick='loadUrl("about.jsp")'>About us</a>
+<a href='#' onclick='loadUrl("contact.jsp")'>Contact us</a>
+
+<hr/>
+<div id="output"></div>
+
+<script>
+  function loadUrl(url) {
+     $("#output").load(url);
+  }
+</script>
+
+
+jQueryValidation Plugins -- https://jqueryvalidation.org/
+---------------------------------------------------------
+This piece of code is used to validate the client input (elements).
+
+1. Download the jqeury.js as well as jqueryValidation.js
+2. Copy them into your project folder
+3. Embed these documents -- First embed jquery.js and after the jquery.js, embed jquery validatiion.js
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/jquery.validate.min.js"></script> 
+
+<form method="post" id="form1">
+ <p><input type="number" id="id" required /> </p>
+ <p><input type="email" id="email" required /> </p>
+ <p><input type="text" id="name" required /> </p>
+ <p>
+ <button>Add</button> 
+ </p>
+</form>
+
+<script>
+   $('#form1').validate(); // bootstrap the #form1 for validation 
+</script>
+
+Customize the "rules" and "messages"
+-------------------------------------
+Pass the { "rules": { }, "messages": { } } JSON to the $('#form1').validation() method.
+
+<form methoh='post' id='form1'>
+  <input type='text' name='id'/>   <--- Attribute must be "name" (not an "id") for custom rules
+  <input type='text' name='email'/>
+  <input type='text' name='name'/>
+ <button>Add</button>
+</form>
+<script>
+   $('#form1').validate({
+	   "rules": {
+		    id: {
+			    required: true,
+			    number: true,
+			    range: [1,30]
+			    }, 
+		    email: {
+			    required: true,
+			    email: true
+			    },
+		    "name": {
+			    "required": true,
+			     maxlength: 30,
+			     minlength: 5
+			    }
+		   },
+              "messages": {
+                       "email": {
+                        	required: "Email is required",
+                        	"email": "Not a valid email"
+              			 }
+			   }
+    });
+
+

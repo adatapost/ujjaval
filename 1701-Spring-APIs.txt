@@ -1,0 +1,263 @@
+The spring maven project and spring API
+========================================
+
+There are number of ways to create a spring project but the easiest way is to inherit the "pre-configure maven" project template. i.e. create a new project from the "parent" project (exsting).
+
+You may either go to starter's web interface (website - start.spring.io) or use project template "spring starter project" to create a new artifact with dependencies.
+
+The folder structure of spring started project is same as "maven" except some other folders in "resources" folder.
+
+The spring framework automatically configure the app structure so we don't have to write any configure properties explicitly.
+
+The spring framework uses "Conventions over coding" strategy so most of the configuration of application and the components are done if we following standard naming conventions (Java's standard naming conventions). In fact there are two ways to configure the spring application:
+ 1. Using XML based documents and
+ 2. Using the annotations  (via code)
+
+What is annotation?
+
+   Annotation is a "type" in Java which is created using @interface statement and it used to
+   provide class or method specific meta-data to the underlying framework/platform.
+
+   We've use @Override annotation which is a "method-level".
+
+The spring API
+---------------
+The spring API or Spring Framework is an unbrella of projects or modules and spring-boot is one of the primary module through which an application of any category/type is defined. Along with spring boot, we have to add modules as per application requirements. The maven tool automatically download APIs from remote repositories to "local respository".
+
+The package "org.springframework" is the base package name and there will be some more packages under this package. e.g  for data module - org.springframework.data, 
+                         for jdbc - org.springframework.jdbc etc
+
+Spring boot module
+------------------
+This module s required for each spring app. It actually bootstrap the spring framework's core and underlying frameworks like JavaSE, and JavaEE's implementation. It also embed the "application server or container -e.g apache tomcat'. 
+
+In fact, this module is the entry point of spring application. Because the spring framework is opnionated (opnionated means free-form -- no restrictions for developers) so anybody can work on spring project --- whether it is a web app, service app, console app or GUI apps.
+
+The class level annotation named @SpringBootApplication bootstrap the project's entry point main method.
+
+For instance,
+
+@SpringBootApplication
+public class Application {
+   public static void main(String []args) {
+      SpringBootApplication.run( Application.class, args );  // Bootstrap the app
+   }
+}
+
+Or code in main method
+
+      SpringBootApplication app = new SpringBootApplication(Application.class);
+      app.run(args);
+
+Above piece of code is equivalent to creating a "context" in JavaEE web app into Apache-tomcat container and more than it.
+
+By default port of "container" will be 8080. e.g localhost:8080        
+
+Example: Create an app having - web,devtools, jdbc,mysql and thymleaf modules and configure JDBC url, username and password via application.properties file located at /resources/ folder.
+
+Step-1 Add following lines into application.properties
+
+spring.datasource.url=jdbc:mysql://localhost/sample_db
+spring.datasource.username=root
+spring.datasource.password=
+
+Step-2 and add some statements into main method of @SpringBootApplication class. 
+Step-3 Run/debug the app
+
+[Note: sample_db is the name of mysql database]
+
+
+The Dependency Injection - DI in spring framework
+=================================================
+The framework uses the "components" when they are required by the users' code. This "lazy" approach allows framework to optimize the code by not loading components very early but load them just before the actual use.
+
+No doubt, interfaces plays an important role in DI design and based upon the interfaces or their implementations (classes), the framework will decide what to do.
+
+For example, if your method requires a HttpSession object then you nust need to tell the DI framework that you need any (default) implementation of HttpSession in your code. Basically, DI is achieved via constructors.
+
+
+The @Component annotation
+--------------------------
+In order to submit the entire "class" to the spring framework, we have @Component annotation. This is general purpose annotation and used for many purposes.
+
+Here, we want to bootstrap a class whose "run" method automatically called when the application context is started. To do so, the class must impelements CommandLineRunner interface and marked as @Component 
+
+@Component
+class JdbcTest implements CommandLineRunner {
+   private JdbcTemplate jdbc;
+   public JdbcTest(JdbcTemplate jdbc) { this.jdbc = jdbc; }
+
+   @Override 
+   public void run(String..args) {
+     test1();
+   }
+   void test1() {
+      jdbc.execute("insert into dept (dept_name,location) values('HR','Meh')");
+   }
+   void test2(String name, String location) {
+         String sql = "insert into dept (dept_name,location) values(?,?)";
+         PreparedStatementCallback<Boolean> action = (PreparedStatementCallback<Boolean>) ps-> {
+            ps.setString(1,name);
+            ps.setString(2,location);
+            return ps.execute();
+         };
+         jdbc.execute(sql,action);
+   }
+}
+
+The Web MVC API
+---------------
+Assume that we've added "web" and "thymeleaf" dependencies.
+
+In order to implement the request-response based communication, the spring MVC API has two category of controllers:
+   1. For REST API -- Returns JSON string when they are requested
+   2. For Web - returns View (Html/CSS/JavaScript) as well as custom output.
+
+To create a rest controller, use @RestController annotation and for regular Web, use @Controller annotation.
+
+The Model in MVC is nothing but comopnent that represent/manage the data.
+
+The View in MVC is a web page (document) and in spring MVC, we have number of View Engines including JSP/EL/JSTL,  Thymeleaf, and many more.
+
+Architectural overview of Spring MVC
+--------------------------------------
+The Spring MVC uses "FrontController" -- a controller or class that receive the all requests from the clients and interpret the urls, data & instructions. After receiving the requests, FrontController or MainController dispatch the request to appropriate users' controllers.
+
+This single front controller is also known as "RouteEngine" or "Router" because it maps the controller classes and their methods via "urls". We've following method-level annotations to map the URLs:
+
+ 1. @RequestMapping(url) -- For any category of request (GET or POST)
+ 2. @GetMapping(url) - For GET request
+ 3. @PostMapping(url) - For POST request
+
+Example: Create a @RestController
+
+1. Create a class at appropriate package( say. com.domain.yourapp.controller)
+
+@RestController
+public class HelloController {
+   @RequestMapping("/welcome") //Or @GetMapping("/welcome")
+   public String sample1() {
+	   return "Welcome to the Spring MVC";
+   }
+   @GetMapping("/student")
+   public Student getStudent() {
+		return new Student(10,"Reema");
+	}
+}
+
+Note: Assume that we've Student class with roll and name fields
+
+We will use "Controller" suffix for better naming conventions for controller classes.
+
+2. Request these urls.
+
+    /welcome
+    /student 
+
+Passing the data via URLs
+-------------------------
+We can pass data like /product/10 <--- 10 is data
+                      /product/edit/20  <--- 20 is data
+
+The Mapping methods uses {varName} to register the @PathVariable
+
+Add following method in controller class:
+
+@GetMapping("/data/{no}")
+public Integer square( @PathVariable Integer no ) {
+  return no * no;
+}
+
+@GetMapping("/student/{name}/{roll}")
+public Student getStudent( @PathVariable String name, @PathVariable Integer roll) {
+  return new Student(roll, name);
+}
+
+Note: @PathVariable must be a sub-class of java.lang.Object -- Can't use primitive types.
+
+Creating the @Controller and the views of Thymeleaf
+====================================================
+Themeleaf documents must be saved/created inside the :
+  /resources/templates folder.
+
+  1. Create two pages under this folder:
+
+	index.html 
+        about.html
+
+  2.  Create a class
+
+@Controller
+public class HomeController {
+   @GetMapping("/")
+   public String index() {
+     return "index";  <----- "index" is the name of web page
+   }
+   @GetMapping("/about")
+   public String about() {
+     return "about";  <----- "about" is the name of web page
+   }
+}
+
+MEthods inside the @Controller/@RestController are known as "actions" or "action methods".
+Now, @Controller action returns a "viewName". i.e name of the "document/page" which is created under /resources/templates folder. If given "viewName" are not there (at /resources/templates) then there will be 404 error.  
+
+/resources/
+          |
+          |-------/static/
+                     In this folder we will add css, js, images etc resources
+          |
+          |-------/templates/
+			This folder contains .html and sub sub-folders to organize the views.
+                    index.html
+                    about.html
+                    login.html .....
+
+
+To organize your views (web pages), you can create a sub folder inside the "templates" folder.
+
+For instance,
+
+-------/templates/
+            |
+            |----/home/ 
+                       index.html, contact.html, about.html, login.html etc
+            |
+            |---/product/
+			index.html, list.html, create.html, edit.html, delete.html etc
+            |
+            |
+            |---/admin/
+	              |
+		      |------/user/
+		      |------/category/
+                      ....
+
+
+Now, to dispatch the "login" document, the action's return value:
+
+  @GetMapping("/login")
+  public String login() { return "home/login"; }
+
+
+  @GetMapping("/")
+  public String home() { return "home/index"; }
+
+
+  @GetMapping("/products")
+  public String list() { return "product/list"; }
+
+
+
+
+
+
+
+  
+
+
+
+
+     
+     
+

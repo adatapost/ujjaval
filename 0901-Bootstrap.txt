@@ -1,0 +1,24 @@
+Bootstrap (getbootstrap.com)
+=============================================================
+A CSS Framework developed top on the jQuery (Open source)
+
+For consistent appearence, (display or render content across the diff browers) bootstrap library is used. It provide basic infrastructure to manage the UI, component and script-components.
+
+Steps: Download the "bootstrap" zip, extract it (also download the jquery.js)
+       Copy the "css" and "js" (along with jquery.js) to your project
+
+code in web-document
+
+
+<head>
+    ...
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+</head>
+<body>
+ <div class='container'>
+
+ </div>
+ <script src='js/jquery.js'></script>
+ <script src='js/bootstrap.bundle.min.js'></script>
+</body>
+

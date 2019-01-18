@@ -1,0 +1,79 @@
+Spring Framework
+================
+
+A "Spring Framework" is JavaEE complient open source general purpose "Framework" developed upon the top of JavaSE. This FRAMEWORK is developed to ease the software development over other Java based frameworks.  
+
+The most important difference in Spring and other Java frameworks is the adoption of "Aspect Oriented Paradigm" or "Concernc oriented paradigm" by the Spring Framework. In fact "Aspect or concern defines the modularity". There are lots of "Modules" in "Spring Framework" and this set is also known as "spring I/O". 
+
+What do you meant by the term Object Oriented Paradigm?
+
+ Ans: It is program design "style".
+
+      The developer can re-use the code easily using this "style".
+
+      OS or sub or sub-platforms have nothing to do with program design styles. They are for
+      the developers/programmers.
+
+
+What do you meant by the term "Platform or Framework"?
+
+   A "platform" receive the "piece" of code and provide almost all types of services to fullfil    the demand.
+
+   In other words, a platform sounds like "Don't call us, we will call you?" Whatever you wish to perform or to do, please pass on to us, we will perform the actions as required if they are assigned to us as per our standard or protocols.
+
+   For example,  JavaSE, we just pass our .java files to the JavaSE (Language+JRE) and we've seen the result.
+
+   JavaEE, we've added code in the form of "Plain Java Object" or Servlets, Filters or EL/JSTL/JSP and we've seen the result and work of JavaEE.
+
+   The word platform or framework is also known as "Inversion of Control" or "Dependency Injection".
+
+    In Servlet sub class, we will get the objects like application context, request, response,
+    cookie, session and many more and with our surprises we didn't created them.  They are injected to our code by the platform and we've injected our code into JavaEE platform.
+
+     JavaEE implementation is not full Aspect-oriented and so we don't have access above mentioned
+      objects in our regular (non-servlet or non-filter) classes. Buuuut, we can if we have
+      ability to understand and implementation of Aspect oriented software developlment.
+
+
+The Spring Tools & APIs
+=======================
+
+Spring tools help us to define the project template or project structure for varying category of applications including desktop gui, console based app, web app or web service app. There are two ways to use the spring tools -- via IDE and the CLI (command line). We can use Eclipse, and IntelliJ idea IDEs or Visual Studio Code Editor to use the IDE/GUI spring tools.
+
+These tools implicitly uses other tools like build tools, project management & debug tools. We will uses "Apache Maven Project Management Tool" indirectly via Spring Tools+Eclipse.
+
+Apache's maven tool help us:
+  1. To create a project structure & configure the project for different types of tools & APIs
+  2. Build the entire project 
+  3. Testing of code -- unit testing
+  4. Download the dependencies of APIs (.jar files) from the remote repositories.
+  5. Deploy the application
+
+Maven tool and maven repository
+=================================
+Maven tool download the necessary dependencies from the remote "mavenrepository" and make a copy into local machine (e.g your_user\.m2\repositories) so these downloaded repositories are used by other projects. (offline repository).
+
+The project directory structure of maven project must be:
+
+ /app/
+     |
+     |---/main/	
+              |
+              |--/java 
+	      |--/resources
+     |---/test/	     --- For unit testing
+              |--/java 
+	      |--/resources
+    
+The .java code files must be placed inside the /java along with appropriate "packages".
+
+The "resources" folder contains static resource files e.g image, styles, js, properties, configuration or data files.
+
+Each project has a project object model pom.xml file which contains the current and parent (Inherit settings from exising project) projects, APIs and their dependencies.
+Under the project folder, there will be "mvn" script file whose content are "instructions" to the maven tool and maven tool perform actions as per script code.
+
+The maven uses "artifact" term to represent the API or library or an "application". Each artifact belongs to a group which is known as "groupId" and has a unique identity called "artifactId" along with version string.
+
+
+
+

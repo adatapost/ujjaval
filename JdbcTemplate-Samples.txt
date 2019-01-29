@@ -1,0 +1,137 @@
+The JdbcTemplate class -- a JDBC wrapper class from org.springframework.jdbc pakcage
+------------------------------------------------------------------------
+In this example, JdbcTemplate is injected via constructor and also our class is CommandLineRunner.
+
+
+@Component
+class JdbcTest implements CommandLineRunner {
+	private JdbcTemplate jdbc;
+	
+        //Dependency Injection
+	public JdbcTest(JdbcTemplate jdbc) {
+		this.jdbc = jdbc;
+	}
+	
+	@Override
+	public void run(String... args) throws Exception {
+		test3();
+	} 
+	void test3() {
+		jdbc.execute(
+				"insert into country (name) values (?)",
+				 (PreparedStatementCallback<Boolean>)ps->{
+					 ps.setString(1, "USA");
+					 return ps.execute();
+				 });
+	}
+	
+	void test2() {
+		String sql = "insert into country (name) values (?)";
+		PreparedStatementCallback<Boolean> action = new PreparedStatementCallback<Boolean>() {
+			@Override
+			public Boolean doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
+				 ps.setString(1, "Nepal");
+				 return ps.executeUpdate() ==1;
+			}
+		};
+		
+		jdbc.execute(sql, action);
+	}
+	void test1() {
+		String sql = "insert into country (name) values ('India')";
+		jdbc.execute(sql);
+	}
+}
+ 
+
+
+Read the result from database using JdbcTemplate's query methods
+================================================================
+
+Assume that we've emp table as well as "Emp" POJO
+
+create table emp
+(
+    emp_id int primary key AUTO_INCREMENT,
+    emp_name varchar(50) not null,
+    join_date date,
+    salary decimal(18,2)
+)
+1. jdbc.query("sql", RowMapper<T>) - Returns List<T>
+
+         void method1() {
+		String sql = "select * from emp";
+		List<Emp> emps = jdbc.query(sql,  new RowMapper<Emp>() {
+			@Override
+			public Emp mapRow(ResultSet rs, int rowNum) throws SQLException {
+				 Emp temp = new Emp();
+				 temp.setEmpId(rs.getInt(1));
+				 temp.setEmpName(rs.getString(2));
+				 temp.setJoinDate(rs.getDate(3));
+				 temp.setSalary(rs.getDouble(4));
+				 return temp;
+			}
+		});
+		
+		for(Emp e : emps)
+		  System.out.println(e);
+	    }
+
+2. jdbc.query(Prepared..Creator, ResultSetExtractor<T>)
+
+Based upon the need, pass the T type.
+To read single row, just pass the POJO but have more than one rows, pass List<T> or Set<T> or Map<T>
+
+
+String sql = "select * from emp where salary>=?";
+double salary = 5000;
+List<Emp> emps =jdbc.query(new PreparedStatementCreator() {
+ @Override
+  public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+	PreparedStatement ps=con.prepareStatement(sql);
+	ps.setDouble(1, salary);
+	return ps;
+  }
+ }, 
+ new ResultSetExtractor<List<Emp>>() {
+    @Override
+    public List<Emp> extractData(ResultSet rs) throws SQLException, DataAccessException {
+	List<Emp> emps = new ArrayList<>();
+	  while(rs.next()) {
+		Emp e = new Emp();
+		e.setEmpId(rs.getInt(1));
+		e.setEmpName(rs.getString(2));
+		e.setJoinDate(rs.getDate(3));
+		e.setSalary(rs.getDouble(4));
+		emps.add(e);
+	   }
+	return emps;
+    }
+});
+		 
+		 
+3. jdbc.query("sql",new Object[] { param1, param..} ,RowMapper<T>) : List<T>
+
+String sql = "select * from emp where salary>=?";
+List<Emp> emps=jdbc.query(sql, new Object[] { 6000 }, new RowMapper<Emp>() {
+ @Override
+  public Emp mapRow(ResultSet rs, int rowNum) throws SQLException {
+    as per previous sample
+  }
+});
+
+
+4.  
+ List<?> names = jdbc.queryForList("select * from emp");
+ System.out.println(names);
+
+method returns List<Map>
+5.
+List<?> names = jdbc.queryForList("select * from emp where salary>? and emp_name like ?",600, 
+  "%abc%");
+
+6. Use jdbc.update("sql", params...)
+
+jdbc.update("insert into emp (emp_name,join_date,salary) values (?,?,?)", value1,value2,value3);
+
+

@@ -1,0 +1,188 @@
+Passing "data" (Push data) from controller's action to the "View"
+=================================================================
+
+To pass or to push data from action to the View is done via:
+  
+  1. Injecting the "Model" object Or
+  2. Return an instance of ModelAndView object
+
+In Thymeleaf view, received data are rendered by the "Thymeleaf" syntax.
+
+Thymeleaf syntax uses "namespace (xmlns - xml namespace)" named "th" for the attributes of HTML object along with Expression Language's expression -- In the context of spring, this EL is known as SpringEL.
+
+To create a namespace, add "xmlns" attribute to the html element
+
+<!doctype html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+....
+
+Note that the "xmlns:th" is optional but if you wish to change the "namespace" then you might use your own namespace name.
+
+Example: 
+
+1. Create an action in controller class
+
+  @GetMapping("/")
+   public String index(Model model) {
+	   model.addAttribute("no",10);
+	   model.addAttribute("name","Reena");
+	   model.addAttribute("now", new java.util.Date());
+     return "home/index";  
+   }
+
+2. /templates/home/index.html
+
+<div th:text="${no}"></div>
+<p th:text="${now}"></p>
+<input type="text" th:value="${name}" />
+
+Alternative of "Model" is to returns the ModelAndView object:
+
+  @GetMapping("/")
+   public ModelAndView index() {
+	   ModelAndView mv = new ModelAndView("home/index");
+	   mv.addObject("no",10);
+	   mv.addObject("name","Meena");
+	   mv.addObject("now", new Date());
+     return mv;  
+   }
+
+Thymeleaf syntax
+=================
+
+1. th:text  - To insert the EL at innerHTML of an element.
+
+   <h1 th:text="${title}">Will insert title here</h1>
+
+2. EL expression can use any arithmetic, relational, logical or conditional operator
+
+   <p th:text="${10+20}"></p>
+   <p th:text="${10>20}"></p>
+   <p th:text="${10<20}"></p>
+   <p th:text="${10*20}"></p>
+   <p th:text="${no+20}"></p>
+
+ We can call methods as well as invoke the properties (getters)
+
+   <p th:text="${name.length()}"></p>
+   <p th:text="${now.date}"></p>
+   <p th:text="${now.month+1}"></p>
+   <p th:text="${now.year+1900}"></p>
+   <p th:text="${name.toUpperCase()}"></p>
+
+ For array elements,
+    <p th:text="${cities[0]}"></p>
+
+Example:  In action method
+
+    ...
+    mv.addObject("status",false);
+    mv.addObject("cities", new String[] { "Meh", "Pat" } );
+    ..
+
+and in .html,
+
+     <p th:text="${status ? 'Pass' : 'Fail'}"></p>
+     <p th:text="${cities[0]=='Meh' ? 'Mehsana' : 'Other City'}"></p>
+    
+3. Concatenate the string
+
+    There are two syntax:
+ 
+     1. th:attribute="{'Text...here' + ${expression}"
+
+Example:
+     <div th:text="'My roll no is : ' + ${no}"></div>
+     <p th:text="'Todays ' + ${now}"></p>
+
+     2. Enclose the text & expression into bars | 
+
+         th:attribute="|Text ...here ${expr}|"
+
+      <div th:text="|My roll is ${no}|"></div>
+      <div th:text="|My name is ${name}|"></div>
+      <div th:text="|Roll: ${no} Name : ${name}|"></div>
+
+4. th:each -- collection iterator
+
+   th:each="localVar : ${collection}"
+
+  Example:
+     <p th:each="city: ${cities}"  th:text="${city}"></p>
+
+     <select>
+       <option th:each="city: ${cities}"  th:text="${city}"></option>
+     </select>
+
+     <ul>
+       <li th:each="city: ${cities}"  th:text="${city}"></li>
+     </ul>
+
+5. th:if="${exp}"  --- Will hide if expr is false
+
+    The falsy values can be null or false
+
+   <div th:if="${cities}">
+       <h3>List of cities</h3>
+       <p th:each="c : ${cities}" th:text="${c}"></p>
+   </div>
+
+6. th:checked = "boolean-exp" -- will be checked if expr is true
+
+     <input type="checkbox" th:checked="${no==11}"  />   
+7. To form the URLs
+   Syntax:
+     @{/path/resource}
+
+    For example,
+
+        <a th:href="@{/home}">Home</a>
+        <a th:href="@{/home/about}">About</a>
+
+The "/static" resources and embed them via URL syntax.
+
+ In side the /static folder we may create "images", "css", "js" and any other folders which represent the "static" resources.
+
+Example: Assume that we've css and images folder inside the /static folder
+
+       <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+        <img th:src="@{/images/one.jpg}" width="100"/>
+        <a th:href="@{|http://www.abc.com?no=${no}&name=${name}|}">Goto Abc Site</a>      
+
+8. th:insert="url" -- insert specified url or resource into current HTML object 
+9. th:replace="url" -- Insert specified url/resource which replaces the current object
+
+/templates/
+          |
+          --/home/
+                 index.html
+                 news.html
+                 menu.html
+
+index.html
+------------
+<h1>Sample Site</h1>
+<div th:insert="/home/news"></div>
+
+<div th:insert="/home/menu"></div>
+
+Or we can use th:replace if we wish the content replaces the current HTML element.
+
+
+Example: Layout page for "user"
+
+1. Create "/templates/layout/user-header.html and
+2. Create "/templates/layout/user-footer.html and
+3. Copy the "bootstrap" and "js - jquery and others" into /static/css and /static/js folder
+4. Now, ad following code in /home/index.html and many others
+
+<div th:replace="/layout/user-header"></div>
+<h4>Welcome</h4>
+<div th:replace="/layout/user-footer"></div>
+   
+
+
+
+

@@ -1,0 +1,232 @@
+The JdbcTemplate - an interface to JDBC
+=======================================
+
+JdbcTemplate encapsulate the necessary operations of "Database" and allow us to write/execute SQL statements without adding extra code to load/register drivers, create/establish the connection and at end, to dispose the objects.
+
+JdbcTemplate class in injected to any class which is annotated with either @Component or @Controller
+
+Following are basic methods to execute SQL statements:
+
+JdbcTemplate's instance methods are:
+
+1. int update("sql",Parameters...)   -- This method should be used with all non-query Statements    (Other than SELECT) - It returns count of affected rows.
+
+We assume that there is a emp table having :
+create table emp
+(
+ emp_id int primary key auto_increment,
+ emp_name varchar(50) not null,
+ join_date date not null,
+ salary decimal(18,2)
+)
+
+We will use CommandLineRunner to test the Jdbc methods (And same methods can be used within the @Controller)
+
+@Component
+class JdbcTest implements CommandLineRunner {
+   private JdbcTemplate jdbc;
+
+   public JdbcTest(JdbcTemplate jdbc) {   // Dependency Injection
+      this.jdbc = jdbc;
+   }
+
+   @Override
+   public void run(String...args) {
+      int result = jdbc.update("insert into emp values (null,?,?,?)",
+                                                "Manish",new Date(),9000.34);
+      System.out.println(result);
+  }
+}
+
+For update an emp,
+
+    jdbc.update("update emp set emp_name=?, join_date=?, salary=? where emp_id=?",
+                      "New Name", new Date(), 49992, 1);
+
+And also use same "update()" method to delete an emp.
+
+    jdbc.update("delete from emp where emp_id=?",1);
+
+
+2. query() method - To read one or more rows -- execute the SELECT (query) statement
+
+   Syntax:  query("sql", RowMapper<T>, Params...) -- This method returns List<T>
+
+code in run method:
+
+
+List<Emp> list;
+            
+list = jdbc.query("select * from emp",new RowMapper<Emp>() {
+  @Override
+  public Emp mapRow(ResultSet rs, int rowNum) throws SQLException {
+	Emp t = new Emp();
+	t.setEmpId(rs.getInt(1));
+	t.setEmpName(rs.getString(2));
+	t.setJoinDate(rs.getDate(3));
+	t.setSalary(rs.getDouble(4));
+        return t;
+  }
+});
+
+for(Emp e : list) 
+   System.out.println(e);
+
+
+Note: We've Emp(empId:integer,empName: string,joinDate:Date, salary:double) POJO
+
+Design the Dao<T> for all tables we've created 
+===============================================
+
+1. Create a Dao<T> interface with:
+
+
+public interface Dao<T> {
+  booelan add(T obj);
+  booelan update(T obj);
+  booelan delete(T obj);
+  T get(T obj);
+  List<T> gets();
+  List<T> gets(int id);
+}
+
+2. Create the POJOs
+
+3. Create the Dao -- implements of Dao<T>
+
+@Component
+public class EmpDao implements Dao<Emp> {
+  private JdbcTemplate jdbc;
+  public EmpDao(JdbcTemplate jdbc) {
+     this.jdbc = jdbc;
+  }
+  @Override 
+  public boolean add(Emp obj) {
+    return jdbc.update("insert into emp values (null,?,?,?)",
+            obj.getEmpName(),obj.getJoinDate(), obj.getSalary()) == 1;
+  }
+  @Override 
+  public boolean update(Emp obj) {
+    return jdbc.update("update emp set emp_name=?, join_date=?,salary=? where emp_id=?",
+            obj.getEmpName(),obj.getJoinDate(), obj.getSalary(), obj.getEmpId()) == 1;
+  }  
+  @Override 
+  public boolean delete(Emp obj) {
+    return jdbc.update("delete from emp where emp_id=?",
+            obj.getEmpId()) == 1;
+  }  
+  
+ //Create a RowMapper<Emp> which will be used for all query() method
+
+ private RowMapper<Emp> rowMapper = new RowMapper<Emp>() {
+  @Override
+  public Emp mapRow(ResultSet rs, int rowNum) throws SQLException {
+	Emp t = new Emp();
+	t.setEmpId(rs.getInt(1));
+	t.setEmpName(rs.getString(2));
+	t.setJoinDate(rs.getDate(3));
+	t.setSalary(rs.getDouble(4));
+	return t;
+   }
+  };
+ @Override   
+ public Emp get(Emp obj) {
+ List<Emp> list=jdbc.query("select * from emp where emp_id=?", 
+						rowMapper, obj.getEmpId());
+  if(list.isEmpty()) return null;
+  return list.get(0);
+ }
+@Override
+public List<Emp> gets() {
+  return jdbc.query("select * from emp",rowMapper);
+}
+
+@Override
+public List<Emp> gets(int id) {
+  throw new RuntimeException("Not Implemented");
+}
+}//End EmpDao
+
+Now, Inject the EmpDao to CommandLineRunner or Controller and call the methods
+
+@Component 
+class JdbcTest implements CommandLineRunner {
+  private EmpDao dao;
+  public JdbcTest(EmpDao dao) {
+     this.dao = dao;
+  }
+  @Override public void run(String...args) {
+     System.out.println( dao.add( new Emp(0,"Amar",new Date(),65555));
+     System.out.println( dao.gets());
+  }
+}
+  
+Example: Add "EmpController" with index() and create() actions
+
+@Controller
+public class EmpController {
+	private EmpDao dao;
+	
+	public EmpController(EmpDao dao) {
+		this.dao = dao;
+	}
+	@RequestMapping("/emp")
+   public ModelAndView index() {
+	   ModelAndView mv = new ModelAndView("emp/index");
+	   mv.addObject("emps",dao.gets());
+	   return mv;
+   }
+	
+	@GetMapping("/emp/create")
+	public ModelAndView create() {
+		   ModelAndView mv = new ModelAndView("emp/create");
+		   Emp e = new Emp(0,"UUU",new Date(),5000);
+		   dao.add(e);
+		   mv.addObject("emp",e);
+		   return mv;
+	   }
+
+	@GetMapping("/emp/display/{id}")
+	public ModelAndView display(@PathVariable Integer id) {
+		   ModelAndView mv = new ModelAndView("emp/display");
+		   Emp e = new Emp(id);
+		   e = dao.get(e);
+		   if(e!=null)
+		        mv.addObject("emp",e);
+		   return mv;
+	   }
+}
+
+emp/index.html
+----------------
+<h5>List of Employees</h5>
+
+<table class="table table-bordered">
+ <tr th:each="e: ${emps}">
+    <td th:text="${e.empId}"></td>
+    <td th:text="${e.empName}"></td>
+    <td th:text="${e.joinDate}"></td>
+    <td th:text="${e.salary}"></td>
+ </tr>
+</table>
+
+emp/create.html
+-----------------
+<h5>Employee</h5>
+<p th:text="${emp.empId}"></p>
+<p th:text="${emp.empName}"></p>
+<p th:text="${emp.joinDate}"></p>
+<p th:text="${emp.salary}"></p>
+
+emp/display.html
+---------------
+
+<div th:if="${emp}">
+<h5>Employee</h5>
+<p th:text="${emp.empId}"></p>
+<p th:text="${emp.empName}"></p>
+<p th:text="${emp.joinDate}"></p>
+<p th:text="${emp.salary}"></p>
+</div>
+ 
+

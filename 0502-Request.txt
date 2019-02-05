@@ -1,0 +1,61 @@
+Read the "request" data    
+=======================
+
+There are number of ways to read the "requests" and these are following:
+
+ 1. HttpServletRequest -- You can inject the HttpServletREquest in your controller and action 			  method.
+
+Example: code in "HomeController"
+
+  @GetMapping("/home/create")
+   public ModelAndView create() 
+     return new ModelAndView("home/create");
+   }
+ 
+   @PostMapping("/home/create")
+   public ModelAndView create(HttpServletRequest request) {
+	   ModelAndView mv = new ModelAndView("home/create");
+	   mv.addObject("no", request.getParameter("no"));
+	   mv.addObject("name", request.getParameter("name"));
+     return mv;  
+   }
+create.html
+------------
+<form method='post' action='/home/create'>
+  <input type='number' name='no'/>
+  <input type='text' name='name'/>
+  <button>Submit</button>
+  <p th:text="|Data received ${no} and ${name}|"></p>
+</form>
+
+2. Second method is to add parameters whose name matches the form's input elements:
+
+Update:
+   @PostMapping("/home/create")
+   public ModelAndView create(Integer no, String name) {
+	   ModelAndView mv = new ModelAndView("home/create");
+	   mv.addObject("no", no);
+	   mv.addObject("name", name);
+     return mv;  
+   }
+
+3. Third method to pass a POJO/Bean whose propery names must matches the form's input elements
+public class Student {
+   private int no;
+   private String name;
+   //TODO
+}
+Update:
+  @PostMapping("/home/create")
+   public ModelAndView create(Student std) {
+	   ModelAndView mv = new ModelAndView("home/create");
+	   mv.addObject("no", std.getNo());
+	   mv.addObject("name",std.getName());
+     return mv;  
+   }
+
+
+
+====================================================
+
+

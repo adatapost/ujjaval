@@ -1,0 +1,409 @@
+Create-Read-Update-Delete Actions
+==================================
+
+1. Emp.java
+
+package com.adatapost.student.model;
+
+import java.util.Date;
+
+public class Emp {
+	private int empId;
+	private String empName;
+	private Date joinDate;
+	private double salary;
+	private String strJoinDate;
+	
+	
+	public String getStrJoinDate() {
+		return strJoinDate;
+	}
+	public void setStrJoinDate(String strJoinDate) {
+		this.strJoinDate = strJoinDate;
+	}
+	public Emp() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public Emp(int empId, String empName, Date joinDate, double salary) {
+		super();
+		this.empId = empId;
+		this.empName = empName;
+		this.joinDate = joinDate;
+		this.salary = salary;
+	}
+	public Emp(int empId) {
+		super();
+		this.empId = empId;
+	}
+	public int getEmpId() {
+		return empId;
+	}
+	public void setEmpId(int empId) {
+		this.empId = empId;
+	}
+	public String getEmpName() {
+		return empName;
+	}
+	public void setEmpName(String empName) {
+		this.empName = empName;
+	}
+	public Date getJoinDate() {
+		
+		return joinDate;
+		
+	}
+	public void setJoinDate(Date joinDate) {
+		this.joinDate = joinDate;
+		this.strJoinDate = U.toISO(joinDate);
+	}
+	public double getSalary() {
+		return salary;
+	}
+	public void setSalary(double salary) {
+		this.salary = salary;
+	}
+	@Override
+	public String toString() {
+		return "Emp [empId=" + empId + ", empName=" + empName + ", joinDate=" + joinDate + ", salary=" + salary + "]";
+	}
+	
+}
+
+
+2.  EmpDao.java
+
+package com.adatapost.student.model;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
+@Component
+public class EmpDao implements Dao<Emp> {
+	private JdbcTemplate jdbc;
+	
+	public EmpDao(JdbcTemplate jdbc) {
+		this.jdbc = jdbc;
+	}
+
+	 @Override 
+	  public boolean add(Emp obj) {
+	    return jdbc.update("insert into emp values (null,?,?,?)",
+	            obj.getEmpName(),obj.getJoinDate(), obj.getSalary()) == 1;
+	  }
+	  @Override 
+	  public boolean update(Emp obj) {
+	    return jdbc.update("update emp set emp_name=?, join_date=?,salary=? where emp_id=?",
+	            obj.getEmpName(),obj.getJoinDate(), obj.getSalary(), obj.getEmpId()) == 1;
+	  }  
+	  @Override 
+	  public boolean delete(Emp obj) {
+	    return jdbc.update("delete from emp where emp_id=?",
+	            obj.getEmpId()) == 1;
+	  } 
+	  
+	  private RowMapper<Emp> rowMapper = new RowMapper<Emp>() {
+		@Override
+		public Emp mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Emp t = new Emp();
+			t.setEmpId(rs.getInt(1));
+			t.setEmpName(rs.getString(2));
+			t.setJoinDate(rs.getDate(3));
+			t.setSalary(rs.getDouble(4));
+			return t;
+		}
+	};
+	  
+	@Override
+	public Emp get(Emp obj) {
+		List<Emp> list=
+				jdbc.query("select * from emp where emp_id=?", 
+						rowMapper, obj.getEmpId());
+		if(list.isEmpty()) return null;
+		return list.get(0);
+	}
+
+	@Override
+	public List<Emp> gets() {
+		return jdbc.query("select * from emp",rowMapper);
+	}
+
+	@Override
+	public List<Emp> gets(int id) {
+		throw new RuntimeException("Not Implemented");
+	}
+  
+}
+
+3. U.java
+
+package com.adatapost.student.model;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class U {
+	
+	public static String toISO(Date dt) {
+		return new SimpleDateFormat("yyyy-MM-dd").format(dt);
+	}
+	public static Date toDate(String str) {
+		try {
+			Date dt;
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			return sdf.parse(str);
+		}catch(Exception ex) {
+			
+		}
+		return null;
+	}
+
+}
+
+
+4. EmpController
+
+package com.adatapost.student.controller;
+
+import java.util.Date;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
+
+import com.adatapost.student.model.Emp;
+import com.adatapost.student.model.EmpDao;
+import com.adatapost.student.model.U;
+
+@Controller
+public class EmpController {
+	private EmpDao dao;
+	
+	public EmpController(EmpDao dao) {
+		this.dao = dao;
+	}
+	@RequestMapping("/emp")
+   public ModelAndView index() {
+	   ModelAndView mv = new ModelAndView("emp/index");
+	   mv.addObject("emps",dao.gets());
+	   return mv;
+   }
+	
+	@GetMapping("/emp/create")
+	public ModelAndView create() {
+		   ModelAndView mv = new ModelAndView("emp/create");
+		   mv.addObject("emp",new Emp());
+		   return mv;
+	   }
+	
+	@PostMapping("/emp/create")
+	public ModelAndView create(Emp model) {
+		   ModelAndView mv = new ModelAndView("emp/create");
+		   try {
+			   
+			   model.setJoinDate( U.toDate(model.getStrJoinDate()) );
+			    mv.addObject("message", dao.add(model) ? "Added" : "Can't add");   
+		   } catch(Exception ex) {
+			   mv.addObject("message","Error.. " + ex);
+		   }
+		   mv.addObject("emp",model);
+		   return mv;
+	   }
+	
+	@GetMapping("/emp/display/{id}")
+	public ModelAndView display(@PathVariable Integer id) {
+		   ModelAndView mv = new ModelAndView("emp/display");
+		   Emp e = new Emp(id);
+		   e = dao.get(e);
+		   if(e!=null)
+		        mv.addObject("emp",e);
+		   return mv;
+	   }
+	
+	
+	@GetMapping("/emp/edit/{id}")
+	public ModelAndView edit(@PathVariable Integer id) {
+		   ModelAndView mv = new ModelAndView("emp/edit");
+		   Emp e = new Emp(id);
+		   e = dao.get(e);
+		   if(e == null) 
+			   mv.setView( new RedirectView("/emp"));
+		   else 
+		       mv.addObject("emp",dao.get(new Emp(id)) );
+		   return mv;
+	   }
+	
+	@PostMapping("/emp/edit")
+	public ModelAndView edit(Emp model) {
+		   ModelAndView mv = new ModelAndView("emp/edit");
+		   try {
+			   
+			   model.setJoinDate( U.toDate(model.getStrJoinDate()) );
+			    mv.addObject("message", dao.update(model) ? "Update" : "Can't update");   
+		   } catch(Exception ex) {
+			   mv.addObject("message","Error.. " + ex);
+		   }
+		   mv.addObject("emp",model);
+		   return mv;
+	   }
+	
+	
+	
+	@GetMapping("/emp/delete/{id}")
+	public ModelAndView delete(@PathVariable Integer id) {
+		   ModelAndView mv = new ModelAndView("emp/delete");
+		   Emp e = new Emp(id);
+		   e = dao.get(e);
+		   if(e == null) 
+			   mv.setView( new RedirectView("/emp"));
+		   else 
+		       mv.addObject("emp",dao.get(new Emp(id)) );
+		   return mv;
+	   }
+	
+	@PostMapping("/emp/delete")
+	public ModelAndView delete(Emp model) {
+		   ModelAndView mv = new ModelAndView("emp/delete");
+		   try {
+			   if(dao.delete(model))
+				   mv.setView(new RedirectView("/emp"));
+			   else 
+				   mv.addObject("message","Please remove child record first");
+		   } catch(Exception ex) {
+			   mv.addObject("message","Error.. " + ex);
+		   }
+		   mv.addObject("emp",model);
+		   return mv;
+	   }
+}
+
+
+5.  Views
+
+index.html
+------------
+<div th:replace="/layout/user-header"></div>
+<h5>List of Employees</h5>
+
+<h5><a th:href="@{/emp/create}">New Employee</a></h5>
+<table class="table table-bordered">
+ <tr th:each="e: ${emps}">
+    <td th:text="${e.empId}"></td>
+    <td th:text="${e.empName}"></td>
+    <td th:text="${e.strJoinDate}"></td>
+    <td th:text="${e.salary}"></td>
+    <td>
+    <a th:href="@{|/emp/display/${e.empId}|}">Display</a>
+      <a th:href="@{|/emp/edit/${e.empId}|}">Edit</a>
+      <a th:href="@{|/emp/delete/${e.empId}|}">Delete</a>
+    </td>
+ </tr>
+</table>
+<div th:replace="/layout/user-footer"></div>
+
+create.html
+=============
+<div th:replace="/layout/user-header"></div>
+<h5>New Employee</h5>
+
+<h5><a th:href="@{/emp}">Back</a></h5>
+
+<form method="post" th:action="@{/emp/create}">
+   <input type="hidden" th:value="${emp.empId}" name="empId" />
+   
+   <p>
+    Name: <input type="text" th:value="${emp.empName}" name="empName"/>
+   </p>
+   
+      <p>
+    Join Date: <input type="date" th:value="${emp.strJoinDate}" name="strJoinDate"/>
+   </p>
+      <p>
+    Salary: <input type="number" th:value="${emp.salary}" name="salary"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button>Add</button>
+   </p>
+</form>
+ 
+<div th:replace="/layout/user-footer"></div>
+
+edit.html
+==========
+<div th:replace="/layout/user-header"></div>
+<h5>Edit Employee</h5>
+
+<h5><a th:href="@{/emp}">Back</a></h5>
+
+<form method="post" th:action="@{/emp/edit}">
+   <input type="hidden" th:value="${emp.empId}" name="empId" />
+   
+   <p>
+    Name: <input type="text" th:value="${emp.empName}" name="empName"/>
+   </p>
+   
+      <p>
+    Join Date: <input type="date" th:value="${emp.strJoinDate}" name="strJoinDate"/>
+   </p>
+      <p>
+    Salary: <input type="number" th:value="${emp.salary}" name="salary"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button>Update</button>
+   </p>
+</form>
+ 
+<div th:replace="/layout/user-footer"></div>
+
+delete.html
+===========
+<div th:replace="/layout/user-header"></div>
+<h5>Edit Employee</h5>
+
+<h5><a th:href="@{/emp}">Back</a></h5>
+
+<form method="post" th:action="@{/emp/delete}">
+   <input type="hidden" th:value="${emp.empId}" name="empId" />
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="${emp.empId}"></p>
+<p th:text="${emp.empName}"></p>
+<p th:text="${emp.joinDate}"></p>
+<p th:text="${emp.salary}"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button>Delete</button>
+   </p>
+</form>
+ 
+<div th:replace="/layout/user-footer"></div>
+
+display.html
+============
+<div th:replace="/layout/user-header"></div>
+
+<div th:if="${emp}">
+<h5>Employee</h5>
+<p th:text="${emp.empId}"></p>
+<p th:text="${emp.empName}"></p>
+<p th:text="${emp.joinDate}"></p>
+<p th:text="${emp.salary}"></p>
+</div>
+ 
+<div th:replace="/layout/user-footer"></div>
+
+
+
+

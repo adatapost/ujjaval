@@ -1,0 +1,94 @@
+Security Module -- Authentication & Authorization
+==================================================
+This module implicitly uses "Filters" and varying "Data Sources" including memory (InMemory - objects) and JDBC for authorization and authentication of the users -- especially ROLE BASED security system.
+
+Steps:
+
+1. Add "Security" module (via Edit Starts)
+2. CReate a sub class of WebSecurityConfigurerAdapater to overrride the "authentication" as well as authorize mechanism.
+ 
+Following example, uses in-memory -- a collection of objects of type "User" can store username, password and their roles.
+
+public class MyWebSecurity extends WebSecurityConfigurerAdapter {
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.inMemoryAuthentication()
+	.passwordEncoder(new PasswordEncoder() {
+            @Override
+	    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+		return true;
+ 	     }
+	     @Override	public String encode(CharSequence rawPassword) {
+			return rawPassword.toString();
+	      }
+	}).withUser("abc").password("abc").authorities("ROLE_USER")
+	  .and()
+	  .withUser("pqr").password("pqr").authorities("ROLE_ADMIN");
+	}
+
+
+   //Filter the requests -- allow or deny the users based upon the roles
+   @Override
+   protected void configure(HttpSecurity http) throws Exception {
+	 http.authorizeRequests()
+	  .antMatchers("/css/**","/js/**", "/","/about").access("permitAll")
+	  .antMatchers("/super/**").access("hasRole('SUPER')")
+	  .antMatchers("/admin/**").access("hasRole('ADMIN')")
+	  .antMatchers("/user/**").access("hasRole('USER')")
+	  .anyRequest().authenticated()
+	  .and()
+	  .formLogin()
+	  .loginPage("/login").access("permitAll")
+	  .and()
+	  .logout()
+	  .logoutUrl("/logout").access("permitAll");
+	}
+
+}
+Note that the ROLE name uses ROLE_ prefix with the authentication (in-memory or JDBC). Don't use the ROLE_ prefix while setting the authorization.
+
+
+Configure the Jdbc source for authentication:
+  1. Inject the JdbcTemplate object
+  2. code in configure --- AuthenticationManager
+
+  auth.jdbcAuthentication()
+	   .dataSource(jdbc.getDataSource())
+	   .passwordEncoder(new PasswordEncoder() {
+		@Override
+		public boolean matches(CharSequence rawPassword, String encodedPassword) {
+			return true;
+		}
+		
+		@Override
+		public String encode(CharSequence rawPassword) {
+		   return rawPassword.toString();
+		}
+	})
+	   .usersByUsernameQuery("select email,pass,active from view_user where email=?")
+	   .authoritiesByUsernameQuery("select email, name from view_user where email=?");
+    }
+
+
+insert into user .......
+
+select user_id from user where email=?
+
+
+ 
+
+View:
+
+create view view_user as  
+
+select user_profile.*,
+user.email,
+user.pass,
+user.role_id,
+user.active,
+role.name
+from user_profile
+right join   user on user.user_id = user_profile.user_id
+right join   role on role.id = user.role_id
+
+

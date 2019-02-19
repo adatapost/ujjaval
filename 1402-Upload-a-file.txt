@@ -1,0 +1,163 @@
+Upload a file
+===================
+
+To upload a file via a "jar" or "war" packging have different deployment folder.
+
+ In case if te "jar", deployment folder will be temporary (create at temp folder) - whose location
+ will be changed on each build+deployment.
+
+ In the case of "war", there will be a folder named "webapp" will be created and it referers the root of your webapp.
+
+ Example: Determine the root of your app
+
+ Use ServletContext's getRealPath method
+
+1. Inject the ServletContext object
+
+   public String index(ServletContext ctx, Model model) {
+      model.addAttribute("info", ctx.getRealPath("/") );
+      return "index";
+   }
+
+2. code in index.html
+
+  <p th:text="${info}"></p>
+
+So, if your app packing type is "war" then there will be a "fixed" location of folder and the folder name is "webapp" under the "src" folder.
+
+Example: Upload a file
+
+1. actions
+
+        @RequestMapping(value="/upload", method = RequestMethod.GET)
+	public String upload() {
+	  return "upload";
+	}
+	@RequestMapping(value="/upload", method = RequestMethod.POST)
+	public String upload(MultipartFile file, Model model) {
+	  if(file!=null) {
+	      String path = context.getRealPath("/" + file.getOriginalFilename());
+	      model.addAttribute("info", file.getOriginalFilename() 
+                        + " " + file.getSize() + "  " + file.getContentType() + "  " + path);
+               try {
+		  file.transferTo(new File(path)); // save a file
+		} catch (IOException e) {
+		  System.out.println(e);
+	 	}
+	   }
+	  return "upload";
+	 }
+2. upload.html
+ <form method="post" action="/upload" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <button>Submit</button>
+  </form>
+
+Note: If you want to save the file content into the database then use "byte[] file.getBytes()" method or "InputStream getInputStream()" to read the bytes.
+
+
+To enhance the upload capacity (upload huge files)
+--------------------------------------------
+Add following lines into application properties
+
+spring.servlet.multipart.max-file-size=1024MB
+spring.servlet.multipart.max-request-size=1024MB
+spring.http.multipart.enabled=false
+  
+
+Single action/view CRUD operations
+====================================
+
+<form method="post" action="/temp" >
+    <input type="number" name="no" th:value="${no}" />
+    <button name="cmd" value="Search">SEarch</button>
+    <input type="text" name="name" th:value="${name}" />
+    <button name="cmd" value="Add">Add</button>
+    <button name="cmd" value="Update">Update</button>
+    <button name="cmd" value="Delete">Delete</button>
+    <button name="cmd" value="Cancel">Cancel</button>
+  </form>
+  <p th:text="${message}"></p>
+  
+       @RequestMapping("/temp")
+	public String temp(Model model, HttpServletRequest req) {
+		String no = req.getParameter("no");
+		String name = req.getParameter("name");
+		String cmd = req.getParameter("cmd");
+		String message = "";
+
+		if ("Add".equals(cmd)) {
+			jdbc.update("insert into temp values (?,?)", no,name);
+          message = "Added";
+		}
+		if ("Update".equals(cmd)) {
+			message = "Updated";
+		}
+		if ("Search".equals(cmd)) {
+			message = "Searched";
+		}
+		if ("Delete".equals(cmd)) {
+			message = "Delete";
+		}
+		if ("Cancel".equals(cmd)) {
+
+		}
+		
+		model.addAttribute("no",no);
+		model.addAttribute("name",name);
+		model.addAttribute("message",message);
+
+		return "temp";
+	}
+
+
+
+Example: Store image (uploaded file content) into database
+
+create table sample (no int primary auto_increment, name varchar(30), photo longblob)
+
+
+Example: Upload a file
+
+1. actions
+
+        @RequestMapping(value="/upload", method = RequestMethod.GET)
+	public String upload() {
+	  return "upload";
+	}
+	@RequestMapping(value="/upload", method = RequestMethod.POST)
+	public String upload(MultipartFile photo, String name, Model model) {
+	  if(file!=null) {
+               jdbc.update("insert into sample values (null,?,?)",name, photo.getBytes());    
+	   }
+	  return "upload";
+	 }
+
+2. upload.html
+ <form method="post" action="/upload" enctype="multipart/form-data">
+    <input type="text" name="name"/>
+    <input type="file" name="photo"/>
+    <button>Submit</button>
+  </form>
+
+3. Read the photo by Id -- Add following action
+
+  @RequestMapping("/photo/{id}")
+  public void getPhoto(@PathVariable Integer id, HttpServletResponse resp) {
+      List<bytes[]> list = jdbc.query("select photo from sample where no=?",new RowMapper<byte[]>() {
+      public byte[] rowMapper(ResultSet rs, int len) {
+         return rs.getBytes(1);
+      }, id);
+     if(!list.isEmpty()) {
+        resp.setContentType("image/jpeg");
+        resp.getOutputStream().write( list.get(0) );
+        resp.getOutputStream().flush(); 
+     }   
+
+   }
+  }
+
+
+To show the image/photo :
+
+  <img src="/photo/2" />

@@ -1,0 +1,16 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>Delete Employee</h5>
+
+<h5><a th:href="@{/admin/category}">Back</a></h5>
+
+<form method="post" th:action="@{/admin/category/delete}">
+   <input type="hidden" th:value="${category.Id}" name="Id" />
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="${category.Id}"></p>
+<p th:text="${category.Name}"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/admin/footer"></div>

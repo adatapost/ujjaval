@@ -1,0 +1,43 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>New Medicine</h5>
+
+<h5><a th:href="@{/shop/medicine}">Back</a></h5>
+<form method="post" th:action="@{/shop/medicine/create}">
+   <input type="hidden" th:value="${medicine.Id}" name="Id" />
+   
+   <p>
+    Medicine name: <input type="text" th:value="${medicine.Name}" name="Name" class="form-control form-control"/>
+   </p>
+   <p>
+   Category:
+   <select class="form-control form-control" name="CategoryId">
+   	<option  th:each= "category :${categorys}"  th:value="${category.Id}" th:text="${category.Name}" ></option>
+   </select>
+   </p>
+   <p>
+   Company:
+   <select  class="form-control form-control" name="CompanyId">
+   	<option th:each= "company :${companys}" th:value="${company.Id}" th:text="${company.Name}" ></option>
+   </select>
+   </p>
+   <p>
+    Available : <textarea th:value="${medicine.Available}" name="Available" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    Prescribed : <textarea th:value="${medicine.Prescribed}" name="Prescribed" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    Unit: <input type="text" th:value="${medicine.Unit}" name="Unit" class="form-control form-control"/>
+   </p>
+   <p>
+    Reorder Level: <input type="text" th:value="${medicine.ReorderLevel}" name="ReorderLevel" class="form-control form-control"/>
+   </p>
+   <p><!-- temporary -->
+    ShopshopId: <input type="text" th:value="${medicine.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

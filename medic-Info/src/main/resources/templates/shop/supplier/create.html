@@ -1,0 +1,27 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>New Supplier</h5>
+
+<h5><a th:href="@{/shop/supplier}">Back</a></h5>
+<form method="post" th:action="@{/shop/supplier/create}">
+   <input type="hidden" th:value="${supplier.Id}" name="Id" />
+   <p>
+    Name: <input type="text" th:value="${supplier.Name}" name="Name" class="form-control form-control"/>
+   </p>
+   <p>
+    Address: <textarea th:value="${supplier.Address}" th:text="${supplier.Address}" name="Address" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    City: <input type="text" th:value="${supplier.City}" name="City" class="form-control form-control"/>
+   </p>
+   <p>
+    Phone: <input type="tel" th:value="${supplier.Phone}" name="Phone" class="form-control form-control"/>
+   </p>
+   <p>
+    ShopAdminId: <input type="text" th:value="${supplier.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

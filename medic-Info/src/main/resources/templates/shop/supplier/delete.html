@@ -1,0 +1,20 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>Delete Supplier</h5>
+
+<h5><a th:href="@{/shop/supplier}">Back</a></h5>
+
+<form method="post" th:action="@{/shop/supplier/delete}">
+   <input type="hidden" th:value="${supplier.Id}" name="Id" />
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="|Id: ${supplier.Id}|"></p>
+<p th:text="|Name: ${supplier.Name}|"></p>
+<p th:text="|Address: ${supplier.Address}|"></p>
+<p th:text="|City: ${supplier.City}|"></p>
+<p th:text="|Phone: ${supplier.Phone}|"></p>
+<p th:text="|ShopAdminId: ${supplier.User.Id}|"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

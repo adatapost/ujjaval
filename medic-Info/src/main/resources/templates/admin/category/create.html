@@ -1,0 +1,20 @@
+<div th:replace="/layout/admin/header"></div>
+<div class="row">
+    <div class="col-sm">
+<h5>New Category</h5>
+
+<h5><a th:href="@{/admin/category}">Back</a></h5>
+
+<form method="post" th:action="@{/admin/category/create}">
+   <input type="hidden" th:value="${category.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${category.Name}" name="Name"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button>Add</button>
+   </p>
+</form>
+</div>
+<div th:replace="/layout/admin/footer"></div>

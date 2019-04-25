@@ -1,0 +1,32 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Sale</h5>
+
+<h5><a th:href="@{/shop/sale/create}">New Sale</a></h5>
+<form method="post" th:action="@{/shop/sale/edit}">
+   <input type="hidden" th:value="${sale.Id}" name="Id" />
+   
+     <p>
+    Sale Date: <input type="date" th:value="${sale.SaleDate}" name="SaleDate" class="form-control form-control"/>
+   </p>
+   <p>
+    Customer: 
+   <select class="form-control form-control" name="CustomerId">
+   <option  disable="true" selected>Choose</option>
+   	<option  th:each= "customers:${customers}"  th:value="${customers.Id}" th:text="${customers.Name}" ></option>
+   </select> 
+   </p>
+   <p>
+    Doctor: 
+   <select class="form-control form-control" name="DoctorId">
+   <option  focus="false"disable="true" selected>Choose</option>
+   	<option  th:each= "doctors:${doctors}"  th:value="${doctors.Id}" th:text="${doctors.Name}" ></option>
+   </select> 
+    </p>
+   <p>
+    ShopAdminId: <input type="text" th:value="${sale.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+    <button type="submit" class="btn btn-warning">Update</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

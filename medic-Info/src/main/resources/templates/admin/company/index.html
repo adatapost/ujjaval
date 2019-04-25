@@ -1,0 +1,20 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>List of Companys</h5>
+
+<h5><a th:href="@{/admin/company/create}">New Company</a></h5>
+<table class="table table-bordered">
+ <tr th:each="company: ${companys}">
+    <td th:text="${company.Id}"></td>
+    <td th:text="${company.Name}"></td>
+    <td th:text="${company.Address}"></td>
+    <td th:text="${company.City}"></td>
+    <td th:text="${company.Website}"></td>
+    <td th:text="${company.Phone}"></td>
+    <td>
+    <a class="btn btn-primary" th:href="@{|/admin/company/display/${company.Id}|}">Display</a>
+      <a class="btn btn-warning" th:href="@{|/admin/company/edit/${company.Id}|}">Edit</a>
+      <a class="btn btn-danger" th:href="@{|/admin/company/delete/${company.Id}|}">Delete</a>
+      </td>
+ </tr>
+</table>
+<div th:replace="/layout/admin/footer"></div>

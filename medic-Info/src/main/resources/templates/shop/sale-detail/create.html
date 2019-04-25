@@ -1,0 +1,36 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>New SaleDetails</h5>
+
+<h5><a th:href="@{/shop/sale-detail}">Back</a></h5>
+<form method="post" th:action="@{/shop/sale-detail/create}">
+   <input type="hidden" th:value="${saleDetail.DetId}" name="Id" />
+   <p>
+   	Medicine Name:
+   	<select class="form-control form-control" name="MedicineId">
+   		<option  th:each= "medicine :${medicines}"  th:value="${medicine.Id}" th:text="${medicine.Name}" ></option>
+   	</select>
+   </p>
+   <p>
+   	Sale Date:
+   	<select class="form-control form-control" name="SaleId">
+   		<option  th:each= "sales :${sales}"  th:value="${sales.Id}" th:text="${sales.SaleDate}" ></option>
+   	</select>
+   </p>
+   <p>
+   Quantity: <input type="text" th:value="${saleDetail.Qty}" name="Qty" class="form-control form-control" >
+   </p>
+   <p>
+   Rate: <input type="text" th:value="${saleDetail.Rate}" name="Rate" class="form-control form-control" >
+   </p>
+   <p>
+   Discount: <input type="text" th:value="${saleDetail.Discount}" name="Discount"  class="form-control form-control" >
+   </p>
+   <p>
+    ShopAdminId: <input type="text" th:value="${saleDetail.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

@@ -1,0 +1,28 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>New Company</h5>
+
+<h5><a th:href="@{/admin/company}">Back</a></h5>
+<form method="post" th:action="@{/admin/company/create}" id="form1">
+   <input type="hidden" th:value="${company.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${company.Name}" name="Name"  required class="form-control form-control"/>
+   </p>
+   <p>
+    Address: <textarea required th:value="${company.Address}" name="Address" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    City: <input type="text" required th:value="${company.City}" name="City" class="form-control form-control"/>
+   </p>
+   <p>
+    Website: <input type="url" required th:value="${company.Website}" name="Website" class="form-control form-control"/>
+   </p>
+   <p>
+    Phone: <input type="tel" required th:value="${company.Phone}" name="Phone" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/admin/footer"></div>

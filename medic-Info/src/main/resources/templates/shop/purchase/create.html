@@ -1,0 +1,26 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>New Purchase</h5>
+
+<h5><a th:href="@{/shop/purchase}">Back</a></h5>
+<form method="post" th:action="@{/shop/purchase/create}">
+   <input type="hidden" th:value="${purchase.Id}" name="Id" />
+   
+   <p>
+    Purchase Date: <input type="date" th:value="${purchase.PurDate}" name="PurDate" class="form-control form-control"/>
+   </p>
+   <p>
+    Supplier Name: 
+   <select class="form-control form-control" name="SupplierId">
+   <option  disable="true" selected>Choose</option>
+   	<option  th:each= "suppliers :${suppliers}"  th:value="${suppliers.Id}" th:text="|${suppliers.Name}-${suppliers.City}|" ></option>
+   </select> 
+    </p>
+   <p>
+    ShopAdminId: <input type="text" th:value="${purchase.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

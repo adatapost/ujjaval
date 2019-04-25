@@ -1,0 +1,14 @@
+<div th:replace="/layout/admin/header"></div>
+
+<h5><a th:href="@{/admin/company}">Back</a></h5>
+<div th:if="${company}">
+<h5>Company</h5>
+<p th:text="|Id: ${company.Id}|"></p>
+<p th:text="|Name: ${company.Name}|"></p>
+<p th:text="|Address: ${company.Address}|"></p>
+<p th:text="|City: ${company.City}|"></p>
+<p th:text="|Website: ${company.Website}|"></p>
+<p th:text="|Phone: ${company.Phone}|"></p>
+</div>
+
+<div th:replace="/layout/admin/footer"></div>

@@ -1,0 +1,23 @@
+<div th:replace="/layout/shop/header"></div>
+<h4 class="text-center display-4 my-4">New Customer</h4>
+
+<h5><a th:href="@{/shop/customer}">Back</a></h5>
+<form method="post" th:action="@{/shop/customer/create}" class="form">
+   <input type="hidden" th:value="${customer.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${customer.Name}" name="Name" class="form-control form-control"/>
+   </p>
+   <p>
+    Address: <textarea th:value="${customer.Address}" name="Address" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    Phone: <input type="tel" th:value="${customer.Phone}" name="Phone" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+    <button class="btn btn-warning">Back</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

@@ -1,0 +1,30 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Suppliers</h5>
+
+<h5>
+	<a th:href="@{/shop/supplier/create}">New Supplier</a>
+</h5>
+<table class="table table-bordered">
+	<tr>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Address</th>
+		<th>City</th>	
+		<th>Phone</th>
+		<th>ShopAdminId</th>
+	</tr>
+	<tr th:each="supplier: ${suppliers}">
+		<td th:text="${supplier.Id}"></td>
+		<td th:text="${supplier.Name}"></td>
+		<td th:text="${supplier.Address}"></td>
+		<td th:text="${supplier.City}"></td>
+		<td th:text="${supplier.Phone}"></td>
+		<td th:text="${supplier.User.Id}"></td>
+		<td><a class="btn btn-primary"
+			th:href="@{|/shop/supplier/display/${supplier.Id}|}">Display</a> <a
+			class="btn btn-warning" th:href="@{|/shop/supplier/edit/${supplier.Id}|}">Edit</a>
+			<a class="btn btn-danger"
+			th:href="@{|/shop/supplier/delete/${supplier.Id}|}">Delete</a></td>
+	</tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

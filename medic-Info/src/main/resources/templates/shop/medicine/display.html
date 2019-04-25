@@ -1,0 +1,17 @@
+<div th:replace="/layout/shop/header"></div>
+
+<h5><a th:href="@{/medicine}">Back</a></h5>
+<div th:if="${medicine}">
+<h5>Medicine Details</h5>
+<p th:text="|Id:${medicine.Id}|"></p>
+	<p th:text="|Name:${medicine.Name}|"></p>
+	<p th:text="|Category: ${category.Name}|"></p>
+	<p th:text="|Company: ${company.Name}|"></p>
+	<p th:text="|Available: ${medicine.Available}|"></p>
+	<p th:text="|Prescribed: ${medicine.Prescribed}|"></p>
+	<p th:text="|Unit: ${medicine.Unit}|"></p>
+	<p th:text="|Reorder Level: ${medicine.ReorderLevel}|"></p>
+	<p th:text="|ShopshopId: ${medicine.User.Id}|"></p>
+</div>
+
+<div th:replace="/layout/shop/footer"></div>

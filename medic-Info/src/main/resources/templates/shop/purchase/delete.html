@@ -1,0 +1,23 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>Delete Purchase</h5>
+
+<h5><a th:href="@{/shop/purchase}">Back</a></h5>
+
+<form method="post" th:action="@{/shop/purchase/delete}">
+   <input type="hidden" th:value="${purchase.Id}" name="Id" />
+   
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="|Id: ${purchase.Id}|"></p>
+<p th:text="|Purchase Date: ${purchase.PurDate}|"></p>
+<h3>Supplier Details:</h3>
+<p th:text="|id: ${purchase.Supplier.Id}|"></p>
+<p th:text="|Name: ${purchase.Supplier.Name}|"></p>
+<p th:text="|Address: ${purchase.Supplier.Address}|"></p>
+<p th:text="|City: ${purchase.Supplier.City}|"></p>
+<p th:text="|ShopAdminId: ${purchase.User.Id}|"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

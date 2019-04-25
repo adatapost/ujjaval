@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title th:text="${title}">Medicine</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css"/>
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarTogglerDemo03"
+			aria-controls="navbarTogglerDemo03" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="#">EsyMedicix</a>
+
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item"
+					th:classappend="${title} == ' '? 'active' : '' "><a
+					class="nav-link" href="/admin/home">Home</a></li>
+					<li class="nav-item"
+					th:classappend="${title} == 'medicine'? 'active' : '' "><a
+					class="nav-link" href="/admin/medicine">Medicine</a></li>
+				<li class="nav-item"
+					th:classappend="${title} == 'company'? 'active' : '' "><a
+					class="nav-link" href="/admin/company">Company</a></li>
+				<li class="nav-item"
+					th:classappend="${title} == 'category'? 'active' : '' "><a
+					class="nav-link" href="/admin/category">Category</a></li>
+				<!--<li class="nav-item"><a class="nav-link disabled" href="#">Disabled</a> -->
+				</li>
+			</ul>
+			<ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+				<li class="nav-item active"><a class="nav-link" th:href="@{/logout}"><span
+						class="glyphicon glyphicon-log-out"></span>Logout</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+	<img src="/images/medicine-strip.jpg"/>
+<hr/>
+<div class='row'>
+  <div class='col-12'>
+  

@@ -1,0 +1,26 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>Delete Medicine</h5>
+
+<h5>
+	<a th:href="@{/admin/medicine}">Back</a>
+</h5>
+
+<form method="post" th:action="@{/admin/medicine/delete}">
+	<input type="hidden" th:value="${medicine.Id}" name="Id" />
+
+	<h5>Are you sure to remove this record?</h5>
+	<p th:text="|Id:${medicine.Id}|"></p>
+	<p th:text="|Name:${medicine.Name}|"></p>
+	<p th:text="|Category: ${category.Name}|"></p>
+	<p th:text="|Company: ${company.Name}|"></p>
+	<p th:text="|Available: ${medicine.Available}|"></p>
+	<p th:text="|Prescribed: ${medicine.Prescribed}|"></p>
+	<p th:text="|Unit: ${medicine.Unit}|"></p>
+	<p th:text="|Reorder Level: ${medicine.ReorderLevel}|"></p>
+	<p th:text="|ShopshopId: ${medicine.User.Id}|"></p>
+	<p th:text="${message}"></p>
+	<p>
+		<button type="submit" class="btn btn-danger">Delete</button>
+	</p>
+</form>
+<div th:replace="/layout/admin/footer"></div>

@@ -1,0 +1,32 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Sales</h5>
+
+<h5>
+	<a th:href="@{/shop/sale/create}">New Sale</a>
+</h5>
+<table class="table table-bordered">
+	<tr>
+		<th>Id</th>
+		<th>Sale Date</th>
+		<th>Customer Name</th>
+		<th>Customer Phone</th>
+		<th>Doctor Name</th>
+		<th>Doctor Phone</th>
+		<th>ShopAdminId</th>
+	</tr>
+	<tr th:if="${sale.Id}" th:each="sale: ${sales}">
+		<td th:text="${sale.Id}"></td>
+		<td th:text="${sale.SaleDate}"></td>
+		<td th:text="${sale.Customer.Name}"></td>
+		<td th:text="${sale.Customer.Phone}"></td>
+		<td th:text="${sale.Doctor.Name}"></td>
+		<td th:text="${sale.Doctor.Phone}"></td>
+		<td th:text="${sale.User.Id}"></td>
+		<td><a class="btn btn-primary"
+			th:href="@{|/shop/sale/display/${sale.Id}|}">Display</a> <a
+			class="btn btn-warning" th:href="@{|/shop/sale/edit/${sale.Id}|}">Edit</a>
+			<a class="btn btn-danger"
+			th:href="@{|/shop/sale/delete/${sale.Id}|}">Delete</a></td>
+	</tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

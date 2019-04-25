@@ -1,0 +1,22 @@
+<div th:replace="/layout/shop/header"></div>
+
+<h5><a th:href="@{/shop/sale}">Back</a></h5>
+<div th:if="${sale}">
+<h5>Sale</h5>
+	<p th:text="|Id: ${sale.Id}|"></p>
+	<p th:text="|Sale Date: ${sale.SaleDate}|"></p>
+	<h3>Customer Details:</h3>
+	<p th:text="|Id: ${sale.Customer.Id}|"></p>
+	<p th:text="|Name: ${sale.Customer.Name}|"></p>
+	<p th:text="|Address: ${sale.Customer.Address}|"></p>
+	<p th:text="|Phone: ${sale.Customer.Phone}|"></p>
+	<h3>Doctor Details:</h3>
+	<p th:text="|id: ${sale.Doctor.Id}|"></p>
+	<p th:text="|Name: ${sale.Doctor.Name}|"></p>
+	<p th:text="|Address: ${sale.Doctor.Address}|"></p>
+	<p th:text="|Phone: ${sale.Doctor.Phone}|"></p>
+	<p th:text="|ShopAdminId: ${sale.User.Id}|"></p>
+
+</div>
+
+<div th:replace="/layout/shop/footer"></div>

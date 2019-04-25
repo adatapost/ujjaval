@@ -1,0 +1,9 @@
+<div th:replace="/layout/admin/header"></div>
+
+<div th:if="${category}">
+<h5>Category</h5>
+<p th:text="${category.Id}"></p>
+<p th:text="${category.Name}"></p>
+</div>
+
+<div th:replace="/layout/admin/footer"></div>

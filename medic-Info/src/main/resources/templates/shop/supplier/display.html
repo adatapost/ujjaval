@@ -1,0 +1,14 @@
+<div th:replace="/layout/shop/header"></div>
+
+<h5><a th:href="@{/shop/supplier}">Back</a></h5>
+<div th:if="${supplier}">
+<h5>Supplier</h5>
+<p th:text="|Id: ${supplier.Id}|"></p>
+<p th:text="|Name: ${supplier.Name}|"></p>
+<p th:text="|Address: ${supplier.Address}|"></p>
+<p th:text="|City: ${supplier.City}|"></p>
+<p th:text="|Phone: ${supplier.Phone}|"></p>
+<p th:text="|ShopAdminId: ${supplier.User.Id}|"></p>
+</div>
+
+<div th:replace="/layout/shop/footer"></div>

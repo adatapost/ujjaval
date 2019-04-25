@@ -1,0 +1,18 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Customers</h5>
+
+<h5><a th:href="@{/shop/customer/create}">New Customer</a></h5>
+<table class="table table-bordered">
+ <tr th:each="customer: ${customers}">
+    <td th:text="${customer.Id}"></td>
+    <td th:text="${customer.Name}"></td>
+    <td th:text="${customer.Address}"></td>
+    <td th:text="${customer.Phone}"></td>
+    <td>
+    <a class="btn btn-primary" th:href="@{|/shop/customer/display/${customer.Id}|}">Display</a>
+      <a class="btn btn-warning" th:href="@{|/shop/customer/edit/${customer.Id}|}">Edit</a>
+      <a class="btn btn-danger" th:href="@{|/shop/customer/delete/${customer.Id}|}">Delete</a>
+      </td>
+ </tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

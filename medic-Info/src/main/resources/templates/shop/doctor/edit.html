@@ -1,0 +1,23 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Doctor</h5>
+
+<h5><a th:href="@{/shop/doctor/create}">New Doctor</a></h5>
+<form method="post" th:action="@{/shop/doctor/edit}">
+   <input type="hidden" th:value="${doctor.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${doctor.Name}" name="Name" class="form-control form-control"/>
+   </p>
+   <p>
+    Address: <textarea th:text="${doctor.Address}" name="Address" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    Phone: <input type="tel" th:value="${doctor.Phone}" name="Phone" class="form-control form-control"/>
+   </p>
+   
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-warning">Update</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

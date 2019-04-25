@@ -1,0 +1,19 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>Delete Customer</h5>
+
+<h5><a th:href="@{/shop/customer}">Back</a></h5>
+
+<form method="post" th:action="@{/shop/customer/delete}">
+   <input type="hidden" th:value="${customer.Id}" name="Id" />
+   
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="${customer.Id}"></p>
+<p th:text="${customer.Name}"></p>
+<p th:text="${customer.Address}"></p>
+<p th:text="${customer.Phone}"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

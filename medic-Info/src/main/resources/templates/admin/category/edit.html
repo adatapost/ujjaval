@@ -1,0 +1,17 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>List of Categorys</h5>
+
+<h5><a th:href="@{/admin/category/create}">New Category</a></h5>
+<form method="post" th:action="@{/admin/category/edit}">
+   <input type="hidden" th:value="${category.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${category.Name}" name="Name"/>
+   </p>
+   
+   <p th:text="${message}"></p>
+   <p>
+    <button>Update</button>
+   </p>
+</form>
+<div th:replace="/layout/admin/footer"></div>

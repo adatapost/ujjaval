@@ -1,0 +1,23 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Customer</h5>
+
+<h5><a th:href="@{/shop/customer/create}">New Customer</a></h5>
+<form method="post" th:action="@{/shop/customer/edit}">
+   <input type="hidden" th:value="${customer.Id}" name="Id" />
+   
+   <p>
+    Name: <input type="text" th:value="${customer.Name}" name="Name" class="form-control form-control"/>
+   </p>
+   <p>
+    Address: <textarea th:text="${customer.Address}" name="Address" class="form-control form-control"></textarea>
+   </p>
+   <p>
+    Phone: <input type="tel" th:value="${customer.Phone}" name="Phone" class="form-control form-control"/>
+   </p>
+   
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-warning">Update</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

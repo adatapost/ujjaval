@@ -1,0 +1,105 @@
+<div th:replace="/layout/header (title='New user registration')"></div>
+
+<h3 class="font-weight-light head-bg">
+	<span class="fas fa-edit space-5"></span>Registration
+</h3>
+
+<div class="row">
+	<div class="col-2"></div>
+	 <div class="col-10">
+		<div class="card">
+			<div class="card-body">
+				<form method="post" th:action="@{/registration}"
+					enctype="multipart/form-data" id="form1">
+					 
+					 <div class="form-group">
+						<label for="roleId">Register as <label class="indicate">*</label></label>
+						<select name="roleId" class='form-control'>
+						   <option value='2'>Shop Owner</option>
+						   <option value='3'>Customer</option>
+						</select>
+					</div>
+					 
+					 <div class="form-group">
+						<label for="email">Email <label class="indicate">*</label></label>
+						<input type="email" id="email" class="form-control" required
+							name='email' placehoder='Email' />
+
+					</div>
+					<div class="form-group">
+						<label for="pass">Password<label class="indicate">*</label></label>
+						<input type="password" id="pass" class="form-control" required
+							name='pass' placehoder='Password' /> </label>
+					</div>
+					 <div class="form-group">
+						<label for="lastName">Last Name <label class="indicate">*</label></label>
+						<input type="text" id="lastName" 
+						       class="form-control" required
+							   name='lastName' placehoder='Last Name' />
+
+					</div>
+					<div class="form-group">
+						<label for="firstName">First Name <label class="indicate">*</label></label>
+						<input type="text" id="firstName" 
+						       class="form-control" required
+							   name='firstName' placehoder='First Name' />
+
+					</div>
+					<div class="form-group">
+						<label for="address">Address<label class="indicate">*</label></label>
+						<textarea type="text" id="address" 
+						       class="form-control" required
+							   name='address' placehoder='address'></textarea>
+
+					</div>
+					
+					<div class="form-group">
+						<label for="city">City<label class="indicate">*</label></label>
+						<input type="text" id="firstName" 
+						       class="form-control" required
+							   name='city' placehoder='City' />
+
+					</div>
+					
+					<div class="form-group">
+						<label for="gender">Gender<label class="indicate">*</label></label>
+						<input type="radio" id="gender" 
+						       required value="Male"
+							   name='gender'/> Male
+							   <input type="radio" id="gender" 
+						       required value="Female"
+							   name='gender'/> Female
+
+					</div>
+					
+					<div class="form-group">
+						<label for="phone">Phone<label class="indicate">*</label></label>
+						<input type="text" id="phone" 
+						       class="form-control" required
+							   name='phone' placehoder='Phone' />
+
+					</div>
+					
+					<div class="form-group">
+						<label for="file">Photo<label class="indicate">*</label></label>
+						<input type="file" id="file" 
+						       class="form-control" required
+							   name='file' />
+
+					</div>
+					
+					<div class="form-group">
+						<button class="btn btn-primary">Register</button>
+						<p th:text="${message}"></p>
+					</div>
+				</form>
+			</div>
+			<div class="card-footer">
+			<strong> PS: <label class="indicate">*</label> indicates
+					the mandatory fields.
+				</strong>
+			</div>
+		</div>
+	</div>
+</div>
+<div th:replace="/layout/footer"></div>

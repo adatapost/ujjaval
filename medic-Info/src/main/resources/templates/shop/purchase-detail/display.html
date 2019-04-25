@@ -1,0 +1,17 @@
+<div th:replace="/layout/shop/header"></div>
+
+<h5><a th:href="@{/shop/purchase-detail}">Back</a></h5>
+<div th:if="${purchaseDetail}">
+<h5>Supplier</h5>
+<p th:text="|Id: ${purchaseDetail.DetId}|"></p>
+<p th:text="|Purchase Date: ${purchaseDetail.Purchase.PurDate}|"></p>
+<p th:text="|Medicine id: ${purchaseDetail.Medicine.Id}|"></p>
+<p th:text="|Medicine name: ${purchaseDetail.Medicine.Name}|"></p>
+<p th:text="|Qty: ${purchaseDetail.Qty}|"></p>
+<p th:text="|Rate: ${purchaseDetail.Rate}|"></p>
+<p th:text="|Expire Date: ${purchaseDetail.ExpireDate}|"></p>
+<p th:text="|Batch No: ${purchaseDetail.BatchNo}|"></p>
+<p th:text="|ShopAdminId: ${purchaseDetail.User.Id}|"></p>
+</div>
+
+<div th:replace="/layout/shop/footer"></div>

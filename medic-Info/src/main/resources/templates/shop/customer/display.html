@@ -1,0 +1,12 @@
+<div th:replace="/layout/shop/header"></div>
+
+<h5><a th:href="@{/shop/customer}">Back</a></h5>
+<div th:if="${customer}">
+<h5>Customer</h5>
+	<p th:text="|Id: ${customer.Id}|"></p>
+	<p th:text="|Name: ${customer.Name}|"></p>
+	<p th:text="|Address: ${customer.Address}|"></p>
+	<p th:text="|Phone: ${customer.Phone}|"></p>
+</div>
+
+<div th:replace="/layout/shop/footer"></div>

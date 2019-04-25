@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title th:text="${title}">Medicine</title>
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
+<link th:href="@{/css/style.css}" rel="stylesheet" type="text/css"/>
+
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarTogglerDemo03"
+			aria-controls="navbarTogglerDemo03" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<a class="navbar-brand" href="#">EsyMedicix</a>
+
+		<div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+				<li class="nav-item active"><a class="nav-link" href="/shop/medicine">Medicine</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/purchase">Purchase</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/purchase-detail">Purchase Report</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/sale">Sales</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/sale-detail">Sales Report</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/supplier">Suppliers</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/doctor">Doctors</a></li>
+				<li class="nav-item"><a class="nav-link" href="/shop/customer">Customers</a></li>
+				</li>
+			</ul>
+			<ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+				<li class="nav-item active"><a class="nav-link" href="#"><i
+						class="fa fa-sign-out"></i>Logout</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="container">
+		<img src="/images/medicine-strip.jpg"/>
+<hr/>
+<div class='row'>
+  <div class='col-12'>

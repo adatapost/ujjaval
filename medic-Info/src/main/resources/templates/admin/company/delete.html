@@ -1,0 +1,21 @@
+<div th:replace="/layout/admin/header"></div>
+<h5>Delete Company</h5>
+
+<h5><a th:href="@{/admin/company}">Back</a></h5>
+
+<form method="post" th:action="@{/admin/company/delete}">
+   <input type="hidden" th:value="${company.Id}" name="Id" />
+   
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="${company.Id}"></p>
+<p th:text="${company.Name}"></p>
+<p th:text="${company.Address}"></p>
+<p th:text="${company.City}"></p>
+<p th:text="${company.Website}"></p>
+<p th:text="${company.Phone}"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/admin/footer"></div>

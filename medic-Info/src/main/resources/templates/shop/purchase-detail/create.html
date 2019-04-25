@@ -1,0 +1,39 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>New PurchaseDetails</h5>
+
+<h5><a th:href="@{/shop/purchase-detail}">Back</a></h5>
+<form method="post" th:action="@{/shop/purchase-detail/create}">
+   <input type="hidden" th:value="${purchaseDetail.DetId}" name="Id" />
+   <p>
+   	Medicine Name:
+   	<select class="form-control form-control" name="MedicineId">
+   		<option  th:each= "medicine :${medicines}"  th:value="${medicine.Id}" th:text="${medicine.Name}" ></option>
+   	</select>
+   </p>
+   <p>
+   	Purchase Date:
+   	<select class="form-control form-control" name="PurchaseId">
+   		<option  th:each= "Purchases :${purchases}"  th:value="${Purchases.Id}" th:text="${Purchases.PurDate}" ></option>
+   	</select>
+   </p>
+   <p>
+   Quantity: <input type="text" th:value="${purchaseDetail.Qty}" name="Qty" class="form-control form-control" >
+   </p>
+   <p>
+   Rate: <input type="text" th:value="${purchaseDetail.Rate}" name="Rate" class="form-control form-control" >
+   </p>
+   <p>
+   Expire Date: <input type="Date" th:value="${purchaseDetail.ExpireDate}" name="Qty"  class="form-control form-control" >
+   </p>
+   <p>
+   Batch No.: <input type="text" th:value="${purchaseDetail.BatchNo}" name="BatchNo" class="form-control form-control" >
+   </p>
+   <p>
+    ShopAdminId: <input type="text" th:value="${purchaseDetail.User.Id}" name="UserId" class="form-control form-control"/>
+   </p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-primary">Add</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

@@ -57,12 +57,12 @@ Configure the Jdbc source for authentication:
 	   .passwordEncoder(new PasswordEncoder() {
 		@Override
 		public boolean matches(CharSequence rawPassword, String encodedPassword) {
-			return true;
+                   return encode(rawPassword).equals(encodedPassword);
 		}
 		
 		@Override
 		public String encode(CharSequence rawPassword) {
-		   return rawPassword.toString();
+		   return U.hashPass(rawPassword.toString());
 		}
 	})
 	   .usersByUsernameQuery("select email,pass,active from view_user where email=?")

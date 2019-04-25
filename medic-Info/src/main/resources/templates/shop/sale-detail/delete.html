@@ -1,0 +1,23 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>Delete Sale-Detail</h5>
+
+<h5><a th:href="@{/shop/sale-detail}">Back</a></h5>
+
+<form method="post" th:action="@{/shop/sale-detail/delete}">
+   <input type="hidden" th:value="${saleDetail.DetId}" name="DetId" />
+   
+   <h5>Are you sure to remove this record?</h5>
+  <p th:text="|Id: ${saleDetail.DetId}|"></p>
+<p th:text="|Sale Date: ${saleDetail.Sale.Id}|"></p>
+<p th:text="|Medicine id: ${saleDetail.Medicine.Id}|"></p>
+<p th:text="|Medicine name: ${saleDetail.Medicine.Name}|"></p>
+<p th:text="|Qty: ${saleDetail.Qty}|"></p>
+<p th:text="|Rate: ${saleDetail.Rate}|"></p>
+<p th:text="|Discount: ${saleDetail.Discount}|"></p>
+<p th:text="|ShopAdminId: ${saleDetail.User.Id}|"></p>
+   <p th:text="${message}"></p>
+   <p>
+    <button type="submit" class="btn btn-danger">Delete</button>
+   </p>
+</form>
+<div th:replace="/layout/shop/footer"></div>

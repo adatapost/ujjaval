@@ -1,0 +1,82 @@
+<div th:replace="/layout/shop/header"></div>
+<h5 class="text-center display-4">Bill</h5>
+
+<h5 class="text-right">
+	<a th:href="@{/shop/customer}">Back</a>
+</h5>
+<hr>
+
+<div class="row">
+	<div class="col-6 col-sm-3">
+		<h4>Bill To:</h4>
+		<form method="post" th:action="@{/customer/create}" id="customerForm">
+
+			<div class="form-group">
+				<label for="name">Name:</label> <input type="text"
+					class="form-control" id="" placeholder="Enter name" name="">
+			</div>
+			<div class="form-group">
+				<label for="Address">Address:</label>
+				<textarea class="form-control" id="" placeholder="Enter address"
+					name=""></textarea>
+			</div>
+			<div class="form-group">
+				<label for="Phone no.">Phone no.:</label><input type="text"
+					class="form-control" id="" placeholder="Enter name" name="">
+			</div>
+
+		</form>
+	</div>
+
+	<div class="col-6 col-sm-3">
+		<h4>Doctor :</h4>
+		<form method="post" th:action="@{/customer/create}" id="doctorForm">
+
+			<div class="form-group">
+				<label for="name">Name:</label> <input type="text"
+					class="form-control" id="" placeholder="Enter name" name="">
+			</div>
+			<div class="form-group">
+				<label for="Address">Address:</label>
+				<textarea class="form-control" id="" placeholder="Enter address"
+					name=""></textarea>
+			</div>
+			<div class="form-group">
+				<label for="Phone no.">Phone no.:</label><input type="text"
+					class="form-control" id="" placeholder="Enter name" name="">
+			</div>
+
+		</form>
+	</div>
+	<div class="col-6 col-sm-3">
+		<form method="post" th:action="@{/customer/create}" id="medicineForm">
+
+		</form>
+		
+	</div>
+	</div>
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<h5 class="card-header">
+					Invoice
+				</h5>
+				<div class="card-body">
+				
+				</div>
+				<div class="card-footer">
+					<input type="button" class="btn btn-primary" value="Click Me!" onclick=""/>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+submitForms = function(){
+    alert("hello");
+    document.getElementById("customerForm").submit();
+    document.getElementById("doctorForm").submit();
+}
+</script>
+
+
+<div th:replace="/layout/shop/footer"></div>

@@ -1,0 +1,30 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Medicine</h5>
+
+<h5><a th:href="@{/shop/medicine/create}">New Medicine</a></h5>
+<table class="table table-bordered">
+<tr>
+	<td>Id</td>
+	<td>Name</td>
+	<td>Available</td>
+	<td>Prescribed</td>
+	<td>Unit</td>
+	<td>ReorderLevel</td>
+</tr>
+ <tr th:each="medicine: ${medicines}">
+    <td th:text="${medicine.Id}"></td>
+    <td th:text="${medicine.Name}"></td>
+  <!--   <td th:text="${medicine.Company.Id}"></td> -->
+    <td th:text="${medicine.Available}"></td>
+    <td th:text="${medicine.Prescribed}"></td>
+    <td th:text="${medicine.Unit}"></td>
+    <td th:text="${medicine.ReorderLevel}"></td>
+    <td th:text="${medicine.User.Id}"></td>
+    <td>
+    <a class="btn btn-primary" th:href="@{|/shop/medicine/display/${medicine.Id}|}">Display</a>
+      <a class="btn btn-warning" th:href="@{|/shop/medicine/edit/${medicine.Id}|}">Edit</a>
+      <a class="btn btn-danger" th:href="@{|/shop/medicine/delete/${medicine.Id}|}">Delete</a>
+      </td>
+ </tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

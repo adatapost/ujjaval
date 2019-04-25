@@ -1,0 +1,18 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Doctor</h5>
+
+<h5><a th:href="@{/shop/doctor/create}">New Doctor</a></h5>
+<table class="table table-bordered">
+ <tr th:each="doctor: ${doctors}">
+    <td th:text="${doctor.Id}"></td>
+    <td th:text="${doctor.Name}"></td>
+    <td th:text="${doctor.Address}"></td>
+    <td th:text="${doctor.Phone}"></td>
+    <td>
+    <a class="btn btn-primary" th:href="@{|/shop/doctor/display/${doctor.Id}|}">Display</a>
+      <a class="btn btn-warning" th:href="@{|/shop/doctor/edit/${doctor.Id}|}">Edit</a>
+      <a class="btn btn-danger" th:href="@{|/shop/doctor/delete/${doctor.Id}|}">Delete</a>
+      </td>
+ </tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

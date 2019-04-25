@@ -1,0 +1,34 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of PurchaseDetails</h5>
+
+<h5>
+	<a th:href="@{/shop/purchase-detail/create}">New PurchaseDetail</a>
+</h5>
+<table class="table table-bordered">
+	<tr>
+		<th>DetId</th>
+		<th>Purchase date</th>
+		<th>Medicine Name:</th>
+		<th>Qty</th>	
+		<th>Rate</th>
+		<th>ExpireDate</th>
+		<th>Batch no</th>
+		
+	</tr>
+	<tr th:each="purchaseDetails: ${purchaseDetails}">
+		<td th:text="${purchaseDetails.DetId}"></td>
+		<td th:text="${purchaseDetails.Purchase.Id}"></td>
+		<td th:text="${purchaseDetails.Medicine.Name}"></td>
+		<td th:text="${purchaseDetails.Qty}"></td>
+		<td th:text="${purchaseDetails.Rate}"></td>
+		<td th:text="${purchaseDetails.ExpireDate}"></td>
+		<td th:text="${purchaseDetails.BatchNo}"></td>
+		<td th:text="${purchaseDetails.User.Id}"></td>
+		<td><a class="btn btn-primary"
+			th:href="@{|/shop/purchase-detail/display/${purchaseDetails.DetId}|}">Display</a> <a
+			class="btn btn-warning" th:href="@{|/shop/purchase-detail/edit/${purchaseDetails.DetId}|}">Edit</a>
+			<a class="btn btn-danger"
+			th:href="@{|/shop/purchase-detail/delete/${purchaseDetails.DetId}|}">Delete</a></td>
+	</tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

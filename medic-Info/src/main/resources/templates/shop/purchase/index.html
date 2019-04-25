@@ -1,0 +1,30 @@
+<div th:replace="/layout/shop/header"></div>
+<h5>List of Purchases</h5>
+
+<h5>
+	<a th:href="@{/shop/purchase/create}">New Purchase</a>
+</h5>
+<table class="table table-bordered">
+	<tr>
+		<th>Id</th>
+		<th>Purchase Date</th>
+		<th>Supplier Name</th>
+		<th>Supplier Address</th>
+		<th>Supplier City</th>
+		<th>ShopAdminId</th>
+	</tr>
+	<tr th:if="${purchase.Id}" th:each="purchase: ${purchases}">
+		<td th:text="${purchase.Id}"></td>
+		<td th:text="${purchase.PurDate}"></td>
+		<td th:text="${purchase.Supplier.Name}"></td>
+		<td th:text="${purchase.Supplier.Address}"></td>
+		<td th:text="${purchase.Supplier.City}"></td>
+		<td th:text="${purchase.User.Id}"></td>
+		<td><a class="btn btn-primary"
+			th:href="@{|/shop/purchase/display/${purchase.Id}|}">Display</a> <a
+			class="btn btn-warning" th:href="@{|/shop/purchase/edit/${purchase.Id}|}">Edit</a>
+			<a class="btn btn-danger"
+			th:href="@{|/shop/purchase/delete/${purchase.Id}|}">Delete</a></td>
+	</tr>
+</table>
+<div th:replace="/layout/shop/footer"></div>

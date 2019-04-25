@@ -1,0 +1,19 @@
+</div>
+</div>
+
+</div>
+<footer class="footer mt-auto py-3 bg-dark">
+		<div class="container">
+			<span class="text-muted text-center">&copy; EsyMedicix -  
+			<span th:text="${#dates.year(#dates.createNow())}"></span> </span>
+		</div>
+	</footer>
+<script th:src="@{/js/jquery-3.3.1.min.js}"></script>
+	<script th:src="@{/js/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+	
+	<script>
+	 $("#form1").validate();
+	</script>
+</body>
+</html>
